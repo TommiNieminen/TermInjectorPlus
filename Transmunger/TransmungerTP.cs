@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Sdl.LanguagePlatform.Core;
 using Sdl.LanguagePlatform.TranslationMemory;
@@ -8,138 +9,154 @@ using Sdl.LanguagePlatform.TranslationMemoryApi;
 
 namespace Transmunger
 {
-    class MyTranslationProvider : ITranslationProvider
+    class TransmungerTP : ITranslationProvider
     {
+
+        public static readonly string TransmungerTranslationProviderScheme = "transmunger";
+
+        #region "TranslationOptions"
+        public TransmungerTPOptions Options
+        {
+            get;
+            set;
+        }
+
+        public TransmungerTP(TransmungerTPOptions options)
+        {
+            Options = options;
+        }
+        #endregion
+
         #region ITranslationProvider Members
 
         public ITranslationProviderLanguageDirection GetLanguageDirection(LanguagePair languageDirection)
         {
-            throw new NotImplementedException();
+            return new TransmungerTPLanguageDirection(this,languageDirection);
         }
 
         public bool IsReadOnly
         {
-            get { throw new NotImplementedException(); }
+            get { return true; }
         }
 
         public void LoadState(string translationProviderState)
         {
-            throw new NotImplementedException();
+
         }
 
         public string Name
         {
-            get { throw new NotImplementedException(); }
+            get { return PluginResources.Plugin_Name; }
         }
 
         public void RefreshStatusInfo()
         {
-            throw new NotImplementedException();
+            
         }
 
         public string SerializeState()
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         public ProviderStatusInfo StatusInfo
         {
-            get { throw new NotImplementedException(); }
+            get { return new ProviderStatusInfo(true, PluginResources.Plugin_NiceName); }
         }
 
         public bool SupportsConcordanceSearch
         {
-            get { throw new NotImplementedException(); }
+            get { return true; }
         }
 
         public bool SupportsDocumentSearches
         {
-            get { throw new NotImplementedException(); }
+            get { return true; }
         }
 
         public bool SupportsFilters
         {
-            get { throw new NotImplementedException(); }
+            get { return true; }
         }
 
         public bool SupportsFuzzySearch
         {
-            get { throw new NotImplementedException(); }
+            get { return false; }
         }
 
         public bool SupportsLanguageDirection(LanguagePair languageDirection)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool SupportsMultipleResults
         {
-            get { throw new NotImplementedException(); }
+            get { return true; }
         }
 
         public bool SupportsPenalties
         {
-            get { throw new NotImplementedException(); }
+            get { return true; }
         }
 
         public bool SupportsPlaceables
         {
-            get { throw new NotImplementedException(); }
+            get { return true; }
         }
 
         public bool SupportsScoring
         {
-            get { throw new NotImplementedException(); }
+            get { return true; }
         }
 
         public bool SupportsSearchForTranslationUnits
         {
-            get { throw new NotImplementedException(); }
+            get { return true; }
         }
 
         public bool SupportsSourceConcordanceSearch
         {
-            get { throw new NotImplementedException(); }
+            get { return true; }
         }
 
         public bool SupportsStructureContext
         {
-            get { throw new NotImplementedException(); }
+            get { return true; }
         }
 
         public bool SupportsTaggedInput
         {
-            get { throw new NotImplementedException(); }
+            get { return true; }
         }
 
         public bool SupportsTargetConcordanceSearch
         {
-            get { throw new NotImplementedException(); }
+            get { return true; }
         }
 
         public bool SupportsTranslation
         {
-            get { throw new NotImplementedException(); }
+            get { return true; }
         }
 
         public bool SupportsUpdate
         {
-            get { throw new NotImplementedException(); }
+            get { return false; }
         }
 
         public bool SupportsWordCounts
         {
-            get { throw new NotImplementedException(); }
+            get { return false; }
         }
 
         public TranslationMethod TranslationMethod
         {
-            get { throw new NotImplementedException(); }
+            get { return TransmungerTPOptions.ProviderTranslationMethod; }
         }
 
         public Uri Uri
         {
-            get { throw new NotImplementedException(); }
+            get { return Options.Uri; }
         }
 
         #endregion

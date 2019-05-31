@@ -56,6 +56,9 @@
       <Private>True</Private>
       <HintPath>$(ProgramFiles)\SDL\SDL Trados Studio\Studio15\Sdl.LanguagePlatform.TranslationMemoryApi.dll</HintPath>
     </Reference>
+    <Reference Include="Sdl.TranslationStudio.Plugins.WorldServerTranslationProvider">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\SDL\SDL Trados Studio\Studio15\Sdl.TranslationStudio.Plugins.WorldServerTranslationProvider.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -67,22 +70,48 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MyTranslationProviderWinFormsUI.cs" />
-    <Compile Include="MyTranslationProviderLanguageDirection.cs" />
-    <Compile Include="MyTranslationProvider.cs" />
-    <Compile Include="MyTranslationProviderFactory.cs" />
+    <Compile Include="PluginResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PluginResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="TransmungerDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TransmungerDialog.Designer.cs">
+      <DependentUpon>TransmungerDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TransmungerElementVisitor.cs" />
+    <Compile Include="TransmungerTPOptions.cs" />
+    <Compile Include="TransmungerTPWinFormsUI.cs" />
+    <Compile Include="TransmungerTPLanguageDirection.cs" />
+    <Compile Include="TransmungerTP.cs" />
+    <Compile Include="TransmungerTPFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\PluginProperties.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="PluginResources.resx" />
+    <EmbeddedResource Include="PluginResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>PluginResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <Content Include="pluginpackage.manifest.xml" />
+    <EmbeddedResource Include="TransmungerDialog.resx">
+      <DependentUpon>TransmungerDialog.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="key.snk" />
     <None Include="packages.config" />
   </ItemGroup>
   <PropertyGroup>
     <CreatePluginPackage>true</CreatePluginPackage>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Sdl.Core.PluginFramework.Build.15.0.2\Build\net45\Sdl.Core.PluginFramework.Build.targets" Condition="Exists('..\packages\Sdl.Core.PluginFramework.Build.15.0.2\Build\net45\Sdl.Core.PluginFramework.Build.targets')" />
