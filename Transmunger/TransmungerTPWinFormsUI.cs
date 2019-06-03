@@ -15,13 +15,14 @@ namespace Transmunger
     class TransmungerTPWinFormsUI : ITranslationProviderWinFormsUI
     {
         #region ITranslationProviderWinFormsUI Members
-
+        
         public ITranslationProvider[] Browse(IWin32Window owner, LanguagePair[] languagePairs, ITranslationProviderCredentialStore credentialStore)
         {
-            TransmungerDialog dialog = new TransmungerDialog(new TransmungerTPOptions());
+            TransmungerDialog dialog = new TransmungerDialog(new TransmungerTPOptions(),credentialStore);
+            
             if (dialog.ShowDialog(owner) == DialogResult.OK)
             {
-                TransmungerTP testProvider = new TransmungerTP(dialog.Options);
+                TransmungerTP testProvider = new TransmungerTP(dialog.Options,dialog.Test_provider,credentialStore);
                 return new ITranslationProvider[] { testProvider };
             }
             return null;
@@ -47,7 +48,7 @@ namespace Transmunger
                 return false;
             }
 
-            TransmungerDialog dialog = new TransmungerDialog(editProvider.Options);
+            TransmungerDialog dialog = new TransmungerDialog(editProvider.Options,credentialStore);
             if (dialog.ShowDialog(owner) == DialogResult.OK)
             {
                 editProvider.Options = dialog.Options;

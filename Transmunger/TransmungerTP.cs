@@ -21,9 +21,17 @@ namespace Transmunger
             set;
         }
 
-        public TransmungerTP(TransmungerTPOptions options)
+        //Make this into a dictionary of instantiated translation providers
+        public static ITranslationProvider test_provider;
+
+        public TransmungerTP(TransmungerTPOptions options, ITranslationProvider test_provider, ITranslationProviderCredentialStore credentialStore)
         {
             Options = options;
+            if (test_provider != null)
+            {
+                TransmungerTP.test_provider = test_provider;
+            }
+            this.CredentialStore = credentialStore;
         }
         #endregion
 
@@ -158,6 +166,8 @@ namespace Transmunger
         {
             get { return Options.Uri; }
         }
+
+        public ITranslationProviderCredentialStore CredentialStore { get; }
 
         #endregion
     }

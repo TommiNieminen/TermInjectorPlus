@@ -6,6 +6,7 @@ using System.Text;
 using Sdl.LanguagePlatform.Core;
 using Sdl.LanguagePlatform.TranslationMemory;
 using Sdl.LanguagePlatform.TranslationMemoryApi;
+using Sdl.ProjectApi;
 
 namespace Transmunger
 {
@@ -78,15 +79,6 @@ namespace Transmunger
             //}
             #endregion
 
-
-            //TODO: This appears to work, next check if e.g. MT Enhanced can be accessed similarly.
-            Assembly test = Assembly.LoadFile(@"C:\Users\anonyymi_\AppData\Roaming\SDL\SDL Trados Studio\15\Plugins\Unpacked\Transmunger\Transmunger.dll");
-            var interfacetypes = from type in test.GetTypes()
-                          where typeof(ITranslationProviderFactory).IsAssignableFrom(type)
-                          select type;
-            ITranslationProviderFactory another = (ITranslationProviderFactory)Activator.CreateInstance(interfacetypes.Single());
-            var test_provider = another.CreateTranslationProvider(_options.Uri, "", null);
-            test_provider.GetLanguageDirection(_languageDirection).SearchText(null,"test");
             //TODO: if access to the translation unit object is needed here, create a class variable above to hold it and assign the variable before the SearchSegments method (where it's available) calls this method
             // this will allow, e.g., checking the confirmation status of the TU.
             //it can't be passed as an argument because this is an interface method and the signature can't be changed
@@ -219,6 +211,15 @@ namespace Transmunger
 
         public SearchResults SearchTranslationUnit(SearchSettings settings, TranslationUnit translationUnit)
         {
+            //TODO: Got to make sure the same function is always called in the nested TP.
+            //Looks like SearchTranslationUnitsMasked is the editor lookup starting point (CHECK!)
+            var testlangdir = TransmungerTP.test_provider.GetLanguageDirection(_languageDirection);
+            var seg = new Segment();
+            seg.Add(new Text("test"));
+            translationUnit.SourceSegment = seg;
+            SearchResults res = testlangdir.SearchTranslationUnit(settings, translationUnit);
+            return res;
+
             return SearchSegment(settings, translationUnit.SourceSegment);
         }
 
