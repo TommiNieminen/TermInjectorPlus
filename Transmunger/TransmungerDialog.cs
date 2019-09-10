@@ -10,32 +10,43 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xaml;
 
 namespace Transmunger
 {
     public partial class TransmungerDialog : Form
     {
-        
+
+
+
 
         #region "ProviderConfDialog"
+
+        public TransmungerDialog(TransmungerTPOptions translationOptions) : this(translationOptions,null)
+        {
+        }
+
         public TransmungerDialog(TransmungerTPOptions translationOptions, ITranslationProviderCredentialStore credentialStore)
         {
             Options = translationOptions;
             InitializeComponent();
             UpdateDialog();
-            //TODO: This appears to work, next check if e.g. MT Enhanced can be accessed similarly.
-            Assembly test = Assembly.LoadFile(@"C:\Users\anonyymi_\AppData\Roaming\SDL\SDL Trados Studio\15\Plugins\Unpacked\MT Enhanced Trados Plugin\Sdl.Community.MtEnhancedProvider.dll");
+
             /*var interfacetypes = from type in test.GetTypes()
                           where typeof(ITranslationProviderFactory).IsAssignableFrom(type)
                           select type;
             ITranslationProviderFactory another = (ITranslationProviderFactory)Activator.CreateInstance(interfacetypes.Single());
             var test_provider = another.CreateTranslationProvider(_options.Uri, "", null);*/
+
+            //TODO: This appears to work, next check if e.g. MT Enhanced can be accessed similarly.
+            /*Assembly test = Assembly.LoadFile(@"C:\Users\anonyymi_\AppData\Roaming\SDL\SDL Trados Studio\15\Plugins\Unpacked\MT Enhanced Trados Plugin\Sdl.Community.MtEnhancedProvider.dll");
+
             var interfacetypes = from type in test.GetTypes()
                                  where typeof(ITranslationProviderWinFormsUI).IsAssignableFrom(type)
                                  select type;
             ITranslationProviderWinFormsUI another = (ITranslationProviderWinFormsUI)Activator.CreateInstance(interfacetypes.Single());
             ITranslationProvider[] providers = another.Browse(this, new LanguagePair[] { new LanguagePair("en-GB", "fi-FI") }, credentialStore);
-            this.Test_provider = providers.Single();
+            this.Test_provider = providers.Single();*/
         }
 
         public TransmungerTPOptions Options

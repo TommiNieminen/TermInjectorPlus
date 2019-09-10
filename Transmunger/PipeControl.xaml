@@ -1,0 +1,33 @@
+﻿<UserControl x:Class="Transmunger.PipeControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Transmunger"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="0.3*" />
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="0.3*" />
+            <ColumnDefinition Width="1*" />
+
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="0.3*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="0.3*" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+        <Button Grid.Row="0" Grid.Column="2">Source text</Button>
+        <ToggleButton x:Name="Toggler" Grid.Row="1" Grid.Column="2" Width="50">+</ToggleButton>
+        <Button Grid.Row="2" Grid.Column="2" Visibility="{Binding IsChecked, ElementName=Toggler, Converter={StaticResource BooleanToVisibilityConverter}}">Source text</Button>
+        <DataGrid Grid.Column="4" HorizontalAlignment="Left" Height="100" Margin="438,29.333,-338,0" Grid.Row="1" Grid.RowSpan="2" VerticalAlignment="Top" Width="100"/>
+    </Grid>
+</UserControl>
