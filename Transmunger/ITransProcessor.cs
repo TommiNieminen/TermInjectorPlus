@@ -5,6 +5,6 @@ namespace Transmunger
     interface ITransProcessor
     {
         string Title { get; set; }
-        TranslationUnit[] Munge(TranslationUnit[] input);
+        TranslationUnit[] Transform(TranslationUnit[] input);
     }
 }

@@ -47,13 +47,13 @@ namespace Transmunger
 
         private void btnDeleteItem_Click(object sender, RoutedEventArgs e)
         {
-            
+            this.modelList.Remove((ITransProcessor)this.lbTodoList.SelectedItem);
         }
 
         private void btnEditItem_Click(object sender, RoutedEventArgs e)
         {
             ProcessorDialog processorDialog = new ProcessorDialog();
-            processorDialog.RegexCollection = ((RegexProcessor)this.lbTodoList.SelectedItem).RegexCollection;
+            processorDialog.RegexProcessor = ((RegexProcessor)this.lbTodoList.SelectedItem);
             processorDialog.ShowDialog();
         }
 

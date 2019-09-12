@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -19,27 +21,38 @@ namespace Transmunger
     /// <summary>
     /// Interaction logic for ProcessorDialog.xaml
     /// </summary>
-    public partial class ProcessorDialog : Window
+    public partial class ProcessorDialog : Window, INotifyPropertyChanged
     {
-        public ObservableCollection<RegexReplacementDef> RegexCollection { get; set; }
-        internal RegexProcessor RegexProcessor { get; private set; }
+        private RegexProcessor _regexProcessor;
 
-        public ProcessorDialog()
+        //public ObservableCollection<RegexReplacementDef> RegexCollection { get; set; }
+        public RegexProcessor RegexProcessor { get => _regexProcessor; set { _regexProcessor = value; NotifyPropertyChanged(); } }
+
+        public ProcessorDialog() : this(new RegexProcessor())
         {
-            
-            InitializeComponent();
-            this.DataContext = this;
-            this.RegexCollection = new ObservableCollection<RegexReplacementDef>()
-            {
-                new RegexReplacementDef("test","test"),
-                new RegexReplacementDef("test1","test1")
-            };
 
+        }
+
+        public ProcessorDialog(RegexProcessor regexProcessor)
+        {
+            this.DataContext = this;
+            this.RegexProcessor = regexProcessor;
+            InitializeComponent();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
 
         private void save_Click(object sender, RoutedEventArgs e)
         {
-            this.RegexProcessor = new RegexProcessor(this.RegexCollection);
+            this.RegexProcessor.Title = this.Title.Text;
             this.DialogResult = true;
             this.Close();
         }

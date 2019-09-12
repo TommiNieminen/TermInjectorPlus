@@ -27,7 +27,7 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="100" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="{Binding Title}" />
+                            <TextBox Text="{Binding Title}" />
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
