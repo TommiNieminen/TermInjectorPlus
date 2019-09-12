@@ -89,6 +89,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>PluginResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="ProcessorDialog.xaml.cs">
+      <DependentUpon>ProcessorDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="RegexDef.cs" />
+    <Compile Include="RegexProcessor.cs" />
     <Compile Include="SimpleMunger.xaml.cs">
       <DependentUpon>SimpleMunger.xaml</DependentUpon>
     </Compile>
@@ -106,7 +111,7 @@
     <Compile Include="TransmungerTPFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\PluginProperties.cs" />
-    <Compile Include="TransProcessor.cs" />
+    <Compile Include="ITransProcessor.cs" />
     <Compile Include="ViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -129,6 +134,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="PipeControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ProcessorDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

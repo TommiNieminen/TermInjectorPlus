@@ -23,8 +23,8 @@ namespace Transmunger
         
         public SimpleMunger()
         {
-            this.DataContext = new ViewModel();
             InitializeComponent();
+
         }
 
     }

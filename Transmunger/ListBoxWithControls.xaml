@@ -16,13 +16,10 @@
                 </StackPanel.Resources>
                 <TextBlock FontWeight="Bold" Margin="0,0,0,10">ListBox selection</TextBlock>
                 <Button Name="addItem" Click="btnAddItem_Click">Add</Button>
-                <Button Name="btnShowSelectedItem" Click="btnShowSelectedItem_Click">Show selected</Button>
-                <Button Name="btnSelectLast" Click="btnSelectLast_Click">Select last</Button>
-                <Button Name="btnSelectNext" Click="btnSelectNext_Click">Select next</Button>
-                <Button Name="btnSelectCSharp" Click="btnSelectCSharp_Click">Select C#</Button>
-                <Button Name="btnSelectAll" Click="btnSelectAll_Click">Select all</Button>
+                <Button Name="deleteItem" Click="btnDeleteItem_Click">Delete</Button>
+                <Button Name="editItem" Click="btnEditItem_Click">Edit</Button>
             </StackPanel>
-            <ListBox Name="lbTodoList" ItemsSource="{Binding Path=.}" HorizontalContentAlignment="Stretch" SelectionMode="Extended" SelectionChanged="lbTodoList_SelectionChanged">
+            <ListBox Name="lbTodoList" ItemsSource="{Binding Path=.}" HorizontalContentAlignment="Stretch" SelectionMode="Extended" SelectionChanged="LbTodoList_SelectionChanged" Margin="0,-32,0,32">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid Margin="0,2">

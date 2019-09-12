@@ -22,61 +22,45 @@ namespace Transmunger
     public partial class ListBoxWithControls : UserControl
     {
 
+        ObservableCollection<ITransProcessor> modelList;
+
         public ListBoxWithControls()
         {
             InitializeComponent();
+            this.DataContextChanged += dataContextChanged;
         }
 
-
-
-        private void lbTodoList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void dataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            /*if (lbTodoList.SelectedItem != null)
-                this.Title = (lbTodoList.SelectedItem as TodoItem).Title;*/
+            this.modelList = this.DataContext as ObservableCollection<ITransProcessor>;
         }
-
+        
         private void btnAddItem_Click(object sender, RoutedEventArgs e)
         {
-            (this.DataContext as ObservableCollection<TransProcessor>).Add(new TransProcessor());
-        }
-
-        private void btnShowSelectedItem_Click(object sender, RoutedEventArgs e)
-        {
-            foreach (object o in lbTodoList.SelectedItems)
-                MessageBox.Show((o as TransProcessor).Title);
-        }
-
-        private void btnSelectLast_Click(object sender, RoutedEventArgs e)
-        {
-            lbTodoList.SelectedIndex = lbTodoList.Items.Count - 1;
-        }
-
-        private void btnSelectNext_Click(object sender, RoutedEventArgs e)
-        {
-            int nextIndex = 0;
-            if ((lbTodoList.SelectedIndex >= 0) && (lbTodoList.SelectedIndex < (lbTodoList.Items.Count - 1)))
-                nextIndex = lbTodoList.SelectedIndex + 1;
-            lbTodoList.SelectedIndex = nextIndex;
-        }
-
-        private void btnSelectCSharp_Click(object sender, RoutedEventArgs e)
-        {
-            foreach (object o in lbTodoList.Items)
+            ProcessorDialog processorDialog = new ProcessorDialog();
+            processorDialog.ShowDialog();
+            if (processorDialog.DialogResult.Value == true)
             {
-                if ((o is TransProcessor) && ((o as TransProcessor).Title.Contains("C#")))
-                {
-                    lbTodoList.SelectedItem = o;
-                    break;
-                }
+                this.modelList.Add(processorDialog.RegexProcessor);
             }
         }
 
-        private void btnSelectAll_Click(object sender, RoutedEventArgs e)
+        private void btnDeleteItem_Click(object sender, RoutedEventArgs e)
         {
-            foreach (object o in lbTodoList.Items)
-                lbTodoList.SelectedItems.Add(o);
+            
         }
-        
+
+        private void btnEditItem_Click(object sender, RoutedEventArgs e)
+        {
+            ProcessorDialog processorDialog = new ProcessorDialog();
+            processorDialog.RegexCollection = ((RegexProcessor)this.lbTodoList.SelectedItem).RegexCollection;
+            processorDialog.ShowDialog();
+        }
+
+        private void LbTodoList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 
 }
