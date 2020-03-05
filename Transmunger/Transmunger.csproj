@@ -113,6 +113,7 @@
     <Compile Include="Properties\PluginProperties.cs" />
     <Compile Include="ITransProcessor.cs" />
     <Compile Include="ViewModel.cs" />
+    <Compile Include="WindowWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="PluginResources.resx">

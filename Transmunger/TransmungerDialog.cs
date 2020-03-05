@@ -1,4 +1,5 @@
-﻿using Sdl.LanguagePlatform.Core;
+﻿using Sdl.Core.PluginFramework;
+using Sdl.LanguagePlatform.Core;
 using Sdl.LanguagePlatform.TranslationMemoryApi;
 using System;
 using System.Collections.Generic;
@@ -22,15 +23,17 @@ namespace Transmunger
 
         #region "ProviderConfDialog"
 
-        public TransmungerDialog(TransmungerTPOptions translationOptions) : this(translationOptions,null)
+        public TransmungerDialog(TransmungerTPOptions translationOptions) : this(translationOptions,null,null)
         {
         }
 
-        public TransmungerDialog(TransmungerTPOptions translationOptions, ITranslationProviderCredentialStore credentialStore)
+        public TransmungerDialog(TransmungerTPOptions translationOptions, ITranslationProviderCredentialStore credentialStore, IWin32Window owner)
         {
             Options = translationOptions;
             InitializeComponent();
             UpdateDialog();
+            this.wpfHost.Child = new SimpleMunger(owner, credentialStore);
+            
 
             /*var interfacetypes = from type in test.GetTypes()
                           where typeof(ITranslationProviderFactory).IsAssignableFrom(type)

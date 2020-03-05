@@ -18,7 +18,8 @@ namespace Transmunger
         
         public ITranslationProvider[] Browse(IWin32Window owner, LanguagePair[] languagePairs, ITranslationProviderCredentialStore credentialStore)
         {
-            TransmungerDialog dialog = new TransmungerDialog(new TransmungerTPOptions(),credentialStore);
+            
+            TransmungerDialog dialog = new TransmungerDialog(new TransmungerTPOptions(),credentialStore,owner);
             
             if (dialog.ShowDialog(owner) == DialogResult.OK)
             {
@@ -48,7 +49,7 @@ namespace Transmunger
                 return false;
             }
 
-            TransmungerDialog dialog = new TransmungerDialog(editProvider.Options,credentialStore);
+            TransmungerDialog dialog = new TransmungerDialog(editProvider.Options,credentialStore,owner);
             if (dialog.ShowDialog(owner) == DialogResult.OK)
             {
                 editProvider.Options = dialog.Options;

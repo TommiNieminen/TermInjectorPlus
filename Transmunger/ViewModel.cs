@@ -1,7 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using Sdl.Core.PluginFramework;
+using Sdl.LanguagePlatform.Core;
+using Sdl.LanguagePlatform.TranslationMemoryApi;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows.Interop;
 
 namespace Transmunger
 {
@@ -9,7 +14,8 @@ namespace Transmunger
     {
         private ObservableCollection<ITransProcessor> _preprocessors;
         private ObservableCollection<ITransProcessor> _postprocessors;
-
+        
+        
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
@@ -25,10 +31,13 @@ namespace Transmunger
         public ObservableCollection<ITransProcessor> Postprocessors
             { get => _postprocessors; set { _postprocessors = value; NotifyPropertyChanged(); } }
 
+
         public ViewModel()
         {
             this.Preprocessors = new ObservableCollection<ITransProcessor>();
             this.Postprocessors = new ObservableCollection<ITransProcessor>();
         }
+
+        
     }
 }
