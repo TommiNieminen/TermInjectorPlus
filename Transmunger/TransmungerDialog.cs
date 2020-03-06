@@ -6,8 +6,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -17,14 +20,14 @@ namespace Transmunger
 {
     public partial class TransmungerDialog : Form
     {
+        private ViewModel viewModel;
 
-
-
-
+        
         #region "ProviderConfDialog"
 
         public TransmungerDialog(TransmungerTPOptions translationOptions) : this(translationOptions,null,null)
         {
+
         }
 
         public TransmungerDialog(TransmungerTPOptions translationOptions, ITranslationProviderCredentialStore credentialStore, IWin32Window owner)
@@ -32,24 +35,8 @@ namespace Transmunger
             Options = translationOptions;
             InitializeComponent();
             UpdateDialog();
-            this.wpfHost.Child = new SimpleMunger(owner, credentialStore);
-            
-
-            /*var interfacetypes = from type in test.GetTypes()
-                          where typeof(ITranslationProviderFactory).IsAssignableFrom(type)
-                          select type;
-            ITranslationProviderFactory another = (ITranslationProviderFactory)Activator.CreateInstance(interfacetypes.Single());
-            var test_provider = another.CreateTranslationProvider(_options.Uri, "", null);*/
-
-            //TODO: This appears to work, next check if e.g. MT Enhanced can be accessed similarly.
-            /*Assembly test = Assembly.LoadFile(@"C:\Users\anonyymi_\AppData\Roaming\SDL\SDL Trados Studio\15\Plugins\Unpacked\MT Enhanced Trados Plugin\Sdl.Community.MtEnhancedProvider.dll");
-
-            var interfacetypes = from type in test.GetTypes()
-                                 where typeof(ITranslationProviderWinFormsUI).IsAssignableFrom(type)
-                                 select type;
-            ITranslationProviderWinFormsUI another = (ITranslationProviderWinFormsUI)Activator.CreateInstance(interfacetypes.Single());
-            ITranslationProvider[] providers = another.Browse(this, new LanguagePair[] { new LanguagePair("en-GB", "fi-FI") }, credentialStore);
-            this.Test_provider = providers.Single();*/
+            this.viewModel = new ViewModel();
+            this.wpfHost.Child = new SimpleMunger(owner, credentialStore,viewModel);
         }
 
         public TransmungerTPOptions Options
@@ -57,7 +44,7 @@ namespace Transmunger
             get;
             set;
         }
-        public ITranslationProvider Test_provider { get; }
+        
         #endregion
 
 
@@ -70,8 +57,16 @@ namespace Transmunger
 
         private void Ok_Click(object sender, EventArgs e)
         {
+            if (this.viewModel.TranslationProvider != null)
+            {
+                this.Options.nestedTranslationProvider = this.viewModel.TranslationProvider.Uri.ToString();
+            }
+
+            this.Options.preprocessors = String.Join("-",this.viewModel.Preprocessors.Select(x => x.Serialize()));
+            
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
+        
     }
 }

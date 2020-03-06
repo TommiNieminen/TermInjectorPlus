@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Sdl.Core.PluginFramework;
 using Sdl.LanguagePlatform.Core;
 using Sdl.LanguagePlatform.TranslationMemory;
 using Sdl.LanguagePlatform.TranslationMemoryApi;
@@ -21,19 +22,42 @@ namespace Transmunger
             set;
         }
 
-        //Make this into a dictionary of instantiated translation providers
-        public static ITranslationProvider test_provider;
-
-        public TransmungerTP(TransmungerTPOptions options, ITranslationProvider test_provider, ITranslationProviderCredentialStore credentialStore)
+        public TransmungerTP(TransmungerTPOptions options, ITranslationProviderCredentialStore credentialStore)
         {
             Options = options;
-            if (test_provider != null)
-            {
-                TransmungerTP.test_provider = test_provider;
-            }
             this.CredentialStore = credentialStore;
+
+            //Instantiate the nested translation provider, if present
+            if (this.Options.nestedTranslationProvider != null || this.Options.nestedTranslationProvider.Length > 0)
+            {
+                this.InstantiateNestedTP();
+            }
+
+            //Deserialize pre- and post-processors
+            this.Preprocessors = TransprocessorFactory.DeserializeProcessors(this.Options.preprocessors);
+
         }
         #endregion
+
+        private void InstantiateNestedTP()
+        {
+            var plugins = PluginManager.DefaultPluginRegistry.Plugins;
+            var nestedUri = new Uri(Options.nestedTranslationProvider);
+            foreach (var plugin in plugins)
+            {
+                foreach (var extension in plugin.Extensions)
+                {
+                    if (extension.ExtensionPoint.ExtensionAttributeType.Name == "TranslationProviderFactoryAttribute")
+                    {
+                        var factory = (ITranslationProviderFactory)extension.CreateInstance();
+                        if (factory.SupportsTranslationProviderUri(nestedUri))
+                        {
+                            this.NestedTP = factory.CreateTranslationProvider(nestedUri, "", this.CredentialStore);
+                        }    
+                    }
+                }
+            }
+        }
 
         #region ITranslationProvider Members
 
@@ -168,6 +192,8 @@ namespace Transmunger
         }
 
         public ITranslationProviderCredentialStore CredentialStore { get; }
+        public ITranslationProvider NestedTP { get; private set; }
+        public List<RegexProcessor> Preprocessors { get; private set; }
 
         #endregion
     }

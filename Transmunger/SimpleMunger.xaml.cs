@@ -28,9 +28,10 @@ namespace Transmunger
     public partial class SimpleMunger : UserControl, INotifyPropertyChanged
     {
 
-        private ObservableCollection<IPlugin> _translatorProviderPlugins;
+        private ObservableCollection<IExtension> _translatorProviderPlugins;
         private System.Windows.Forms.IWin32Window owner;
         private ITranslationProviderCredentialStore credentialStore;
+        private ViewModel viewModel;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -42,39 +43,45 @@ namespace Transmunger
             }
         }
 
-        public ObservableCollection<IPlugin> TranslationProviderPlugins
+        public ObservableCollection<IExtension> TranslationProviderPluginUis
         { get => _translatorProviderPlugins; set { _translatorProviderPlugins = value; NotifyPropertyChanged(); } }
 
 
-        public SimpleMunger(System.Windows.Forms.IWin32Window owner, ITranslationProviderCredentialStore credentialStore)
+        public SimpleMunger(System.Windows.Forms.IWin32Window owner, ITranslationProviderCredentialStore credentialStore, ViewModel viewModel)
         {
             InitializeComponent();
-            this.DataContext = new ViewModel();
-            this.TranslationProviderPlugins = new ObservableCollection<IPlugin>();
-            this.GetTranslationProviders();
+            this.viewModel = viewModel;
+            this.DataContext = this.viewModel;
+            this.TranslationProviderPluginUis = new ObservableCollection<IExtension>();
+            this.GetTranslationProvidersUis();
             this.owner = owner;
             this.credentialStore = credentialStore;
         }
 
-        private void GetTranslationProviders()
+        private void GetTranslationProvidersUis()
         {
             var plugins = PluginManager.DefaultPluginRegistry.Plugins;
-            foreach (var tpPlugin in plugins.Where(x => x.Extensions.Any(y => y.ExtensionPoint.ExtensionAttributeType.Name == "TranslationProviderFactoryAttribute")))
+             
+            foreach (var tpPlugin in plugins)
             {
-                this.TranslationProviderPlugins.Add(tpPlugin);
+                foreach (var extension in tpPlugin.Extensions)
+                {
+                    if (extension.ExtensionPoint.ExtensionAttributeType.Name == "TranslationProviderWinFormsUiAttribute")
+                    {
+                        this.TranslationProviderPluginUis.Add(extension);
+                    }
+                }
             }
         }
 
 
         private void TpSettingsClick(object sender, RoutedEventArgs e)
         {
-            var selectedPlugin = (IPlugin)this.TpComboBox.SelectedItem;
-            //Some tp's have multiple UI's?
-            var extension = selectedPlugin.Extensions.Single(x => x.ExtensionPoint.ExtensionAttributeType.Name == "TranslationProviderWinFormsUiAttribute");
-            var winform = (ITranslationProviderWinFormsUI)extension.CreateInstance();
+            var selectedUiExtension = (IExtension)this.TpComboBox.SelectedItem;
             
-            //Need to pass the owner and credential store from Transmunger instance
-            winform.Browse(this.owner, new LanguagePair[] { new LanguagePair("en-GB", "fi-FI") }, this.credentialStore);
+            var winform = (ITranslationProviderWinFormsUI)selectedUiExtension.CreateInstance();
+
+            this.viewModel.TranslationProvider = winform.Browse(this.owner, new LanguagePair[] {}, this.credentialStore).Single();
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Transmunger
             
             if (dialog.ShowDialog(owner) == DialogResult.OK)
             {
-                TransmungerTP testProvider = new TransmungerTP(dialog.Options,dialog.Test_provider,credentialStore);
+                TransmungerTP testProvider = new TransmungerTP(dialog.Options,credentialStore);
                 return new ITranslationProvider[] { testProvider };
             }
             return null;

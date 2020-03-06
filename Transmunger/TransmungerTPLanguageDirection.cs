@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using Sdl.LanguagePlatform.Core;
 using Sdl.LanguagePlatform.TranslationMemory;
 using Sdl.LanguagePlatform.TranslationMemoryApi;
@@ -211,16 +212,22 @@ namespace Transmunger
 
         public SearchResults SearchTranslationUnit(SearchSettings settings, TranslationUnit translationUnit)
         {
-            //TODO: Got to make sure the same function is always called in the nested TP.
-            //Looks like SearchTranslationUnitsMasked is the editor lookup starting point (CHECK!)
-            var testlangdir = TransmungerTP.test_provider.GetLanguageDirection(_languageDirection);
+            var plain = translationUnit.SourceSegment.ToPlain();
+            foreach (var processor in this._provider.Preprocessors)
+            {
+                foreach (var regex in processor.RegexCollection)
+                {
+                    plain = Regex.Replace(plain, regex.Pattern, regex.Replacement);
+                }
+            }
+            translationUnit.SourceSegment.Clear();
+            translationUnit.SourceSegment.Add(plain);
+            var testlangdir = this._provider.NestedTP.GetLanguageDirection(_languageDirection);
             var seg = new Segment();
-            seg.Add(new Text("test"));
-            translationUnit.SourceSegment = seg;
             SearchResults res = testlangdir.SearchTranslationUnit(settings, translationUnit);
             return res;
 
-            return SearchSegment(settings, translationUnit.SourceSegment);
+            //return SearchSegment(settings, translationUnit.SourceSegment);
         }
 
         public SearchResults[] SearchTranslationUnits(SearchSettings settings, TranslationUnit[] translationUnits)

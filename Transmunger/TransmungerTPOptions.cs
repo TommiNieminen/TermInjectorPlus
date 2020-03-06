@@ -33,11 +33,24 @@ namespace Transmunger
             set { SetStringParameter("languageDirection", value); }
         }
        
-        public string serverAddress
+        public string nestedTranslationProvider
         {
-            get { return GetStringParameter("serverAddress"); }
-            set { SetStringParameter("serverAddress", value); }
+            get { return GetStringParameter("nestedTranslationProvider"); }
+            set { SetStringParameter("nestedTranslationProvider", value); }
         }
+
+        public string preprocessors
+        {
+            get { return GetStringParameter("preprocessors"); }
+            set { SetStringParameter("preprocessors", value); }
+        }
+
+        public string postprocessors
+        {
+            get { return GetStringParameter("postprocessors"); }
+            set { SetStringParameter("postprocessors", value); }
+        }
+
         public string port
         {
             get { return GetStringParameter("port"); }
@@ -89,7 +102,6 @@ namespace Transmunger
             return paramString;
         }
         #endregion
-
 
         #region "Uri"
         public Uri Uri

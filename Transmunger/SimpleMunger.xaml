@@ -37,8 +37,8 @@
                     <ComboBox
                         Name="TpComboBox"
                         Grid.Column="0"
-                        ItemsSource="{Binding Path=TranslationProviderPlugins, ElementName=_this}" 
-                        DisplayMemberPath="Name"></ComboBox>
+                        ItemsSource="{Binding Path=TranslationProviderPluginUis, ElementName=_this}" 
+                        DisplayMemberPath="Plugin.Name"></ComboBox>
                     <Button Grid.Column="1" Click="TpSettingsClick">Settings</Button>
                 </Grid>
             </StackPanel>

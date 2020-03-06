@@ -1,9 +1,15 @@
-﻿namespace Transmunger
+﻿using System;
+using System.Runtime.Serialization;
+
+namespace Transmunger
 {
-    
+    [DataContract]
     public class RegexReplacementDef
     {
+        [DataMember]
         public string Pattern { get; set; }
+
+        [DataMember]
         public string Replacement { get; set; }
 
 

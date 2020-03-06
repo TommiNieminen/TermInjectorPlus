@@ -1,17 +1,22 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.RegularExpressions;
 using Sdl.LanguagePlatform.Core;
 using Sdl.LanguagePlatform.TranslationMemory;
 
 namespace Transmunger
 {
+    [DataContract]
     public class RegexProcessor : ITransProcessor, INotifyPropertyChanged
     {
         private ObservableCollection<RegexReplacementDef> regexCollection;
         private string _title;
-
+        
         public RegexProcessor()
         {
             this.Title = "";
@@ -24,9 +29,16 @@ namespace Transmunger
             this.RegexCollection = regexCollection;
         }
 
+        [DataMember]
         public string Title { get => _title; set { _title = value; NotifyPropertyChanged(); } }
 
+        [DataMember]
         public ObservableCollection<RegexReplacementDef> RegexCollection { get => regexCollection; set => regexCollection = value; }
+
+        [DataMember]
+        public string FileName { get => fileName; set => fileName = value; }
+
+        private string fileName;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -51,5 +63,17 @@ namespace Transmunger
             input[0].TargetSegment = newTargetSegment;
             return input;
         }
+
+        public string Serialize()
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                DataContractSerializer ser =
+                new DataContractSerializer(typeof(RegexProcessor));
+                ser.WriteObject(ms, this);
+                return Convert.ToBase64String(ms.ToArray());
+            }
+        }
+        
     }
 }
