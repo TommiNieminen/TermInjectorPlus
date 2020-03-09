@@ -8,17 +8,8 @@
              x:Name="_this"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="2*" />
-            <RowDefinition Height="2*" />
-            <RowDefinition Height="2*" />
-        </Grid.RowDefinitions>
-
-        <Border Margin="10,10,10,10" Grid.Row="0" BorderBrush="Black" BorderThickness="1">
+    <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Border Margin="10,10,10,10" BorderBrush="Black" BorderThickness="1">
             <StackPanel>
                 <Label>Pre-processors</Label>
                 <local:ListBoxWithControls>
@@ -26,7 +17,7 @@
                 </local:ListBoxWithControls>
             </StackPanel>
         </Border>
-        <Border Margin="10,10,10,10" Grid.Row="1" BorderBrush="Black" BorderThickness="1">
+        <Border Margin="10,10,10,10" BorderBrush="Black" BorderThickness="1">
             <StackPanel>
                 <Label>Translation provider</Label>
                 <Grid Margin="10,10,10,10">
@@ -43,7 +34,7 @@
                 </Grid>
             </StackPanel>
         </Border>
-        <Border Margin="10,10,10,10" Grid.Row="2" BorderBrush="Black" BorderThickness="1">
+        <Border Margin="10,10,10,10" BorderBrush="Black" BorderThickness="1">
             <StackPanel Visibility="Hidden">
                 <Label>Post-processors</Label>
                 <local:ListBoxWithControls>
@@ -51,5 +42,5 @@
                 </local:ListBoxWithControls>
             </StackPanel>
         </Border>
-    </Grid>
+    </StackPanel>
 </UserControl>

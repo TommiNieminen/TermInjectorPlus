@@ -30,7 +30,7 @@ namespace Transmunger
             //Instantiate the nested translation provider, if present
             if (this.Options.nestedTranslationProvider != null || this.Options.nestedTranslationProvider.Length > 0)
             {
-                this.InstantiateNestedTP();
+                this.NestedTP = NestedTPFactory.InstantiateNestedTP(this.Options.nestedTranslationProvider,credentialStore);
             }
 
             //Deserialize pre- and post-processors
@@ -39,25 +39,6 @@ namespace Transmunger
         }
         #endregion
 
-        private void InstantiateNestedTP()
-        {
-            var plugins = PluginManager.DefaultPluginRegistry.Plugins;
-            var nestedUri = new Uri(Options.nestedTranslationProvider);
-            foreach (var plugin in plugins)
-            {
-                foreach (var extension in plugin.Extensions)
-                {
-                    if (extension.ExtensionPoint.ExtensionAttributeType.Name == "TranslationProviderFactoryAttribute")
-                    {
-                        var factory = (ITranslationProviderFactory)extension.CreateInstance();
-                        if (factory.SupportsTranslationProviderUri(nestedUri))
-                        {
-                            this.NestedTP = factory.CreateTranslationProvider(nestedUri, "", this.CredentialStore);
-                        }    
-                    }
-                }
-            }
-        }
 
         #region ITranslationProvider Members
 

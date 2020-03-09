@@ -35,7 +35,7 @@
             // 
             // okButton
             // 
-            this.okButton.Location = new System.Drawing.Point(24, 402);
+            this.okButton.Location = new System.Drawing.Point(7, 598);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(75, 36);
             this.okButton.TabIndex = 0;
@@ -47,14 +47,14 @@
             // 
             this.wpfHost.Location = new System.Drawing.Point(0, 0);
             this.wpfHost.Name = "wpfHost";
-            this.wpfHost.Size = new System.Drawing.Size(800, 396);
+            this.wpfHost.Size = new System.Drawing.Size(797, 592);
             this.wpfHost.TabIndex = 1;
             this.wpfHost.Text = "elementHost1";
             this.wpfHost.Child = null;
             // 
             // cancelButton
             // 
-            this.cancelButton.Location = new System.Drawing.Point(105, 402);
+            this.cancelButton.Location = new System.Drawing.Point(88, 598);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 36);
             this.cancelButton.TabIndex = 2;
@@ -65,9 +65,9 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.cancelButton);
+            this.ClientSize = new System.Drawing.Size(800, 646);
             this.Controls.Add(this.wpfHost);
+            this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.okButton);
             this.Name = "TransmungerDialog";
             this.Text = "TransmungerDialog";

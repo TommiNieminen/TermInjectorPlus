@@ -60,17 +60,24 @@ namespace Transmunger
 
         private void GetTranslationProvidersUis()
         {
-            var plugins = PluginManager.DefaultPluginRegistry.Plugins;
-             
-            foreach (var tpPlugin in plugins)
+            try
             {
-                foreach (var extension in tpPlugin.Extensions)
+                var plugins = PluginManager.DefaultPluginRegistry.Plugins;
+
+                foreach (var tpPlugin in plugins)
                 {
-                    if (extension.ExtensionPoint.ExtensionAttributeType.Name == "TranslationProviderWinFormsUiAttribute")
+                    foreach (var extension in tpPlugin.Extensions)
                     {
-                        this.TranslationProviderPluginUis.Add(extension);
+                        if (extension.ExtensionPoint.ExtensionAttributeType.Name == "TranslationProviderWinFormsUiAttribute")
+                        {
+                            this.TranslationProviderPluginUis.Add(extension);
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+
             }
         }
 

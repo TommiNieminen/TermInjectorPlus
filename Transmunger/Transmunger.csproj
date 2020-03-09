@@ -82,6 +82,7 @@
     <Compile Include="ListBoxWithControls.xaml.cs">
       <DependentUpon>ListBoxWithControls.xaml</DependentUpon>
     </Compile>
+    <Compile Include="NestedTPFactory.cs" />
     <Compile Include="PipeControl.xaml.cs">
       <DependentUpon>PipeControl.xaml</DependentUpon>
     </Compile>
