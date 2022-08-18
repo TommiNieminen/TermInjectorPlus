@@ -1,10 +1,10 @@
 ﻿using Sdl.LanguagePlatform.Core;
 
-namespace Transmunger
+namespace TermInjector2022
 {
-    class TransmungerElementVisitor : ISegmentElementVisitor
+    class TermInjector2022ElementVisitor : ISegmentElementVisitor
     {
-        private TransmungerTPOptions _options;
+        private TermInjector2022TPOptions _options;
         private string _plainText;
         
         public string PlainText
@@ -28,7 +28,7 @@ namespace Transmunger
             _plainText = "";
         }
 
-        public TransmungerElementVisitor(TransmungerTPOptions options)
+        public TermInjector2022ElementVisitor(TermInjector2022TPOptions options)
         {
             _options = options;
         }

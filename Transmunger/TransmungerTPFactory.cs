@@ -7,18 +7,18 @@ using Sdl.LanguagePlatform.Core;
 using Sdl.LanguagePlatform.TranslationMemory;
 using Sdl.LanguagePlatform.TranslationMemoryApi;
 
-namespace Transmunger
+namespace TermInjector2022
 {
-    [TranslationProviderFactory(Id = "Transmunger_Plug_inFactory",
-                                Name = "Transmunger_Plug_inFactory",
-                                Description = "Transmunger_Plug_inFactory")]
-    class TransmungerTPFactory : ITranslationProviderFactory
+    [TranslationProviderFactory(Id = "TermInjector2022_Plug_inFactory",
+                                Name = "TermInjector2022_Plug_inFactory",
+                                Description = "TermInjector2022_Plug_inFactory")]
+    class TermInjector2022TPFactory : ITranslationProviderFactory
     {
         #region ITranslationProviderFactory Members
 
         public ITranslationProvider CreateTranslationProvider(Uri translationProviderUri, string translationProviderState, ITranslationProviderCredentialStore credentialStore)
         {
-            return new TransmungerTP(new TransmungerTPOptions(translationProviderUri),credentialStore);
+            return new TermInjector2022TP(new TermInjector2022TPOptions(translationProviderUri),credentialStore);
         }
 
         public TranslationProviderInfo GetTranslationProviderInfo(Uri translationProviderUri, string translationProviderState)
@@ -26,7 +26,7 @@ namespace Transmunger
             TranslationProviderInfo info = new TranslationProviderInfo();
 
             #region "TranslationMethod"
-            info.TranslationMethod = TransmungerTPOptions.ProviderTranslationMethod;
+            info.TranslationMethod = TermInjector2022TPOptions.ProviderTranslationMethod;
             #endregion
 
             #region "Name"
@@ -42,7 +42,7 @@ namespace Transmunger
             {
                 throw new ArgumentNullException("Translation provider URI not supported.");
             }
-            return String.Equals(translationProviderUri.Scheme, TransmungerTP.TransmungerTranslationProviderScheme, StringComparison.OrdinalIgnoreCase);
+            return String.Equals(translationProviderUri.Scheme, TermInjector2022TP.TermInjector2022TranslationProviderScheme, StringComparison.OrdinalIgnoreCase);
         }
 
         #endregion

@@ -8,7 +8,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Interop;
 
-namespace Transmunger
+namespace TermInjector2022
 {
     public class ViewModel : INotifyPropertyChanged
     {

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Transmunger {
+namespace TermInjector2022 {
     using System;
     
     
@@ -22,7 +22,7 @@ namespace Transmunger {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class PluginResources {
+    public class PluginResources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,10 +36,10 @@ namespace Transmunger {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Transmunger.PluginResources", typeof(PluginResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("TermInjector2022.PluginResources", typeof(PluginResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -51,7 +51,7 @@ namespace Transmunger {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -61,27 +61,27 @@ namespace Transmunger {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Transmunger TP.
+        ///   Looks up a localized string similar to TermInjector2022 TP.
         /// </summary>
-        internal static string Plugin_Description {
+        public static string Plugin_Description {
             get {
                 return ResourceManager.GetString("Plugin_Description", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Transmunger.
+        ///   Looks up a localized string similar to TermInjector2022.
         /// </summary>
-        internal static string Plugin_Name {
+        public static string Plugin_Name {
             get {
                 return ResourceManager.GetString("Plugin_Name", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Transmunger.
+        ///   Looks up a localized string similar to TermInjector2022.
         /// </summary>
-        internal static string Plugin_NiceName {
+        public static string Plugin_NiceName {
             get {
                 return ResourceManager.GetString("Plugin_NiceName", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace Transmunger {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
-        internal static string Plugin_Tooltip {
+        public static string Plugin_Tooltip {
             get {
                 return ResourceManager.GetString("Plugin_Tooltip", resourceCulture);
             }

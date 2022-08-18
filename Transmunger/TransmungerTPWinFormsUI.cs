@@ -7,23 +7,23 @@ using Sdl.LanguagePlatform.Core;
 using Sdl.LanguagePlatform.TranslationMemory;
 using Sdl.LanguagePlatform.TranslationMemoryApi;
 
-namespace Transmunger
+namespace TermInjector2022
 {
     [TranslationProviderWinFormsUi(Id = "Translation_Provider_Plug_inWinFormsUI",
                                    Name = "Translation_Provider_Plug_inWinFormsUI",
                                    Description = "Translation_Provider_Plug_inWinFormsUI")]
-    class TransmungerTPWinFormsUI : ITranslationProviderWinFormsUI
+    class TermInjector2022TPWinFormsUI : ITranslationProviderWinFormsUI
     {
         #region ITranslationProviderWinFormsUI Members
         
         public ITranslationProvider[] Browse(IWin32Window owner, LanguagePair[] languagePairs, ITranslationProviderCredentialStore credentialStore)
         {
             
-            TransmungerDialog dialog = new TransmungerDialog(new TransmungerTPOptions(),credentialStore,owner);
+            TermInjector2022Dialog dialog = new TermInjector2022Dialog(new TermInjector2022TPOptions(),credentialStore,owner);
             
             if (dialog.ShowDialog(owner) == DialogResult.OK)
             {
-                TransmungerTP testProvider = new TransmungerTP(dialog.Options,credentialStore);
+                TermInjector2022TP testProvider = new TermInjector2022TP(dialog.Options,credentialStore);
                 return new ITranslationProvider[] { testProvider };
             }
             return null;
@@ -43,13 +43,13 @@ namespace Transmunger
         #region "Edit"
         public bool Edit(IWin32Window owner, ITranslationProvider translationProvider, LanguagePair[] languagePairs, ITranslationProviderCredentialStore credentialStore)
         {
-            TransmungerTP editProvider = translationProvider as TransmungerTP;
+            TermInjector2022TP editProvider = translationProvider as TermInjector2022TP;
             if (editProvider == null)
             {
                 return false;
             }
 
-            TransmungerDialog dialog = new TransmungerDialog(editProvider.Options,credentialStore,owner);
+            TermInjector2022Dialog dialog = new TermInjector2022Dialog(editProvider.Options,credentialStore,owner);
             if (dialog.ShowDialog(owner) == DialogResult.OK)
             {
                 editProvider.Options = dialog.Options;

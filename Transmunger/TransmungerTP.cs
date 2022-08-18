@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -7,34 +8,53 @@ using Sdl.Core.PluginFramework;
 using Sdl.LanguagePlatform.Core;
 using Sdl.LanguagePlatform.TranslationMemory;
 using Sdl.LanguagePlatform.TranslationMemoryApi;
+using Serilog;
 
-namespace Transmunger
+namespace TermInjector2022
 {
-    class TransmungerTP : ITranslationProvider
+    class TermInjector2022TP : ITranslationProvider
     {
 
-        public static readonly string TransmungerTranslationProviderScheme = "transmunger";
+        public static readonly string TermInjector2022TranslationProviderScheme = "TermInjector2022";
 
         #region "TranslationOptions"
-        public TransmungerTPOptions Options
+        public TermInjector2022TPOptions Options
         {
             get;
             set;
         }
 
-        public TransmungerTP(TransmungerTPOptions options, ITranslationProviderCredentialStore credentialStore)
+        private void SetupLogging()
         {
+            var logDir = HelperFunctions.GetLocalAppDataPath(TermInjector2022Settings.Default.LogDir);
+
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.File(Path.Combine(logDir, "terminjector2022.txt"), rollingInterval: RollingInterval.Day)
+                .CreateLogger();
+        }
+
+        public TermInjector2022TP(TermInjector2022TPOptions options, ITranslationProviderCredentialStore credentialStore)
+        {
+            this.SetupLogging();
+
             Options = options;
             this.CredentialStore = credentialStore;
 
-            //Instantiate the nested translation provider, if present
-            if (this.Options.nestedTranslationProvider != null || this.Options.nestedTranslationProvider.Length > 0)
+            Guid configGuid;
+            //Check if the options contain a guid for an existing terminjector configuration
+            if (Guid.TryParse(options.termInjectorConfigGuid, out configGuid))
             {
-                this.NestedTP = NestedTPFactory.InstantiateNestedTP(this.Options.nestedTranslationProvider,credentialStore);
-            }
+                var pipelineConfigDir = new DirectoryInfo(
+                    HelperFunctions.GetLocalAppDataPath(TermInjector2022Settings.Default.ConfigDir));
+                var configInOptionFileInfo = pipelineConfigDir.GetFiles($"{configGuid}.txt").FirstOrDefault();
+                if (configInOptionFileInfo != null)
+                {
+                    var configInOption = TermInjectorPipeline.CreateFromFile(configInOptionFileInfo);
+                    this.NestedTP = NestedTPFactory.InstantiateNestedTP(configInOption.NestedTranslationProviderUri, credentialStore);
+                }
 
-            //Deserialize pre- and post-processors
-            this.Preprocessors = TransprocessorFactory.DeserializeProcessors(this.Options.preprocessors);
+            }
 
         }
         #endregion
@@ -44,7 +64,7 @@ namespace Transmunger
 
         public ITranslationProviderLanguageDirection GetLanguageDirection(LanguagePair languageDirection)
         {
-            return new TransmungerTPLanguageDirection(this,languageDirection);
+            return new TermInjector2022TPLanguageDirection(this,languageDirection);
         }
 
         public bool IsReadOnly
@@ -164,7 +184,7 @@ namespace Transmunger
 
         public TranslationMethod TranslationMethod
         {
-            get { return TransmungerTPOptions.ProviderTranslationMethod; }
+            get { return TermInjector2022TPOptions.ProviderTranslationMethod; }
         }
 
         public Uri Uri
@@ -174,7 +194,6 @@ namespace Transmunger
 
         public ITranslationProviderCredentialStore CredentialStore { get; }
         public ITranslationProvider NestedTP { get; private set; }
-        public List<RegexProcessor> Preprocessors { get; private set; }
 
         #endregion
     }

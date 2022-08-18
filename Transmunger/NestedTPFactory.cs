@@ -6,12 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Transmunger
+namespace TermInjector2022
 {
     public class NestedTPFactory
     {
         public static ITranslationProvider InstantiateNestedTP(string nestedTPUriString, ITranslationProviderCredentialStore credentialStore)
         {
+            //TODO: USE TranslationProviderManager to create factory
             var plugins = PluginManager.DefaultPluginRegistry.Plugins;
             var nestedUri = new Uri(nestedTPUriString);
             foreach (var plugin in plugins)

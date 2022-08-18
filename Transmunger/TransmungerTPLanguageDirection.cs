@@ -9,16 +9,16 @@ using Sdl.LanguagePlatform.TranslationMemory;
 using Sdl.LanguagePlatform.TranslationMemoryApi;
 using Sdl.ProjectApi;
 
-namespace Transmunger
+namespace TermInjector2022
 {
-    class TransmungerTPLanguageDirection : ITranslationProviderLanguageDirection
+    class TermInjector2022TPLanguageDirection : ITranslationProviderLanguageDirection
     {
         
         #region "PrivateMembers"
-        private TransmungerTP _provider;
+        private TermInjector2022TP _provider;
         private LanguagePair _languageDirection;
-        private TransmungerTPOptions _options;
-        private TransmungerElementVisitor _visitor;
+        private TermInjector2022TPOptions _options;
+        private TermInjector2022ElementVisitor _visitor;
         #endregion
 
         #region "ITranslationProviderLanguageDirection Members"
@@ -29,13 +29,13 @@ namespace Transmunger
         /// <param name="provider"></param>
         /// <param name="languages"></param>
         #region "ProviderLanguageDirection"
-        public TransmungerTPLanguageDirection(TransmungerTP provider, LanguagePair languages)
+        public TermInjector2022TPLanguageDirection(TermInjector2022TP provider, LanguagePair languages)
         {
             #region "Instantiate"
             _provider = provider;
             _languageDirection = languages;
             _options = _provider.Options;
-            _visitor = new TransmungerElementVisitor(_options);
+            _visitor = new TermInjector2022ElementVisitor(_options);
             #endregion
 
             //TODO: any instantiation code for ILanguageDirection
@@ -213,18 +213,29 @@ namespace Transmunger
         public SearchResults SearchTranslationUnit(SearchSettings settings, TranslationUnit translationUnit)
         {
             var plain = translationUnit.SourceSegment.ToPlain();
-            foreach (var processor in this._provider.Preprocessors)
+            /*foreach (var processor in this._provider.Preprocessors)
             {
                 foreach (var regex in processor.RegexCollection)
                 {
                     plain = Regex.Replace(plain, regex.Pattern, regex.Replacement);
                 }
-            }
+            }*/
+            plain = Regex.Replace(plain, " +", " ");
             translationUnit.SourceSegment.Clear();
             translationUnit.SourceSegment.Add(plain);
             var testlangdir = this._provider.NestedTP.GetLanguageDirection(_languageDirection);
             var seg = new Segment();
             SearchResults res = testlangdir.SearchTranslationUnit(settings, translationUnit);
+            foreach (var result in res)
+            {
+                var targetSeg = result.TranslationProposal.TargetSegment;
+                var plainOutput = targetSeg.ToPlain();
+                plain = Regex.Replace(plainOutput, " +", " ");
+                targetSeg.Clear();
+                targetSeg.Add(plain);
+            }
+            
+
             return res;
 
             //return SearchSegment(settings, translationUnit.SourceSegment);

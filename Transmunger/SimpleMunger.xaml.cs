@@ -20,7 +20,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Transmunger
+namespace TermInjector2022
 {
     /// <summary>
     /// Interaction logic for SimpleMunger.xaml

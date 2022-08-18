@@ -1,13 +1,13 @@
 ﻿using System;
 using Sdl.LanguagePlatform.TranslationMemoryApi;
 
-namespace Transmunger
+namespace TermInjector2022
 {
     /// <summary>
     /// This class is used to hold the provider plug-in settings. 
     /// All settings are automatically stored in a URI.
     /// </summary>
-    public class TransmungerTPOptions
+    public class TermInjector2022TPOptions
     {
         #region "TranslationMethod"
         public static readonly TranslationMethod ProviderTranslationMethod = TranslationMethod.Other;
@@ -16,18 +16,18 @@ namespace Transmunger
         #region "TranslationProviderUriBuilder"
         TranslationProviderUriBuilder _uriBuilder;        
 
-        public TransmungerTPOptions()
+        public TermInjector2022TPOptions()
         {
-            _uriBuilder = new TranslationProviderUriBuilder(TransmungerTP.TransmungerTranslationProviderScheme);
+            _uriBuilder = new TranslationProviderUriBuilder(TermInjector2022TP.TermInjector2022TranslationProviderScheme);
         }
 
-        public TransmungerTPOptions(Uri uri)
+        public TermInjector2022TPOptions(Uri uri)
         {
             _uriBuilder = new TranslationProviderUriBuilder(uri);
         }
         #endregion
-        
-        public string languageDirection
+
+        /*public string languageDirection
         {
             get { return GetStringParameter("languageDirection"); }
             set { SetStringParameter("languageDirection", value); }
@@ -56,6 +56,7 @@ namespace Transmunger
             get { return GetStringParameter("port"); }
             set { SetStringParameter("port", value); }
         }
+
         public string client
         {
             get { return GetStringParameter("client"); }
@@ -82,11 +83,13 @@ namespace Transmunger
         {
             get { return GetStringParameter("languageDirectionTarget"); }
             set { SetStringParameter("languageDirectionTarget", value); }
+        }*/
+
+        public string termInjectorConfigGuid
+        {
+            get { return GetStringParameter("termInjectorConfigGuid"); }
+            set { SetStringParameter("termInjectorConfigGuid", value); }
         }
-
-        
-
-        
 
         #region "SetStringParameter"
         private void SetStringParameter(string p, string value)
