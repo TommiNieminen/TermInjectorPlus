@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Sdl.LanguagePlatform.TranslationMemoryApi;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using YamlDotNet.Serialization;
 
 namespace TermInjector2022
@@ -16,6 +18,7 @@ namespace TermInjector2022
     {
         [YamlMember(Alias = "name", ApplyNamingConventions = false)]
         public string PipelineName { get; set; }
+        
 
         [YamlMember(Alias = "guid", ApplyNamingConventions = false)]
         public string PipelineGuid;
@@ -37,6 +40,8 @@ namespace TermInjector2022
             this.PipelineGuid = System.Guid.NewGuid().ToString();
             this.AutoPostEditRuleCollectionGuids = new ObservableCollection<string>();
             this.AutoPreEditRuleCollectionGuids = new ObservableCollection<string>();
+            this.AutoPreEditRuleCollections = new ObservableCollection<AutoEditRuleCollection>();
+            this.AutoPostEditRuleCollections = new ObservableCollection<AutoEditRuleCollection>();
         }
 
         public string ProcessInput(string input, bool applyEditRules)
@@ -66,7 +71,7 @@ namespace TermInjector2022
             //Don't replace current file yet
             using (var writer = File.CreateText(configTempPath))
             {
-                serializer.Serialize(writer, this, typeof(TermInjectorConfig));
+                serializer.Serialize(writer, this, typeof(TermInjectorPipeline));
             }
 
             if (!File.Exists(configPath))

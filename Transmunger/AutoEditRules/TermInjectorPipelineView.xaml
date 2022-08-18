@@ -6,11 +6,12 @@
         xmlns:local="clr-namespace:TermInjector2022"
         xmlns:resx="clr-namespace:TermInjector2022.Properties"
         mc:Ignorable="d"
-        Height="550" Width="800">
+        Height="850" Width="800"
+        FontFamily="Segoe UI" FontSize="12">
     <ScrollViewer Name="ScrollViewer" VerticalScrollBarVisibility="Auto">
-        <StackPanel>
+        <StackPanel Background="White">
             <Label Margin="10,0,0,0" FontSize="20" Content="{x:Static resx:Resources.EditRules_EditRulesHeading}"/>
-            <Border Margin="5" BorderBrush="Black" BorderThickness="1">
+            <Border Background="AliceBlue" Margin="5" BorderBrush="Black" BorderThickness="1">
                 <StackPanel>
                     <Label FontWeight="Bold" FontSize="15">Pre-edit rule collections</Label>
             <DockPanel Margin="10">
@@ -81,7 +82,12 @@
             </DockPanel>
                 </StackPanel>
             </Border>
-            <Border Margin="5" BorderBrush="Black" BorderThickness="1">
+            <ComboBox Name="TpComboBox" ItemsSource="{Binding Path=TranslationProviderPluginUis, Mode=TwoWay}"
+                            DisplayMemberPath="Name"
+                            SelectedValue="{Binding SelectedTranslationProvider, Mode=TwoWay}"
+                            Width="200"/>
+
+            <Border Background="AliceBlue" Margin="5" BorderBrush="Black" BorderThickness="1">
                 <StackPanel>
                     <Label FontWeight="Bold" FontSize="15">Post-edit rule collections</Label>
                     <DockPanel Margin="10">

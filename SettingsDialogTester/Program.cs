@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Transmunger;
+using TermInjector2022;
 
 namespace SettingsDialogTester
 {
@@ -13,7 +13,7 @@ namespace SettingsDialogTester
         [STAThread]
         static void Main(string[] args)
         {
-            TransmungerDialog dialog = new TransmungerDialog(new TransmungerTPOptions());
+            TermInjector2022Dialog dialog = new TermInjector2022Dialog(new TermInjector2022TPOptions());
             if (dialog.ShowDialog() == DialogResult.OK)
             {
             }

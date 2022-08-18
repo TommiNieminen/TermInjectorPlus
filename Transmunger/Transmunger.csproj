@@ -36,15 +36,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CustomMarshalers" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.WindowsAPICodePack-Core.1.1.0.2\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
+    <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.8.0, Culture=neutral, PublicKeyToken=8985beaab7ea3f04, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft-Windows10-APICodePack-Core.1.1.8\lib\net47\Microsoft.WindowsAPICodePack.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.WindowsAPICodePack-Shell.1.1.0.0\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.WindowsAPICodePack.ShellExtensions, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.WindowsAPICodePack-Shell.1.1.0.0\lib\Microsoft.WindowsAPICodePack.ShellExtensions.dll</HintPath>
+    <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.8.0, Culture=neutral, PublicKeyToken=8985beaab7ea3f04, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft-Windows10-APICodePack-Shell.1.1.8\lib\net47\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -134,9 +132,6 @@
     <Compile Include="AutoEditRules\TestPreEditRuleControl.xaml.cs">
       <DependentUpon>TestPreEditRuleControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ListBoxWithControls.xaml.cs">
-      <DependentUpon>ListBoxWithControls.xaml</DependentUpon>
-    </Compile>
     <Compile Include="AutoEditRules\MatchColorPicker.cs" />
     <Compile Include="NestedTPFactory.cs" />
     <Compile Include="PipeControl.xaml.cs">
@@ -152,13 +147,16 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SimpleMunger.xaml.cs">
-      <DependentUpon>SimpleMunger.xaml</DependentUpon>
-    </Compile>
     <Compile Include="TermInjector2022Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>TermInjector2022Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="TermInjector2022Dialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TermInjector2022Dialog.Designer.cs">
+      <DependentUpon>TermInjector2022Dialog.cs</DependentUpon>
     </Compile>
     <Compile Include="TransmungerElementVisitor.cs" />
     <Compile Include="TransmungerTPOptions.cs" />
@@ -168,8 +166,6 @@
     <Compile Include="TransmungerTPFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\PluginProperties.cs" />
-    <Compile Include="ITransProcessor.cs" />
-    <Compile Include="ViewModel.cs" />
     <Compile Include="WindowWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -181,6 +177,9 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TermInjector2022Dialog.resx">
+      <DependentUpon>TermInjector2022Dialog.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -225,15 +224,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ListBoxWithControls.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="PipeControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="SimpleMunger.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

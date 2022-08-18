@@ -1,4 +1,7 @@
 ﻿
+using Sdl.Core.PluginFramework;
+using Sdl.LanguagePlatform.Core;
+using Sdl.LanguagePlatform.TranslationMemoryApi;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -39,8 +42,10 @@ namespace TermInjector2022
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+        private IPlugin selectedTranslationProvider;
 
         private TermInjectorPipeline textProcessor;
+        private ObservableCollection<IPlugin> _translatorProviderPlugins;
 
         private void InitializePipelineConfigurations()
         {
@@ -111,10 +116,19 @@ namespace TermInjector2022
 
         }
 
-        public TermInjectorPipelineView(TermInjector2022TPOptions translationOptions)
+        public System.Windows.Forms.IWin32Window Owner { get; private set; }
+        public ITranslationProviderCredentialStore CredentialStore { get; private set; }
+
+        public TermInjectorPipelineView(
+            System.Windows.Forms.IWin32Window owner, 
+            ITranslationProviderCredentialStore credentialStore, 
+            TermInjector2022TPOptions translationOptions)
         {
+            this.Owner = owner;
+            this.CredentialStore = credentialStore;
             this.InitializeAutoEditRuleCollections();
             this.InitializePipelineConfigurations();
+            this.GetTranslationProvidersUis();
             Guid configGuid;
             //Check if the options contain a guid for an existing terminjector configuration
             if (Guid.TryParse(translationOptions.termInjectorConfigGuid, out configGuid))
@@ -127,7 +141,11 @@ namespace TermInjector2022
                     this.TermInjectorConfig = configInOptions;
                 }
             }
-            
+
+            if (this.TermInjectorConfig == null)
+            {
+                this.TermInjectorConfig = new TermInjectorPipeline() {PipelineName = "Unnamed" };
+            }
             
             this.Title = String.Format(TermInjector2022.Properties.Resources.EditRules_EditRulesTitle,TermInjectorConfig.PipelineName);
             
@@ -200,10 +218,54 @@ namespace TermInjector2022
         public List<TestPostEditRuleControl> PostEditTesters { get; private set; }
         public ObservableCollection<TermInjectorPipeline> PipelineConfigurations { get; private set; }
 
+        public ObservableCollection<IPlugin> TranslationProviderPluginUis
+        { get => _translatorProviderPlugins; set { _translatorProviderPlugins = value; NotifyPropertyChanged(); } }
+
+        public ITranslationProvider TranslationProvider { get; private set; }
+        public IPlugin SelectedTranslationProvider
+        {
+            get => selectedTranslationProvider;
+            set { selectedTranslationProvider = value; NotifyPropertyChanged(); }
+        }
+
+        private void GetTranslationProvidersUis()
+        {
+            try
+            {
+                var plugins = PluginManager.DefaultPluginRegistry.Plugins;
+
+                foreach (var tpPlugin in plugins)
+                {
+                    foreach (var extension in tpPlugin.Extensions)
+                    {
+                        if (extension.ExtensionPoint.ExtensionAttributeType.Name == "TranslationProviderWinFormsUiAttribute")
+                        {
+                            this.TranslationProviderPluginUis.Add((IPlugin)extension);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+
+        private void TpSettingsClick(object sender, RoutedEventArgs e)
+        {
+            var selectedUiExtension = (IExtension)this.TpComboBox.SelectedItem;
+
+            var winform = (ITranslationProviderWinFormsUI)selectedUiExtension.CreateInstance();
+
+            this.TranslationProvider = winform.Browse(this.Owner, new LanguagePair[] { }, this.CredentialStore).Single();
+        }
+    
+
         private void CreatePreRule_Click(object sender, RoutedEventArgs e)
         {
             var createRuleWindow = new CreatePreEditRuleWindow();
-            ((Window)createRuleWindow).Owner = Application.Current.MainWindow;
+            ((Window)createRuleWindow).Owner = (Window)this.Owner;
             var dialogResult = createRuleWindow.ShowDialog();
 
 
@@ -233,7 +295,7 @@ namespace TermInjector2022
                 new AddEditRuleCollectionWindow(
                     this.AutoPreEditRuleCollections, 
                     this.TermInjectorConfig.AutoPreEditRuleCollections);
-            addCollectionWindow.Owner = Application.Current.MainWindow;
+            addCollectionWindow.Owner = (Window)this.Owner;
             var dialogResult = addCollectionWindow.ShowDialog();
             if (dialogResult.Value)
             {
@@ -288,7 +350,7 @@ namespace TermInjector2022
             
             //Edit a clone of the collection, so that the changes can be canceled in the edit window
             var editCollectionWindow = new EditPreEditRuleCollectionWindow(selectedCollection.Clone());
-            editCollectionWindow.Owner = Application.Current.MainWindow;
+            editCollectionWindow.Owner = (Window)this.Owner;
             var dialogResult = editCollectionWindow.ShowDialog();
             if (dialogResult.Value)
             {
@@ -340,7 +402,7 @@ namespace TermInjector2022
         private void CreatePostRule_Click(object sender, RoutedEventArgs e)
         {
             var createRuleWindow = new CreatePostEditRuleWindow();
-            createRuleWindow.Owner = Application.Current.MainWindow;
+            createRuleWindow.Owner = (Window)this.Owner;
             var dialogResult = createRuleWindow.ShowDialog();
 
             if (dialogResult != null && dialogResult.Value)
@@ -369,7 +431,7 @@ namespace TermInjector2022
                 new AddEditRuleCollectionWindow(
                     AutoPostEditRuleCollections,
                     this.TermInjectorConfig.AutoPostEditRuleCollections);
-            addCollectionWindow.Owner = Application.Current.MainWindow;
+            addCollectionWindow.Owner = (Window)this.Owner;
             var dialogResult = addCollectionWindow.ShowDialog();
             if (dialogResult.Value)
             {
@@ -387,7 +449,7 @@ namespace TermInjector2022
             
             //Edit a clone of the collection, so that the changes can be canceled in the edit window
             var editCollectionWindow = new EditPostEditRuleCollectionWindow(selectedCollection.Clone());
-            editCollectionWindow.Owner = Application.Current.MainWindow;
+            editCollectionWindow.Owner = (Window)this.Owner;
             var dialogResult = editCollectionWindow.ShowDialog();
             if (dialogResult.Value)
             {

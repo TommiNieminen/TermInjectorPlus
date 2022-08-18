@@ -5,4 +5,9 @@
   <Description>Plugin description</Description>
   <Author></Author>
   <RequiredProduct name="SDLTradosStudio" minversion="15.0" />
+  <Include>
+    <File>YamlDotNet.dll</File>
+    <File>License.txt</File>
+    <File>ThirdPartyNotices.txt</File>
+  </Include>
 </PluginPackage>
