@@ -6,161 +6,196 @@
         xmlns:local="clr-namespace:TermInjector2022"
         xmlns:resx="clr-namespace:TermInjector2022.Properties"
         mc:Ignorable="d"
-        Height="850" Width="800"
+        Height="450" Width="870"
         FontFamily="Segoe UI" FontSize="12">
     <ScrollViewer Name="ScrollViewer" VerticalScrollBarVisibility="Auto">
         <StackPanel Background="White">
-            <Label Margin="10,0,0,0" FontSize="20" Content="{x:Static resx:Resources.EditRules_EditRulesHeading}"/>
             <Border Background="AliceBlue" Margin="5" BorderBrush="Black" BorderThickness="1">
+
                 <StackPanel>
-                    <Label FontWeight="Bold" FontSize="15">Pre-edit rule collections</Label>
-            <DockPanel Margin="10">
-                <StackPanel DockPanel.Dock="Right" Margin="10,0" Orientation="Vertical">
-                    <StackPanel.Resources>
-                        <Style TargetType="Button">
-                            <Setter Property="Margin" Value="0,0,0,5" />
-                        </Style>
-                    </StackPanel.Resources>
-                    <Button 
+                    <DockPanel LastChildFill="True" Margin="5">
+                        <Label FontWeight="Bold" FontSize="15">TermInjector template</Label>
+                        <ComboBox Name="TermInjectorConfigComboBox"
+                            DisplayMemberPath="PipelineName"
+                            SelectedValue="{Binding TermInjectorConfig, Mode=TwoWay}"/>
+                    </DockPanel>
+                    <DockPanel Margin="5">
+                        <Label DockPanel.Dock="Left">Name</Label>
+
+                        <Button Name="SaveTemplateButton" Margin="5,0,0,0" Padding="10,0" DockPanel.Dock="Right" Click="SaveTemplateButton_Click">Save template</Button>
+                        <TextBox Margin="5,0,5,0" DockPanel.Dock="Right" Name="TermInjectorConfigNameBox" Text="{Binding Path=TermInjectorConfig.PipelineName, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                    </DockPanel>
+                </StackPanel>
+
+            </Border>
+            
+            
+            <Border Background="AliceBlue" Margin="5" BorderBrush="Black" BorderThickness="1">
+
+                <DockPanel Margin="5">
+                    <Label FontWeight="Bold" FontSize="15">Translation provider (TM, MT etc.):</Label>
+                    
+                    <Button Name="TpSettingsButton" DockPanel.Dock="Right" Width="130" Click="TpSettingsButton_Click">Open settings</Button>
+                    <ComboBox Margin="5,0,5,0" Name="TpComboBox"
+                            DisplayMemberPath="Plugin.Name"
+                            SelectedValue="{Binding SelectedTranslationProvider, Mode=TwoWay}"/>
+                </DockPanel>
+
+            </Border>
+
+            <StackPanel Orientation="Horizontal">
+                <Border Background="AliceBlue" Margin="5" BorderBrush="Black" BorderThickness="1">
+                    <StackPanel>
+                        <Label FontWeight="Bold" FontSize="15">Pre-edit rule collections</Label>
+                        <DockPanel Margin="10">
+                            <StackPanel DockPanel.Dock="Right" Margin="10,0" Orientation="Vertical">
+                                <StackPanel.Resources>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Margin" Value="0,0,0,5" />
+                                    </Style>
+                                </StackPanel.Resources>
+                                <Button 
                         Name="createPreRule" 
                         Click="CreatePreRule_Click"
                         Content="{x:Static resx:Resources.EditRules_CreateRuleButton}" />
 
-                    <Button 
+                                <Button 
                         Name="addPreRuleCollection" 
                         Click="AddPreRuleCollection_Click"
                         Content="{x:Static resx:Resources.EditRules_AddRuleCollectionButton}" />
 
-                    <Button 
+                                <Button 
                         IsEnabled="{Binding ElementName=AutoPreEditRuleCollectionList, Path=SelectedItems.Count}" 
                         Name="editPreRuleCollection" 
                         Click="EditPreRuleCollection_Click"
                         Content="{x:Static resx:Resources.EditRules_EditRuleCollectionButton}" />
-                    
-                    <Button 
+
+                                <Button 
                         IsEnabled="{Binding ElementName=AutoPreEditRuleCollectionList, Path=SelectedItems.Count}" 
                         Name="removePreRuleCollection" 
                         Click="RemovePreRuleCollection_Click"
                         Content="{x:Static resx:Resources.EditRules_RemoveRuleCollectionButton}" />
-                    <Button 
+                                <Button 
                         IsEnabled="{Binding ElementName=AutoPreEditRuleCollectionList, Path=SelectedItems.Count}" 
                         Name="deletePreRuleCollection" 
                         Click="DeletePreRuleCollection_Click"
                         Content="{x:Static resx:Resources.EditRules_DeleteRuleCollectionButton}" />
-                    <Button 
+                                <Button 
                         IsEnabled="{Binding ElementName=AutoPreEditRuleCollectionList, Path=SelectedItems.Count}" 
                         Name="movePreRuleCollectionUp" 
                         Click="MovePreRuleCollectionUp_Click"
                         Content="{x:Static resx:Resources.EditRules_MoveUpButton}" />
-                    <Button 
+                                <Button 
                         IsEnabled="{Binding ElementName=AutoPreEditRuleCollectionList, Path=SelectedItems.Count}" 
                         Name="movePreRuleCollectionDown" 
                         Click="MovePreRuleCollectionDown_Click"
                         Content="{x:Static resx:Resources.EditRules_MoveDownButton}" />
 
-                        </StackPanel>
-                <ListView Name="AutoPreEditRuleCollectionList">
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="{x:Type ListViewItem}">
-                            <Setter Property="BorderBrush" Value="LightGray" />
-                            <Setter Property="BorderThickness" Value="1,1,1,1" />
-                        </Style>
-                    </ListView.ItemContainerStyle>
+                            </StackPanel>
+                            <ListView Name="AutoPreEditRuleCollectionList">
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="{x:Type ListViewItem}">
+                                        <Setter Property="BorderBrush" Value="LightGray" />
+                                        <Setter Property="BorderThickness" Value="1,1,1,1" />
+                                    </Style>
+                                </ListView.ItemContainerStyle>
 
-                    <ListView.View>
-                                <GridView AllowsColumnReorder="true">
-                                    <GridViewColumn Width="350" DisplayMemberBinding="{Binding Path=CollectionName, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
-                                        <GridViewColumn.Header>
-                                            <GridViewColumnHeader Content="Collection name" HorizontalContentAlignment="Center"/>
-                                        </GridViewColumn.Header>
-                                    </GridViewColumn>
-                                    <GridViewColumn Header="Number of rules" DisplayMemberBinding="{Binding Path=EditRules.Count, Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" />
-                                </GridView>
-                            </ListView.View>
-                </ListView>
+                                <ListView.View>
+                                    <GridView AllowsColumnReorder="true">
+                                        <GridViewColumn Width="220" DisplayMemberBinding="{Binding Path=CollectionName, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+                                            <GridViewColumn.Header>
+                                                <GridViewColumnHeader Content="Collection name" HorizontalContentAlignment="Center"/>
+                                            </GridViewColumn.Header>
+                                        </GridViewColumn>
+                                        <GridViewColumn Header="Number of rules" DisplayMemberBinding="{Binding Path=EditRules.Count, Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" />
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
 
-            </DockPanel>
-                </StackPanel>
-            </Border>
-            <ComboBox Name="TpComboBox" ItemsSource="{Binding Path=TranslationProviderPluginUis, Mode=TwoWay}"
-                            DisplayMemberPath="Name"
-                            SelectedValue="{Binding SelectedTranslationProvider, Mode=TwoWay}"
-                            Width="200"/>
-
-            <Border Background="AliceBlue" Margin="5" BorderBrush="Black" BorderThickness="1">
-                <StackPanel>
-                    <Label FontWeight="Bold" FontSize="15">Post-edit rule collections</Label>
-                    <DockPanel Margin="10">
-                        <StackPanel DockPanel.Dock="Right" Margin="10,0" Orientation="Vertical">
-                            <StackPanel.Resources>
-                                <Style TargetType="Button">
-                                    <Setter Property="Margin" Value="0,0,0,5" />
-                                </Style>
-                            </StackPanel.Resources>
-                            <Button 
+                        </DockPanel>
+                    </StackPanel>
+                </Border>
+                <Border Background="AliceBlue" Margin="5" BorderBrush="Black" BorderThickness="1">
+                    <StackPanel>
+                        <Label FontWeight="Bold" FontSize="15">Post-edit rule collections</Label>
+                        <DockPanel Margin="10">
+                            <StackPanel DockPanel.Dock="Right" Margin="10,0" Orientation="Vertical">
+                                <StackPanel.Resources>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Margin" Value="0,0,0,5" />
+                                    </Style>
+                                </StackPanel.Resources>
+                                <Button 
                         Name="createPostRule" 
                         Click="CreatePostRule_Click"
                         Content="{x:Static resx:Resources.EditRules_CreateRuleButton}" />
 
-                            <Button 
+                                <Button 
                         Name="addPostRuleCollection" 
                         Click="AddPostRuleCollection_Click"
                         Content="{x:Static resx:Resources.EditRules_AddRuleCollectionButton}" />
 
-                            <Button 
+                                <Button 
                         IsEnabled="{Binding ElementName=AutoPostEditRuleCollectionList, Path=SelectedItems.Count}" 
                         Name="editPostRuleCollection" 
                         Click="EditPostRuleCollection_Click"
                         Content="{x:Static resx:Resources.EditRules_EditRuleCollectionButton}" />
 
-                            <Button 
+                                <Button 
                         IsEnabled="{Binding ElementName=AutoPostEditRuleCollectionList, Path=SelectedItems.Count}" 
                         Name="removePostRuleCollection" 
                         Click="RemovePostRuleCollection_Click"
                         Content="{x:Static resx:Resources.EditRules_RemoveRuleCollectionButton}" />
-                            <Button 
+                                <Button 
                         IsEnabled="{Binding ElementName=AutoPostEditRuleCollectionList, Path=SelectedItems.Count}" 
                         Name="deletePostRuleCollection" 
                         Click="DeletePostRuleCollection_Click"
                         Content="{x:Static resx:Resources.EditRules_DeleteRuleCollectionButton}" />
 
-                            <Button 
+                                <Button 
                         IsEnabled="{Binding ElementName=AutoPreEditRuleCollectionList, Path=SelectedItems.Count}" 
                         Name="movePostRuleCollectionUp" 
                         Click="MovePostRuleCollectionUp_Click"
                         Content="{x:Static resx:Resources.EditRules_MoveUpButton}" />
-                            <Button 
+                                <Button 
                         IsEnabled="{Binding ElementName=AutoPreEditRuleCollectionList, Path=SelectedItems.Count}" 
                         Name="movePostRuleCollectionDown" 
                         Click="MovePostRuleCollectionDown_Click"
                         Content="{x:Static resx:Resources.EditRules_MoveDownButton}" />
 
-                        </StackPanel>
-                        <ListView Name="AutoPostEditRuleCollectionList">
-                            <ListView.ItemContainerStyle>
-                                <Style TargetType="{x:Type ListViewItem}">
-                                    <Setter Property="BorderBrush" Value="LightGray" />
-                                    <Setter Property="BorderThickness" Value="1,1,1,1" />
-                                </Style>
-                            </ListView.ItemContainerStyle>
+                            </StackPanel>
+                            <ListView Name="AutoPostEditRuleCollectionList">
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="{x:Type ListViewItem}">
+                                        <Setter Property="BorderBrush" Value="LightGray" />
+                                        <Setter Property="BorderThickness" Value="1,1,1,1" />
+                                    </Style>
+                                </ListView.ItemContainerStyle>
 
-                            <ListView.View>
-                                <GridView AllowsColumnReorder="true">
-                                    <GridViewColumn Width="350" Header="Collection name" DisplayMemberBinding="{Binding Path=CollectionName, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
-                                    <GridViewColumn Header="Number of rules" DisplayMemberBinding="{Binding Path=EditRules.Count, Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" />
-                                </GridView>
-                            </ListView.View>
-                        </ListView>
-                    </DockPanel>
-                </StackPanel>
-            </Border>
-            <Expander Expanded="Tester_Expanded" Margin="5" IsExpanded="False" Header="Rule collection tester">
-                <StackPanel>
-                <Button Margin="5" Padding="5" Click="TestRules_Click">Test all pre- and post-edit rule collections</Button>
-                <StackPanel Name="RuleTester" />
-                </StackPanel>
-            </Expander>
+                                <ListView.View>
+                                    <GridView AllowsColumnReorder="true">
+                                        <GridViewColumn Width="220" Header="Collection name" DisplayMemberBinding="{Binding Path=CollectionName, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                        <GridViewColumn Header="Number of rules" DisplayMemberBinding="{Binding Path=EditRules.Count, Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" />
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </DockPanel>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+
+            <DockPanel LastChildFill="True" Margin="5">
+                <Button Width="70" Height="30" DockPanel.Dock="Right" VerticalAlignment="Bottom" Margin="5,0,0,0">Cancel</Button>
+                <Button Width="130" Height="30" DockPanel.Dock="Right" VerticalAlignment="Bottom" Margin="0,0,5,0">Save settings</Button>
+                <Expander Expanded="Tester_Expanded" Margin="5" IsExpanded="False" Header="Rule collection tester">
+                    <StackPanel>
+                        <Button Margin="5" Padding="5" Click="TestRules_Click">Test all pre- and post-edit rule collections</Button>
+                        <StackPanel Name="RuleTester" />
+                    </StackPanel>
+                </Expander>
+            </DockPanel>
+            
         </StackPanel>
-        
     </ScrollViewer>
 </UserControl>

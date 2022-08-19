@@ -19,7 +19,7 @@ namespace TermInjector2022
         public ITranslationProvider[] Browse(IWin32Window owner, LanguagePair[] languagePairs, ITranslationProviderCredentialStore credentialStore)
         {
             
-            TermInjector2022Dialog dialog = new TermInjector2022Dialog(new TermInjector2022TPOptions(),credentialStore,owner);
+            TermInjector2022Dialog dialog = new TermInjector2022Dialog(new TermInjector2022TPOptions(),credentialStore,owner, languagePairs);
             
             if (dialog.ShowDialog(owner) == DialogResult.OK)
             {
@@ -49,7 +49,7 @@ namespace TermInjector2022
                 return false;
             }
 
-            TermInjector2022Dialog dialog = new TermInjector2022Dialog(editProvider.Options,credentialStore,owner);
+            TermInjector2022Dialog dialog = new TermInjector2022Dialog(editProvider.Options,credentialStore,owner,languagePairs);
             if (dialog.ShowDialog(owner) == DialogResult.OK)
             {
                 editProvider.Options = dialog.Options;

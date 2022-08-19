@@ -1,0 +1,18 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="TermInjector2022" GeneratedClassName="TermInjector2022Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="EditRuleDir" Type="System.String" Scope="User">
+      <Value Profile="(Default)">editrules</Value>
+    </Setting>
+    <Setting Name="TermInjectorDir" Type="System.String" Scope="User">
+      <Value Profile="(Default)">TermInjector2022</Value>
+    </Setting>
+    <Setting Name="ConfigDir" Type="System.String" Scope="User">
+      <Value Profile="(Default)">configs</Value>
+    </Setting>
+    <Setting Name="LogDir" Type="System.String" Scope="User">
+      <Value Profile="(Default)">logs</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

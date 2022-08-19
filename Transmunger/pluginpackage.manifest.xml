@@ -9,5 +9,6 @@
     <File>YamlDotNet.dll</File>
     <File>License.txt</File>
     <File>ThirdPartyNotices.txt</File>
+    <File>Serilog.dll</File>
   </Include>
 </PluginPackage>

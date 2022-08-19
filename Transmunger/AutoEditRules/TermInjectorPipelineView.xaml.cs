@@ -1,6 +1,7 @@
 ﻿
 using Sdl.Core.PluginFramework;
 using Sdl.LanguagePlatform.Core;
+using Sdl.LanguagePlatform.TranslationMemory;
 using Sdl.LanguagePlatform.TranslationMemoryApi;
 using Serilog;
 using System;
@@ -44,12 +45,16 @@ namespace TermInjector2022
         }
         private IPlugin selectedTranslationProvider;
 
-        private TermInjectorPipeline textProcessor;
-        private ObservableCollection<IPlugin> _translatorProviderPlugins;
+        private TermInjectorPipeline termInjectorConfig;
+        private ObservableCollection<IExtension> _translatorProviderPlugins;
 
         private void InitializePipelineConfigurations()
         {
-            this.PipelineConfigurations = new ObservableCollection<TermInjectorPipeline>();
+            //Always add one empty configuration to list to use as basis for new configurations
+            this.emptyConfig = new TermInjectorPipeline() { PipelineName = "<new template>" };
+            this.PipelineConfigurations = 
+                new ObservableCollection<TermInjectorPipeline>()
+                { emptyConfig };
             var pipelineConfigDir = new DirectoryInfo(
                 HelperFunctions.GetLocalAppDataPath(TermInjector2022Settings.Default.ConfigDir));
 
@@ -117,19 +122,29 @@ namespace TermInjector2022
         }
 
         public System.Windows.Forms.IWin32Window Owner { get; private set; }
+        public LanguagePair[] LanguagePairs { get; private set; }
         public ITranslationProviderCredentialStore CredentialStore { get; private set; }
 
         public TermInjectorPipelineView(
             System.Windows.Forms.IWin32Window owner, 
             ITranslationProviderCredentialStore credentialStore, 
-            TermInjector2022TPOptions translationOptions)
+            TermInjector2022TPOptions translationOptions,
+            LanguagePair[] languagePairs)
         {
+            this.DataContext = this;
             this.Owner = owner;
+            this.LanguagePairs = languagePairs;
             this.CredentialStore = credentialStore;
             this.InitializeAutoEditRuleCollections();
             this.InitializePipelineConfigurations();
             this.GetTranslationProvidersUis();
             Guid configGuid;
+            
+            
+            
+            
+            InitializeComponent();
+
             //Check if the options contain a guid for an existing terminjector configuration
             if (Guid.TryParse(translationOptions.termInjectorConfigGuid, out configGuid))
             {
@@ -144,16 +159,13 @@ namespace TermInjector2022
 
             if (this.TermInjectorConfig == null)
             {
-                this.TermInjectorConfig = new TermInjectorPipeline() {PipelineName = "Unnamed" };
+                this.TermInjectorConfig = this.emptyConfig;
             }
+
+            this.Title = String.Format(TermInjector2022.Properties.Resources.EditRules_EditRulesTitle, TermInjectorConfig.PipelineName);
             
-            this.Title = String.Format(TermInjector2022.Properties.Resources.EditRules_EditRulesTitle,TermInjectorConfig.PipelineName);
-            
-            InitializeComponent();
-            
-            InitializeTester();
-            this.AutoPreEditRuleCollectionList.ItemsSource = this.TermInjectorConfig.AutoPreEditRuleCollections;
-            this.AutoPostEditRuleCollectionList.ItemsSource = this.TermInjectorConfig.AutoPostEditRuleCollections;
+            this.TpComboBox.ItemsSource = this.TranslationProviderPluginUis;
+            this.TermInjectorConfigComboBox.ItemsSource = this.PipelineConfigurations;
         }
 
         //Add testing controls for each collection
@@ -210,15 +222,30 @@ namespace TermInjector2022
             }
         }
 
-        public TermInjectorPipeline TermInjectorConfig { get => textProcessor; set => textProcessor = value; }
+        public TermInjectorPipeline TermInjectorConfig
+        {
+            get => termInjectorConfig;
+            set
+            {
+                termInjectorConfig = value;
+                this.AutoPreEditRuleCollectionList.ItemsSource = termInjectorConfig.AutoPreEditRuleCollections;
+                this.AutoPostEditRuleCollectionList.ItemsSource = termInjectorConfig.AutoPostEditRuleCollections;
+                this.InitializeTester();
+                NotifyPropertyChanged();
+            }
+        }
+
         public string Title { get; private set; }
         public ObservableCollection<AutoEditRuleCollection> AutoPreEditRuleCollections { get; private set; }
         public ObservableCollection<AutoEditRuleCollection> AutoPostEditRuleCollections { get; private set; }
         public List<TestPreEditRuleControl> PreEditTesters { get; private set; }
         public List<TestPostEditRuleControl> PostEditTesters { get; private set; }
+
+        private TermInjectorPipeline emptyConfig;
+
         public ObservableCollection<TermInjectorPipeline> PipelineConfigurations { get; private set; }
 
-        public ObservableCollection<IPlugin> TranslationProviderPluginUis
+        public ObservableCollection<IExtension> TranslationProviderPluginUis
         { get => _translatorProviderPlugins; set { _translatorProviderPlugins = value; NotifyPropertyChanged(); } }
 
         public ITranslationProvider TranslationProvider { get; private set; }
@@ -230,6 +257,7 @@ namespace TermInjector2022
 
         private void GetTranslationProvidersUis()
         {
+            this.TranslationProviderPluginUis = new ObservableCollection<IExtension>();
             try
             {
                 var plugins = PluginManager.DefaultPluginRegistry.Plugins;
@@ -240,7 +268,7 @@ namespace TermInjector2022
                     {
                         if (extension.ExtensionPoint.ExtensionAttributeType.Name == "TranslationProviderWinFormsUiAttribute")
                         {
-                            this.TranslationProviderPluginUis.Add((IPlugin)extension);
+                            this.TranslationProviderPluginUis.Add(extension);
                         }
                     }
                 }
@@ -252,20 +280,10 @@ namespace TermInjector2022
         }
 
 
-        private void TpSettingsClick(object sender, RoutedEventArgs e)
-        {
-            var selectedUiExtension = (IExtension)this.TpComboBox.SelectedItem;
-
-            var winform = (ITranslationProviderWinFormsUI)selectedUiExtension.CreateInstance();
-
-            this.TranslationProvider = winform.Browse(this.Owner, new LanguagePair[] { }, this.CredentialStore).Single();
-        }
-    
-
         private void CreatePreRule_Click(object sender, RoutedEventArgs e)
         {
             var createRuleWindow = new CreatePreEditRuleWindow();
-            ((Window)createRuleWindow).Owner = (Window)this.Owner;
+            ((Window)createRuleWindow).Owner = Window.GetWindow(this);
             var dialogResult = createRuleWindow.ShowDialog();
 
 
@@ -280,7 +298,7 @@ namespace TermInjector2022
                 newRuleCollection.AddRule(createRuleWindow.CreatedRule);
                 newRuleCollection.Save();
                 this.TermInjectorConfig.AutoPreEditRuleCollectionGuids.Add(newRuleCollection.CollectionGuid);
-                this.TermInjectorConfig.SaveConfig();
+                //this.TermInjectorConfig.SaveConfig();
                 this.AutoPreEditRuleCollections.Add(newRuleCollection);
                 this.TermInjectorConfig.AutoPreEditRuleCollections.Add(newRuleCollection);
                 InitializeTester();
@@ -295,7 +313,7 @@ namespace TermInjector2022
                 new AddEditRuleCollectionWindow(
                     this.AutoPreEditRuleCollections, 
                     this.TermInjectorConfig.AutoPreEditRuleCollections);
-            addCollectionWindow.Owner = (Window)this.Owner;
+            addCollectionWindow.Owner = Window.GetWindow(this);
             var dialogResult = addCollectionWindow.ShowDialog();
             if (dialogResult.Value)
             {
@@ -340,7 +358,7 @@ namespace TermInjector2022
                     }
                 }
             }
-            this.TermInjectorConfig.SaveConfig();
+            //this.TermInjectorConfig.SaveConfig();
             InitializeTester(); ;
         }
 
@@ -350,7 +368,7 @@ namespace TermInjector2022
             
             //Edit a clone of the collection, so that the changes can be canceled in the edit window
             var editCollectionWindow = new EditPreEditRuleCollectionWindow(selectedCollection.Clone());
-            editCollectionWindow.Owner = (Window)this.Owner;
+            editCollectionWindow.Owner = Window.GetWindow(this);
             var dialogResult = editCollectionWindow.ShowDialog();
             if (dialogResult.Value)
             {
@@ -371,7 +389,7 @@ namespace TermInjector2022
                 guidList.Remove(selectedCollection.CollectionGuid);
                 collectionList.Remove(selectedCollection);
             }
-            this.TermInjectorConfig.SaveConfig();
+            //this.TermInjectorConfig.SaveConfig();
             InitializeTester();
         }
 
@@ -394,7 +412,7 @@ namespace TermInjector2022
                 this.TermInjectorConfig.AutoPreEditRuleCollections.Remove(selectedCollection);
                 this.AutoPreEditRuleCollections.Remove(selectedCollection);
                 this.TermInjectorConfig.AutoPreEditRuleCollectionGuids.Remove(selectedCollection.CollectionGuid);
-                this.TermInjectorConfig.SaveConfig();
+                //this.TermInjectorConfig.SaveConfig();
                 InitializeTester();
             }
         }
@@ -402,7 +420,7 @@ namespace TermInjector2022
         private void CreatePostRule_Click(object sender, RoutedEventArgs e)
         {
             var createRuleWindow = new CreatePostEditRuleWindow();
-            createRuleWindow.Owner = (Window)this.Owner;
+            createRuleWindow.Owner = Window.GetWindow(this);
             var dialogResult = createRuleWindow.ShowDialog();
 
             if (dialogResult != null && dialogResult.Value)
@@ -418,7 +436,7 @@ namespace TermInjector2022
                 newRuleCollection.AddRule(createRuleWindow.CreatedRule);
                 newRuleCollection.Save();
                 this.TermInjectorConfig.AutoPostEditRuleCollectionGuids.Add(newRuleCollection.CollectionGuid);
-                this.TermInjectorConfig.SaveConfig();
+                //this.TermInjectorConfig.SaveConfig();
                 this.AutoPostEditRuleCollections.Add(newRuleCollection);
                 this.TermInjectorConfig.AutoPostEditRuleCollections.Add(newRuleCollection);
                 InitializeTester();
@@ -431,7 +449,7 @@ namespace TermInjector2022
                 new AddEditRuleCollectionWindow(
                     AutoPostEditRuleCollections,
                     this.TermInjectorConfig.AutoPostEditRuleCollections);
-            addCollectionWindow.Owner = (Window)this.Owner;
+            addCollectionWindow.Owner = Window.GetWindow(this);
             var dialogResult = addCollectionWindow.ShowDialog();
             if (dialogResult.Value)
             {
@@ -449,7 +467,7 @@ namespace TermInjector2022
             
             //Edit a clone of the collection, so that the changes can be canceled in the edit window
             var editCollectionWindow = new EditPostEditRuleCollectionWindow(selectedCollection.Clone());
-            editCollectionWindow.Owner = (Window)this.Owner;
+            editCollectionWindow.Owner = Window.GetWindow(this);
             var dialogResult = editCollectionWindow.ShowDialog();
             if (dialogResult.Value)
             {
@@ -478,7 +496,7 @@ namespace TermInjector2022
             this.TermInjectorConfig.AutoPostEditRuleCollections.Remove(selectedCollection);
             this.AutoPostEditRuleCollections.Remove(selectedCollection);
             this.TermInjectorConfig.AutoPostEditRuleCollectionGuids.Remove(selectedCollection.CollectionGuid);
-            this.TermInjectorConfig.SaveConfig();
+            //this.TermInjectorConfig.SaveConfig();
             InitializeTester();
         }
 
@@ -503,9 +521,18 @@ namespace TermInjector2022
             //previousTesterOutput will now contain the pre-edited source for machine translation,
             //change it to MT output.
             //Do not apply edit rules here, since they will be visually applied in the tester
-            previousTesterOutput = this.TermInjectorConfig.ProcessInput(
-                previousTesterOutput,
-                applyEditRules:false);
+
+            var tpMatches = this.TranslationProvider.GetLanguageDirection(
+                this.LanguagePairs.First()).SearchText(new SearchSettings(), previousTesterOutput);
+
+            if (!tpMatches.Any())
+            {
+                previousTesterOutput = "No match found in translation provider";
+            }
+            else
+            {
+                previousTesterOutput = tpMatches.First().TranslationProposal.TargetSegment.ToPlain();
+            }    
 
             foreach (var tester in this.PostEditTesters)
             {
@@ -535,7 +562,7 @@ namespace TermInjector2022
                 collectionGuids.Move(guidIndex, guidIndex + 1);
             }
             this.InitializeTester();
-            this.TermInjectorConfig.SaveConfig();
+            //this.TermInjectorConfig.SaveConfig();
         }
 
         private void MovePreRuleCollectionDown_Click(object sender, RoutedEventArgs e)
@@ -568,7 +595,7 @@ namespace TermInjector2022
                 collectionGuids.Move(guidIndex, guidIndex - 1);
             }
             this.InitializeTester();
-            this.TermInjectorConfig.SaveConfig();
+            //this.TermInjectorConfig.SaveConfig();
         }
 
         private void MovePreRuleCollectionUp_Click(object sender, RoutedEventArgs e)
@@ -593,6 +620,22 @@ namespace TermInjector2022
             var tester = (Expander)sender;
             tester.BringIntoView();
         }
-        
+
+        private void TpSettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedUiExtension = (IExtension)this.TpComboBox.SelectedItem;
+
+            var winform = (ITranslationProviderWinFormsUI)selectedUiExtension.CreateInstance();
+
+            this.TranslationProvider = winform.Browse(
+                this.Owner, 
+                this.LanguagePairs, 
+                this.CredentialStore).SingleOrDefault();
+        }
+
+        private void SaveTemplateButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.TermInjectorConfig.SaveConfig();
+        }
     }
 }
