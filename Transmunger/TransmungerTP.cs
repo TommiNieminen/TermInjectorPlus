@@ -50,10 +50,8 @@ namespace TermInjector2022
                 var configInOptionFileInfo = pipelineConfigDir.GetFiles($"{configGuid}.txt").FirstOrDefault();
                 if (configInOptionFileInfo != null)
                 {
-                    var configInOption = TermInjectorPipeline.CreateFromFile(configInOptionFileInfo);
-                    this.NestedTP = NestedTPFactory.InstantiateNestedTP(configInOption.NestedTranslationProviderUri, credentialStore);
+                    this.TerminjectorPipeline = TermInjectorPipeline.CreateFromFile(configInOptionFileInfo, credentialStore);
                 }
-
             }
 
         }
@@ -193,6 +191,7 @@ namespace TermInjector2022
         }
 
         public ITranslationProviderCredentialStore CredentialStore { get; }
+        public TermInjectorPipeline TerminjectorPipeline { get; private set; }
         public ITranslationProvider NestedTP { get; private set; }
 
         #endregion

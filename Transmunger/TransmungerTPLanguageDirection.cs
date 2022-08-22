@@ -212,14 +212,11 @@ namespace TermInjector2022
 
         public SearchResults SearchTranslationUnit(SearchSettings settings, TranslationUnit translationUnit)
         {
+
             var plain = translationUnit.SourceSegment.ToPlain();
-            /*foreach (var processor in this._provider.Preprocessors)
-            {
-                foreach (var regex in processor.RegexCollection)
-                {
-                    plain = Regex.Replace(plain, regex.Pattern, regex.Replacement);
-                }
-            }*/
+            var output = this._provider.TerminjectorPipeline.ProcessInput(plain, _languageDirection);
+
+            
             plain = Regex.Replace(plain, " +", " ");
             translationUnit.SourceSegment.Clear();
             translationUnit.SourceSegment.Add(plain);

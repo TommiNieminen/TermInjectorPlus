@@ -1,4 +1,5 @@
-﻿using Sdl.LanguagePlatform.TranslationMemoryApi;
+﻿using Sdl.LanguagePlatform.Core;
+using Sdl.LanguagePlatform.TranslationMemoryApi;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -32,6 +33,7 @@ namespace TermInjector2022
         [YamlMember(Alias = "auto-post-edit-rule-collection-guids", ApplyNamingConventions = false)]
         public ObservableCollection<string> AutoPostEditRuleCollectionGuids { get; internal set; }
 
+        private ITranslationProvider nestedTranslationProvider;
 
         private FileInfo configFile;
 
@@ -44,13 +46,29 @@ namespace TermInjector2022
             this.AutoPostEditRuleCollections = new ObservableCollection<AutoEditRuleCollection>();
         }
 
-        public string ProcessInput(string input, bool applyEditRules)
+        public string ProcessInput(string input, LanguagePair languagePair, bool applyEditRules=true)
         {
+            //Preprocess input with pre-edit rules
+            if (applyEditRules)
+            {
+                foreach (var preEditRuleCollection in this.AutoPreEditRuleCollections)
+                {
+                    input = preEditRuleCollection.ProcessPreEditRules(input).Result;
+                }
+            }
+
+            if (this.nestedTranslationProvider == null)
+            {
+                this.nestedTranslationProvider = NestedTPFactory.InstantiateNestedTP(this.NestedTranslationProviderUri, this.CredentialStore);
+            }
+
+
             return "";
         }
 
         public ObservableCollection<AutoEditRuleCollection> AutoPostEditRuleCollections { get; set; }
         public ObservableCollection<AutoEditRuleCollection> AutoPreEditRuleCollections { get; set; }
+        public ITranslationProviderCredentialStore CredentialStore { get; private set; }
 
         internal void SaveConfig()
         {
@@ -110,7 +128,39 @@ namespace TermInjector2022
             {
                 pipeline.PipelineGuid = Guid.NewGuid().ToString();
             }
+            
+            pipeline.AutoPreEditRuleCollections = new ObservableCollection<AutoEditRuleCollection>();
+            pipeline.AutoPostEditRuleCollections = new ObservableCollection<AutoEditRuleCollection>();
+
+            TermInjectorPipeline.UpdateCollectionsFromGuids(
+                pipeline.AutoPreEditRuleCollectionGuids,
+                pipeline.AutoPreEditRuleCollections);
+
+            TermInjectorPipeline.UpdateCollectionsFromGuids(
+                pipeline.AutoPostEditRuleCollectionGuids,
+                pipeline.AutoPostEditRuleCollections);
+
             return pipeline;
+        }
+
+        private static void UpdateCollectionsFromGuids(
+            ObservableCollection<string> guids, ObservableCollection<AutoEditRuleCollection> collections)
+        {
+            var editRuleDir = new DirectoryInfo(
+                HelperFunctions.GetLocalAppDataPath(TermInjector2022Settings.Default.EditRuleDir));
+            var editRuleCollectionFiles = editRuleDir.GetFiles("*.yml");
+
+            foreach (var guid in guids)
+            {
+                var ruleFile =
+                    editRuleCollectionFiles.SingleOrDefault(
+                        x => x.Name == $"{guid}.yml");
+
+                if (ruleFile != null)
+                {
+                    collections.Add(AutoEditRuleCollection.CreateFromFile(ruleFile));
+                }
+            }
         }
     }
 }
