@@ -1,4 +1,5 @@
 ﻿using Sdl.LanguagePlatform.Core;
+using Sdl.LanguagePlatform.TranslationMemory;
 using Sdl.LanguagePlatform.TranslationMemoryApi;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,10 @@ namespace TermInjector2022
     {
         [YamlMember(Alias = "name", ApplyNamingConventions = false)]
         public string PipelineName { get; set; }
-        
+
+        [YamlMember(Alias = "is-template", ApplyNamingConventions = false)]
+        public bool IsTemplate { get; set; }
+
 
         [YamlMember(Alias = "guid", ApplyNamingConventions = false)]
         public string PipelineGuid;
@@ -46,31 +50,47 @@ namespace TermInjector2022
             this.AutoPostEditRuleCollections = new ObservableCollection<AutoEditRuleCollection>();
         }
 
-        public string ProcessInput(string input, LanguagePair languagePair, bool applyEditRules=true)
+        public SearchResults ProcessInput(string input, LanguagePair languagePair, bool applyEditRules=true)
         {
             //Preprocess input with pre-edit rules
+            string preeditedInput = input;
             if (applyEditRules)
             {
                 foreach (var preEditRuleCollection in this.AutoPreEditRuleCollections)
                 {
-                    input = preEditRuleCollection.ProcessPreEditRules(input).Result;
+                    preeditedInput = preEditRuleCollection.ProcessPreEditRules(preeditedInput).Result;
                 }
             }
 
-            if (this.nestedTranslationProvider == null)
+            SearchResults results = this.NestedTranslationProvider.GetLanguageDirection(languagePair).SearchText(new SearchSettings(), preeditedInput);
+
+            foreach (var result in results)
             {
-                this.nestedTranslationProvider = NestedTPFactory.InstantiateNestedTP(this.NestedTranslationProviderUri, this.CredentialStore);
+                var targetSeg = result.MemoryTranslationUnit.TargetSegment;
+                var plainOutput = targetSeg.ToPlain();
+                foreach (var postEditRuleCollection in this.AutoPostEditRuleCollections)
+                {
+                    plainOutput = postEditRuleCollection.ProcessPostEditRules(input,plainOutput).Result;
+                }
+
+                targetSeg.Clear();
+                targetSeg.Add(plainOutput);
             }
 
-
-            return "";
+            return results;
         }
 
+        [YamlIgnore]
         public ObservableCollection<AutoEditRuleCollection> AutoPostEditRuleCollections { get; set; }
-        public ObservableCollection<AutoEditRuleCollection> AutoPreEditRuleCollections { get; set; }
-        public ITranslationProviderCredentialStore CredentialStore { get; private set; }
 
-        internal void SaveConfig()
+        [YamlIgnore]
+        public ObservableCollection<AutoEditRuleCollection> AutoPreEditRuleCollections { get; set; }
+
+        [YamlIgnore]
+        public ITranslationProviderCredentialStore CredentialStore { get; private set; }
+        public ITranslationProvider NestedTranslationProvider { get => nestedTranslationProvider; set => nestedTranslationProvider = value; }
+
+        internal void SaveConfig(bool isTemplate=false)
         {
             //The configs are saved in the terminjector folder in appdata, using GUIDs as file names.
             var configDir = new DirectoryInfo(
@@ -79,7 +99,10 @@ namespace TermInjector2022
             {
                 configDir.Create();
             }
-            
+
+            //if the config is a template, mark it so
+            this.IsTemplate = isTemplate;
+
             var configTempPath = Path.Combine(
                 configDir.FullName, $"{this.PipelineGuid}_temp.yml");
             var configPath = Path.Combine(
@@ -115,7 +138,10 @@ namespace TermInjector2022
 
         }
 
-        public static TermInjectorPipeline CreateFromFile(FileInfo configFileInfo, bool assignNewId = false)
+        public static TermInjectorPipeline CreateFromFile(
+            FileInfo configFileInfo, 
+            ITranslationProviderCredentialStore credentialStore,
+            bool assignNewId = false)
         {
             TermInjectorPipeline pipeline;
             var deserializer = new Deserializer();
@@ -140,6 +166,8 @@ namespace TermInjector2022
                 pipeline.AutoPostEditRuleCollectionGuids,
                 pipeline.AutoPostEditRuleCollections);
 
+            pipeline.NestedTranslationProvider = NestedTPFactory.InstantiateNestedTP(pipeline.NestedTranslationProviderUri, credentialStore);
+
             return pipeline;
         }
 
@@ -162,5 +190,6 @@ namespace TermInjector2022
                 }
             }
         }
+        
     }
 }

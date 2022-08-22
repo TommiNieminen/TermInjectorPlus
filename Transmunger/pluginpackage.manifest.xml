@@ -10,5 +10,6 @@
     <File>License.txt</File>
     <File>ThirdPartyNotices.txt</File>
     <File>Serilog.dll</File>
+    <File>Serilog.Sinks.File.dll</File>
   </Include>
 </PluginPackage>

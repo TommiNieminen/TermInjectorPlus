@@ -52,9 +52,12 @@ namespace TermInjector2022
         {
             //Always add one empty configuration to list to use as basis for new configurations
             this.emptyConfig = new TermInjectorPipeline() { PipelineName = "<new template>" };
-            this.PipelineConfigurations = 
+            this.PipelineTemplates = 
                 new ObservableCollection<TermInjectorPipeline>()
                 { emptyConfig };
+
+            this.PipelineConfigs = new ObservableCollection<TermInjectorPipeline>();
+
             var pipelineConfigDir = new DirectoryInfo(
                 HelperFunctions.GetLocalAppDataPath(TermInjector2022Settings.Default.ConfigDir));
 
@@ -70,7 +73,14 @@ namespace TermInjector2022
                     try
                     {
                         var loadedConfig = deserializer.Deserialize<TermInjectorPipeline>(reader);
-                        this.PipelineConfigurations.Add(loadedConfig);
+                        if (loadedConfig.IsTemplate)
+                        {
+                            this.PipelineTemplates.Add(loadedConfig);
+                        }
+                        else
+                        {
+                            this.PipelineConfigs.Add(loadedConfig);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -121,6 +131,8 @@ namespace TermInjector2022
 
         }
 
+        
+
         public System.Windows.Forms.IWin32Window Owner { get; private set; }
         public LanguagePair[] LanguagePairs { get; private set; }
         public ITranslationProviderCredentialStore CredentialStore { get; private set; }
@@ -146,14 +158,15 @@ namespace TermInjector2022
             InitializeComponent();
 
             //Check if the options contain a guid for an existing terminjector configuration
-            if (Guid.TryParse(translationOptions.termInjectorConfigGuid, out configGuid))
+            if (Guid.TryParse(translationOptions.configGuid, out configGuid))
             {
                 //TODO: Load all configs and check whether the config with this guid exists.
                 var configInOptions =
-                    this.PipelineConfigurations.SingleOrDefault(x => x.PipelineGuid == translationOptions.termInjectorConfigGuid);
+                    this.PipelineConfigs.SingleOrDefault(x => x.PipelineGuid == translationOptions.configGuid);
                 if (configInOptions != null)
                 {
                     this.TermInjectorConfig = configInOptions;
+                    
                 }
             }
 
@@ -165,7 +178,7 @@ namespace TermInjector2022
             this.Title = String.Format(TermInjector2022.Properties.Resources.EditRules_EditRulesTitle, TermInjectorConfig.PipelineName);
             
             this.TpComboBox.ItemsSource = this.TranslationProviderPluginUis;
-            this.TermInjectorConfigComboBox.ItemsSource = this.PipelineConfigurations;
+            this.TermInjectorConfigComboBox.ItemsSource = this.PipelineTemplates;
         }
 
         //Add testing controls for each collection
@@ -228,6 +241,8 @@ namespace TermInjector2022
             set
             {
                 termInjectorConfig = value;
+                //TODO: Update the UI by updating selected item in the tp combo box and by updating the
+                //rule collections from the guid lists.
                 this.AutoPreEditRuleCollectionList.ItemsSource = termInjectorConfig.AutoPreEditRuleCollections;
                 this.AutoPostEditRuleCollectionList.ItemsSource = termInjectorConfig.AutoPostEditRuleCollections;
                 this.InitializeTester();
@@ -243,7 +258,8 @@ namespace TermInjector2022
 
         private TermInjectorPipeline emptyConfig;
 
-        public ObservableCollection<TermInjectorPipeline> PipelineConfigurations { get; private set; }
+        public ObservableCollection<TermInjectorPipeline> PipelineTemplates { get; private set; }
+        public ObservableCollection<TermInjectorPipeline> PipelineConfigs { get; private set; }
 
         public ObservableCollection<IExtension> TranslationProviderPluginUis
         { get => _translatorProviderPlugins; set { _translatorProviderPlugins = value; NotifyPropertyChanged(); } }
@@ -631,11 +647,20 @@ namespace TermInjector2022
                 this.Owner, 
                 this.LanguagePairs, 
                 this.CredentialStore).SingleOrDefault();
+            this.TermInjectorConfig.NestedTranslationProviderUri = this.TranslationProvider.Uri.ToString();
         }
 
         private void SaveTemplateButton_Click(object sender, RoutedEventArgs e)
         {
-            this.TermInjectorConfig.SaveConfig();
+            this.TermInjectorConfig.SaveConfig(true);
         }
+
+        //This will save the config as 
+        internal void SaveSettings()
+        {
+            this.TermInjectorConfig.SaveConfig(false);
+        }
+
+
     }
 }
