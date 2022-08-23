@@ -26,6 +26,9 @@ namespace TermInjector2022
         [YamlMember(Alias = "global-collection", ApplyNamingConventions = false)]
         public Boolean GlobalCollection { get; set; }
 
+        [YamlMember(Alias = "no-match-collection", ApplyNamingConventions = false)]
+        public Boolean NoMatchCollection { get; set; }
+
         private FileInfo ruleCollectionFile;
 
         public AutoEditRuleCollection()
@@ -356,6 +359,7 @@ namespace TermInjector2022
             this.CollectionName = otherRuleCollection.CollectionName;
             this.EditRules = otherRuleCollection.EditRules;
             this.GlobalCollection = otherRuleCollection.GlobalCollection;
+            this.NoMatchCollection = otherRuleCollection.NoMatchCollection;
         }
 
         internal AutoEditRuleCollection Clone()

@@ -46,7 +46,7 @@ namespace TermInjector2022
         private IPlugin selectedTranslationProvider;
 
         private TermInjectorPipeline termInjectorConfig;
-        private ObservableCollection<IExtension> _translatorProviderPlugins;
+        private ObservableCollection<ITranslationProviderWinFormsUI> _translatorProviderPlugins;
 
         private void InitializePipelineConfigurations()
         {
@@ -65,27 +65,18 @@ namespace TermInjector2022
             {
                 pipelineConfigDir.Create();
             }
-            var deserializer = new Deserializer();
+            
             foreach (var file in pipelineConfigDir.EnumerateFiles())
             {
-                using (var reader = file.OpenText())
+                var loadedConfig = TermInjectorPipeline.CreateFromFile(file, this.CredentialStore);
+                
+                if (loadedConfig.IsTemplate)
                 {
-                    try
-                    {
-                        var loadedConfig = deserializer.Deserialize<TermInjectorPipeline>(reader);
-                        if (loadedConfig.IsTemplate)
-                        {
-                            this.PipelineTemplates.Add(loadedConfig);
-                        }
-                        else
-                        {
-                            this.PipelineConfigs.Add(loadedConfig);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error($"Pipeline config file deserialization failed, file {file.Name}. Exception: {ex.Message}");
-                    }
+                    this.PipelineTemplates.Add(loadedConfig);
+                }
+                else
+                {
+                    this.PipelineConfigs.Add(loadedConfig);
                 }
             }
         }
@@ -149,7 +140,7 @@ namespace TermInjector2022
             this.CredentialStore = credentialStore;
             this.InitializeAutoEditRuleCollections();
             this.InitializePipelineConfigurations();
-            this.GetTranslationProvidersUis();
+            
             Guid configGuid;
             
             
@@ -157,10 +148,14 @@ namespace TermInjector2022
             
             InitializeComponent();
 
+            //Populate the translation provider combo box
+            this.GetTranslationProvidersUis();
+            this.TpComboBox.ItemsSource = this.TranslationProviderPluginUis;
+
+
             //Check if the options contain a guid for an existing terminjector configuration
             if (Guid.TryParse(translationOptions.configGuid, out configGuid))
             {
-                //TODO: Load all configs and check whether the config with this guid exists.
                 var configInOptions =
                     this.PipelineConfigs.SingleOrDefault(x => x.PipelineGuid == translationOptions.configGuid);
                 if (configInOptions != null)
@@ -177,7 +172,7 @@ namespace TermInjector2022
 
             this.Title = String.Format(TermInjector2022.Properties.Resources.EditRules_EditRulesTitle, TermInjectorConfig.PipelineName);
             
-            this.TpComboBox.ItemsSource = this.TranslationProviderPluginUis;
+            
             this.TermInjectorConfigComboBox.ItemsSource = this.PipelineTemplates;
         }
 
@@ -241,10 +236,19 @@ namespace TermInjector2022
             set
             {
                 termInjectorConfig = value;
-                //TODO: Update the UI by updating selected item in the tp combo box and by updating the
-                //rule collections from the guid lists.
-                this.AutoPreEditRuleCollectionList.ItemsSource = termInjectorConfig.AutoPreEditRuleCollections;
-                this.AutoPostEditRuleCollectionList.ItemsSource = termInjectorConfig.AutoPostEditRuleCollections;
+
+                if (!String.IsNullOrWhiteSpace(termInjectorConfig.NestedTranslationProviderUri))
+                {
+                    foreach (ITranslationProviderWinFormsUI item in this.TpComboBox.Items)
+                    {
+                        if (item.SupportsTranslationProviderUri(new Uri(termInjectorConfig.NestedTranslationProviderUri)))
+                        {
+                            this.TpComboBox.SelectedItem = item;
+                        }
+                    }
+                }
+                
+                
                 this.InitializeTester();
                 NotifyPropertyChanged();
             }
@@ -261,7 +265,7 @@ namespace TermInjector2022
         public ObservableCollection<TermInjectorPipeline> PipelineTemplates { get; private set; }
         public ObservableCollection<TermInjectorPipeline> PipelineConfigs { get; private set; }
 
-        public ObservableCollection<IExtension> TranslationProviderPluginUis
+        public ObservableCollection<ITranslationProviderWinFormsUI> TranslationProviderPluginUis
         { get => _translatorProviderPlugins; set { _translatorProviderPlugins = value; NotifyPropertyChanged(); } }
 
         public ITranslationProvider TranslationProvider { get; private set; }
@@ -273,26 +277,8 @@ namespace TermInjector2022
 
         private void GetTranslationProvidersUis()
         {
-            this.TranslationProviderPluginUis = new ObservableCollection<IExtension>();
-            try
-            {
-                var plugins = PluginManager.DefaultPluginRegistry.Plugins;
-
-                foreach (var tpPlugin in plugins)
-                {
-                    foreach (var extension in tpPlugin.Extensions)
-                    {
-                        if (extension.ExtensionPoint.ExtensionAttributeType.Name == "TranslationProviderWinFormsUiAttribute")
-                        {
-                            this.TranslationProviderPluginUis.Add(extension);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-
-            }
+            this.TranslationProviderPluginUis = 
+                new ObservableCollection<ITranslationProviderWinFormsUI>(TranslationProviderManager.GetTranslationProviderWinFormsUIs());
         }
 
 
@@ -639,14 +625,29 @@ namespace TermInjector2022
 
         private void TpSettingsButton_Click(object sender, RoutedEventArgs e)
         {
-            var selectedUiExtension = (IExtension)this.TpComboBox.SelectedItem;
+            var selectedUi = (ITranslationProviderWinFormsUI)this.TpComboBox.SelectedItem;
 
-            var winform = (ITranslationProviderWinFormsUI)selectedUiExtension.CreateInstance();
+            if (String.IsNullOrWhiteSpace(this.TermInjectorConfig.NestedTranslationProviderUri))
+            {
+                this.TranslationProvider = selectedUi.Browse(
+                    this.Owner,
+                    this.LanguagePairs,
+                    this.CredentialStore).SingleOrDefault();
+            }
+            else
+            {
+                if (this.TranslationProvider == null && 
+                    String.IsNullOrWhiteSpace(this.TermInjectorConfig.NestedTranslationProviderUri))
+                {
+                    this.TranslationProvider = NestedTPFactory.InstantiateNestedTP(this.TermInjectorConfig.NestedTranslationProviderUri, this.CredentialStore);
+                }
 
-            this.TranslationProvider = winform.Browse(
-                this.Owner, 
-                this.LanguagePairs, 
-                this.CredentialStore).SingleOrDefault();
+                selectedUi.Edit(
+                    this.Owner,
+                    this.TranslationProvider,
+                    this.LanguagePairs,
+                    this.CredentialStore);
+            }
             this.TermInjectorConfig.NestedTranslationProviderUri = this.TranslationProvider.Uri.ToString();
         }
 

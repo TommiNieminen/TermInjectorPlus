@@ -37,7 +37,7 @@
                     
                     <Button Name="TpSettingsButton" DockPanel.Dock="Right" Width="130" Click="TpSettingsButton_Click">Open settings</Button>
                     <ComboBox Margin="5,0,5,0" Name="TpComboBox"
-                            DisplayMemberPath="Plugin.Name"
+                            DisplayMemberPath="TypeName"
                             SelectedValue="{Binding SelectedTranslationProvider, Mode=TwoWay}"/>
                 </DockPanel>
 

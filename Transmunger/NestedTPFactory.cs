@@ -13,20 +13,14 @@ namespace TermInjector2022
         public static ITranslationProvider InstantiateNestedTP(string nestedTPUriString, ITranslationProviderCredentialStore credentialStore)
         {
             //TODO: USE TranslationProviderManager to create factory
-            var plugins = PluginManager.DefaultPluginRegistry.Plugins;
+            var tpFactories = TranslationProviderManager.GetTranslationProviderFactories();
             var nestedUri = new Uri(nestedTPUriString);
-            foreach (var plugin in plugins)
+            
+            foreach(var factory in tpFactories)
             {
-                foreach (var extension in plugin.Extensions)
+                if (factory.SupportsTranslationProviderUri(nestedUri))
                 {
-                    if (extension.ExtensionPoint.ExtensionAttributeType.Name == "TranslationProviderFactoryAttribute")
-                    {
-                        var factory = (ITranslationProviderFactory)extension.CreateInstance();
-                        if (factory.SupportsTranslationProviderUri(nestedUri))
-                        {
-                            return factory.CreateTranslationProvider(nestedUri, "", credentialStore);
-                        }
-                    }
+                    return factory.CreateTranslationProvider(nestedUri, "", credentialStore);
                 }
             }
 

@@ -58,26 +58,84 @@ namespace TermInjector2022
             {
                 foreach (var preEditRuleCollection in this.AutoPreEditRuleCollections)
                 {
-                    preeditedInput = preEditRuleCollection.ProcessPreEditRules(preeditedInput).Result;
+                    if (!preEditRuleCollection.NoMatchCollection)
+                    {
+                        preeditedInput = preEditRuleCollection.ProcessPreEditRules(preeditedInput).Result;
+                    }
                 }
             }
 
             SearchResults results = this.NestedTranslationProvider.GetLanguageDirection(languagePair).SearchText(new SearchSettings(), preeditedInput);
 
-            foreach (var result in results)
+            //If there are no results, apply the no-match rules
+            if (results.Count == 0)
             {
-                var targetSeg = result.MemoryTranslationUnit.TargetSegment;
-                var plainOutput = targetSeg.ToPlain();
-                foreach (var postEditRuleCollection in this.AutoPostEditRuleCollections)
+                preeditedInput = input;
+                foreach (var preEditRuleCollection in this.AutoPreEditRuleCollections)
                 {
-                    plainOutput = postEditRuleCollection.ProcessPostEditRules(input,plainOutput).Result;
+                    if (preEditRuleCollection.NoMatchCollection)
+                    {
+                        preeditedInput = preEditRuleCollection.ProcessPreEditRules(preeditedInput).Result;
+                    }
                 }
 
-                targetSeg.Clear();
-                targetSeg.Add(plainOutput);
+                var noMatchSource = new Segment(languagePair.SourceCulture);
+                noMatchSource.Add(input);
+                var noMatchTarget = new Segment(languagePair.TargetCulture);
+                noMatchTarget.Add(preeditedInput);
+                var noMatchTu = new TranslationUnit(noMatchSource, noMatchTarget);
+                var noMatchResult = this.CreateSearchResult(noMatchSource, noMatchTarget, input, false);
+                
+                results.Add(noMatchResult);
+            }
+            else
+            {
+                foreach (var result in results)
+                {
+                    var targetSeg = result.MemoryTranslationUnit.TargetSegment;
+                    var plainOutput = targetSeg.ToPlain();
+                    foreach (var postEditRuleCollection in this.AutoPostEditRuleCollections)
+                    {
+                        plainOutput = postEditRuleCollection.ProcessPostEditRules(input, plainOutput).Result;
+                    }
+
+                    targetSeg.Clear();
+                    targetSeg.Add(plainOutput);
+                }
             }
 
             return results;
+        }
+
+        private SearchResult CreateSearchResult(Segment searchSegment, Segment translation,
+            string sourceSegment, bool formattingPenalty)
+        {
+            #region "TranslationUnit"
+            TranslationUnit tu = new TranslationUnit();
+            Segment orgSegment = new Segment();
+            orgSegment.Add(sourceSegment);
+            tu.SourceSegment = orgSegment;
+            tu.TargetSegment = translation;
+            #endregion
+
+            tu.ResourceId = new PersistentObjectToken(tu.GetHashCode(), Guid.Empty);
+
+            #region "TuProperties"
+            int score = 0; //TODO: determine scoring for TM result to return to Studio
+            tu.Origin = TranslationUnitOrigin.TM;
+
+
+            SearchResult searchResult = new SearchResult(tu);
+            searchResult.ScoringResult = new ScoringResult();
+            searchResult.ScoringResult.BaseScore = score;
+
+            //TODO: determine the confirmation level, possibly conditional on the score
+            //e.g.:
+            tu.ConfirmationLevel = Sdl.Core.Globalization.ConfirmationLevel.Draft;
+
+            #endregion
+
+            return searchResult;
         }
 
         [YamlIgnore]
@@ -165,8 +223,10 @@ namespace TermInjector2022
             TermInjectorPipeline.UpdateCollectionsFromGuids(
                 pipeline.AutoPostEditRuleCollectionGuids,
                 pipeline.AutoPostEditRuleCollections);
-
-            pipeline.NestedTranslationProvider = NestedTPFactory.InstantiateNestedTP(pipeline.NestedTranslationProviderUri, credentialStore);
+            if (String.IsNullOrWhiteSpace(pipeline.NestedTranslationProviderUri))
+            {
+                pipeline.NestedTranslationProvider = NestedTPFactory.InstantiateNestedTP(pipeline.NestedTranslationProviderUri, credentialStore);
+            }
 
             return pipeline;
         }
