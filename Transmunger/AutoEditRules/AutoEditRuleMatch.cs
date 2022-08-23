@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Media;
 
-namespace TermInjector2022
+namespace TermInjectorPlus
 {
     public class AutoEditRuleMatch
     {

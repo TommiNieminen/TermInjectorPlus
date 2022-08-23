@@ -17,7 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
-namespace TermInjector2022
+namespace TermInjectorPlus
 {
     /// <summary>
     /// Interaction logic for TestPostEditRuleControl.xaml

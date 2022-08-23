@@ -8,16 +8,16 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace TermInjector2022 {
+namespace TermInjectorPlus {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.9.0.0")]
-    internal sealed partial class TermInjector2022Settings : global::System.Configuration.ApplicationSettingsBase {
+    internal sealed partial class TermInjectorPlusSettings : global::System.Configuration.ApplicationSettingsBase {
         
-        private static TermInjector2022Settings defaultInstance = ((TermInjector2022Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new TermInjector2022Settings())));
+        private static TermInjectorPlusSettings defaultInstance = ((TermInjectorPlusSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new TermInjectorPlusSettings())));
         
-        public static TermInjector2022Settings Default {
+        public static TermInjectorPlusSettings Default {
             get {
                 return defaultInstance;
             }
@@ -37,7 +37,7 @@ namespace TermInjector2022 {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("TermInjector2022")]
+        [global::System.Configuration.DefaultSettingValueAttribute("TermInjectorPlus")]
         public string TermInjectorDir {
             get {
                 return ((string)(this["TermInjectorDir"]));

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 
-namespace TermInjector2022
+namespace TermInjectorPlus
 {
     public static class MatchColorPicker
     {

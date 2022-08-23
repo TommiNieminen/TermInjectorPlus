@@ -55,9 +55,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Transmunger\TermInjector2022.csproj">
+    <ProjectReference Include="..\Transmunger\TermInjectorPlus.csproj">
       <Project>{c22ba65d-cfda-4e96-8dad-b7c425e26d26}</Project>
-      <Name>TermInjector2022</Name>
+      <Name>TermInjectorPlus</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

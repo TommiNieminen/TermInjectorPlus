@@ -1,4 +1,4 @@
-﻿namespace TermInjector2022
+﻿namespace TermInjectorPlus
 {
     internal interface ICreateRuleWindow
     {

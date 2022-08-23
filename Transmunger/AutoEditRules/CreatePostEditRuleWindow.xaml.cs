@@ -13,9 +13,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using static TermInjector2022.AutoEditRule;
+using static TermInjectorPlus.AutoEditRule;
 
-namespace TermInjector2022
+namespace TermInjectorPlus
 {
     public partial class CreatePostEditRuleWindow : Window, ICreateRuleWindow, INotifyPropertyChanged
     {

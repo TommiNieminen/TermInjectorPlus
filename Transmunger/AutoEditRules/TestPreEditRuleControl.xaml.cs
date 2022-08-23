@@ -15,7 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace TermInjector2022
+namespace TermInjectorPlus
 {
     /// <summary>
     /// Interaction logic for TestPreEditRuleControl.xaml

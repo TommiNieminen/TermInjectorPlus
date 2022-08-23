@@ -13,7 +13,7 @@ namespace SettingsDialogTester
         [STAThread]
         static void Main(string[] args)
         {
-            TermInjector2022Dialog dialog = new TermInjector2022Dialog(new TermInjector2022TPOptions());
+            TermInjectorPlusDialog dialog = new TermInjectorPlusDialog(new TermInjectorPlusTPOptions());
             if (dialog.ShowDialog() == DialogResult.OK)
             {
             }

@@ -3,7 +3,7 @@
 using System.Text.RegularExpressions;
 using YamlDotNet.Serialization;
 
-namespace TermInjector2022
+namespace TermInjectorPlus
 {
 
     public class AutoEditRule

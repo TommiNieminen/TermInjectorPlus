@@ -26,12 +26,12 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using YamlDotNet.Serialization;
 
-namespace TermInjector2022
+namespace TermInjectorPlus
 {
     /// <summary>
     /// Interaction logic for TranslateWindow.xaml
     /// </summary>
-    public partial class TermInjectorPipelineView: UserControl, INotifyPropertyChanged
+    public partial class TermInjectorPipelineView : UserControl, INotifyPropertyChanged
     {
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -52,24 +52,24 @@ namespace TermInjector2022
         {
             //Always add one empty configuration to list to use as basis for new configurations
             this.emptyConfig = new TermInjectorPipeline() { PipelineName = "<new template>" };
-            this.PipelineTemplates = 
+            this.PipelineTemplates =
                 new ObservableCollection<TermInjectorPipeline>()
                 { emptyConfig };
 
             this.PipelineConfigs = new ObservableCollection<TermInjectorPipeline>();
 
             var pipelineConfigDir = new DirectoryInfo(
-                HelperFunctions.GetLocalAppDataPath(TermInjector2022Settings.Default.ConfigDir));
+                HelperFunctions.GetLocalAppDataPath(TermInjectorPlusSettings.Default.ConfigDir));
 
             if (!pipelineConfigDir.Exists)
             {
                 pipelineConfigDir.Create();
             }
-            
+
             foreach (var file in pipelineConfigDir.EnumerateFiles())
             {
                 var loadedConfig = TermInjectorPipeline.CreateFromFile(file, this.CredentialStore);
-                
+
                 if (loadedConfig.IsTemplate)
                 {
                     this.PipelineTemplates.Add(loadedConfig);
@@ -87,7 +87,7 @@ namespace TermInjector2022
             this.AutoPreEditRuleCollections = new ObservableCollection<AutoEditRuleCollection>();
 
             var editRuleDir = new DirectoryInfo(
-                HelperFunctions.GetLocalAppDataPath(TermInjector2022Settings.Default.EditRuleDir));
+                HelperFunctions.GetLocalAppDataPath(TermInjectorPlusSettings.Default.EditRuleDir));
 
             if (!editRuleDir.Exists)
             {
@@ -122,16 +122,16 @@ namespace TermInjector2022
 
         }
 
-        
+
 
         public System.Windows.Forms.IWin32Window Owner { get; private set; }
         public LanguagePair[] LanguagePairs { get; private set; }
         public ITranslationProviderCredentialStore CredentialStore { get; private set; }
 
         public TermInjectorPipelineView(
-            System.Windows.Forms.IWin32Window owner, 
-            ITranslationProviderCredentialStore credentialStore, 
-            TermInjector2022TPOptions translationOptions,
+            System.Windows.Forms.IWin32Window owner,
+            ITranslationProviderCredentialStore credentialStore,
+            TermInjectorPlusTPOptions translationOptions,
             LanguagePair[] languagePairs)
         {
             this.DataContext = this;
@@ -140,12 +140,9 @@ namespace TermInjector2022
             this.CredentialStore = credentialStore;
             this.InitializeAutoEditRuleCollections();
             this.InitializePipelineConfigurations();
-            
+
             Guid configGuid;
-            
-            
-            
-            
+
             InitializeComponent();
 
             //Populate the translation provider combo box
@@ -161,7 +158,6 @@ namespace TermInjector2022
                 if (configInOptions != null)
                 {
                     this.TermInjectorConfig = configInOptions;
-                    
                 }
             }
 
@@ -170,9 +166,9 @@ namespace TermInjector2022
                 this.TermInjectorConfig = this.emptyConfig;
             }
 
-            this.Title = String.Format(TermInjector2022.Properties.Resources.EditRules_EditRulesTitle, TermInjectorConfig.PipelineName);
-            
-            
+            this.Title = String.Format(TermInjectorPlus.Properties.Resources.EditRules_EditRulesTitle, TermInjectorConfig.PipelineName);
+
+
             this.TermInjectorConfigComboBox.ItemsSource = this.PipelineTemplates;
         }
 
@@ -186,10 +182,10 @@ namespace TermInjector2022
 
             var inputBoxLabel = "Input to rule collection:";
             var inputOrigin = "Source text";
-            
+
             foreach (var preEditRuleCollection in this.TermInjectorConfig.AutoPreEditRuleCollections)
             {
-                
+
                 var title = $"Pre-edit rule collection";
                 var testControl =
                     new TestPreEditRuleControl()
@@ -247,8 +243,9 @@ namespace TermInjector2022
                         }
                     }
                 }
-                
-                
+
+
+
                 this.InitializeTester();
                 NotifyPropertyChanged();
             }
@@ -277,7 +274,7 @@ namespace TermInjector2022
 
         private void GetTranslationProvidersUis()
         {
-            this.TranslationProviderPluginUis = 
+            this.TranslationProviderPluginUis =
                 new ObservableCollection<ITranslationProviderWinFormsUI>(TranslationProviderManager.GetTranslationProviderWinFormsUIs());
         }
 
@@ -306,14 +303,14 @@ namespace TermInjector2022
                 InitializeTester();
             }
         }
-        
 
-        
+
+
         private void AddPreRuleCollection_Click(object sender, RoutedEventArgs e)
         {
-            var addCollectionWindow = 
+            var addCollectionWindow =
                 new AddEditRuleCollectionWindow(
-                    this.AutoPreEditRuleCollections, 
+                    this.AutoPreEditRuleCollections,
                     this.TermInjectorConfig.AutoPreEditRuleCollections);
             addCollectionWindow.Owner = Window.GetWindow(this);
             var dialogResult = addCollectionWindow.ShowDialog();
@@ -329,8 +326,8 @@ namespace TermInjector2022
 
         private void AddRuleCollection(
             ObservableCollection<CheckBoxListItem<AutoEditRuleCollection>> ruleCollectionCheckBoxList,
-            ObservableCollection<AutoEditRuleCollection> allCollections, 
-            ObservableCollection<AutoEditRuleCollection> modelCollections, 
+            ObservableCollection<AutoEditRuleCollection> allCollections,
+            ObservableCollection<AutoEditRuleCollection> modelCollections,
             ObservableCollection<string> modelGuids)
         {
             foreach (var collection in ruleCollectionCheckBoxList)
@@ -367,7 +364,7 @@ namespace TermInjector2022
         private void EditPreRuleCollection_Click(object sender, RoutedEventArgs e)
         {
             var selectedCollection = (AutoEditRuleCollection)this.AutoPreEditRuleCollectionList.SelectedItem;
-            
+
             //Edit a clone of the collection, so that the changes can be canceled in the edit window
             var editCollectionWindow = new EditPreEditRuleCollectionWindow(selectedCollection.Clone());
             editCollectionWindow.Owner = Window.GetWindow(this);
@@ -397,7 +394,7 @@ namespace TermInjector2022
 
         private void RemovePreRuleCollection_Click(object sender, RoutedEventArgs e)
         {
-            var selectedCollections = 
+            var selectedCollections =
                 this.AutoPreEditRuleCollectionList.SelectedItems.Cast<AutoEditRuleCollection>().ToList();
             this.RemoveRuleCollection(
                 selectedCollections,
@@ -466,7 +463,7 @@ namespace TermInjector2022
         private void EditPostRuleCollection_Click(object sender, RoutedEventArgs e)
         {
             var selectedCollection = (AutoEditRuleCollection)this.AutoPostEditRuleCollectionList.SelectedItem;
-            
+
             //Edit a clone of the collection, so that the changes can be canceled in the edit window
             var editCollectionWindow = new EditPostEditRuleCollectionWindow(selectedCollection.Clone());
             editCollectionWindow.Owner = Window.GetWindow(this);
@@ -524,38 +521,51 @@ namespace TermInjector2022
             //change it to MT output.
             //Do not apply edit rules here, since they will be visually applied in the tester
 
-            var tpMatches = this.TranslationProvider.GetLanguageDirection(
-                this.LanguagePairs.First()).SearchText(new SearchSettings(), previousTesterOutput);
-
-            if (!tpMatches.Any())
+            if (this.TranslationProvider == null &&
+                    !String.IsNullOrWhiteSpace(this.TermInjectorConfig.NestedTranslationProviderUri))
             {
-                previousTesterOutput = "No match found in translation provider";
+                this.TranslationProvider = NestedTPFactory.InstantiateNestedTP(this.TermInjectorConfig.NestedTranslationProviderUri, this.CredentialStore);
+            }
+
+            if (this.TranslationProvider == null)
+            {
+                previousTesterOutput = "No translation provider configured";
             }
             else
             {
-                previousTesterOutput = tpMatches.First().TranslationProposal.TargetSegment.ToPlain();
-            }    
+                var tpMatches = this.TranslationProvider.GetLanguageDirection(
+                this.LanguagePairs.First()).SearchText(new SearchSettings(), previousTesterOutput);
+
+                if (!tpMatches.Any())
+                {
+                    previousTesterOutput = "No match found in translation provider";
+                }
+                else
+                {
+                    previousTesterOutput = tpMatches.First().TranslationProposal.TargetSegment.ToPlain();
+                }
+            }
 
             foreach (var tester in this.PostEditTesters)
             {
                 tester.SourceText = rawSource;
                 tester.OutputText = previousTesterOutput;
-                
+
                 tester.ProcessRules();
                 previousTesterOutput = tester.EditedOutputText;
             }
 
         }
-        
-        
+
+
         private void MoveCollectionDown(
-            ListView collectionList, 
+            ListView collectionList,
             ObservableCollection<AutoEditRuleCollection> ruleCollection,
             ObservableCollection<string> collectionGuids
             )
         {
             var selectedItem = (AutoEditRuleCollection)collectionList.SelectedItem;
-            
+
             var selectedItemIndex = ruleCollection.IndexOf(selectedItem);
             var guidIndex = collectionGuids.IndexOf(selectedItem.CollectionGuid);
             if (selectedItemIndex < ruleCollection.Count - 1)
@@ -570,7 +580,7 @@ namespace TermInjector2022
         private void MovePreRuleCollectionDown_Click(object sender, RoutedEventArgs e)
         {
             this.MoveCollectionDown(
-                this.AutoPreEditRuleCollectionList, 
+                this.AutoPreEditRuleCollectionList,
                 this.TermInjectorConfig.AutoPreEditRuleCollections,
                 this.TermInjectorConfig.AutoPreEditRuleCollectionGuids);
         }
@@ -578,13 +588,13 @@ namespace TermInjector2022
         private void MovePostRuleCollectionDown_Click(object sender, RoutedEventArgs e)
         {
             this.MoveCollectionDown(
-                this.AutoPostEditRuleCollectionList, 
+                this.AutoPostEditRuleCollectionList,
                 this.TermInjectorConfig.AutoPostEditRuleCollections,
                 this.TermInjectorConfig.AutoPostEditRuleCollectionGuids);
         }
 
         private void MoveCollectionUp(
-            ListView collectionList, 
+            ListView collectionList,
             ObservableCollection<AutoEditRuleCollection> ruleCollection,
             ObservableCollection<string> collectionGuids)
         {
@@ -603,7 +613,7 @@ namespace TermInjector2022
         private void MovePreRuleCollectionUp_Click(object sender, RoutedEventArgs e)
         {
             this.MoveCollectionUp(
-                this.AutoPreEditRuleCollectionList, 
+                this.AutoPreEditRuleCollectionList,
                 this.TermInjectorConfig.AutoPreEditRuleCollections,
                 this.TermInjectorConfig.AutoPreEditRuleCollectionGuids);
         }
@@ -611,7 +621,7 @@ namespace TermInjector2022
         private void MovePostRuleCollectionUp_Click(object sender, RoutedEventArgs e)
         {
             this.MoveCollectionUp(
-                this.AutoPostEditRuleCollectionList, 
+                this.AutoPostEditRuleCollectionList,
                 this.TermInjectorConfig.AutoPostEditRuleCollections,
                 this.TermInjectorConfig.AutoPostEditRuleCollectionGuids);
         }
@@ -627,17 +637,24 @@ namespace TermInjector2022
         {
             var selectedUi = (ITranslationProviderWinFormsUI)this.TpComboBox.SelectedItem;
 
-            if (String.IsNullOrWhiteSpace(this.TermInjectorConfig.NestedTranslationProviderUri))
+            //Open new settings window if there is no uri or the selected ui does not support uri
+            if (String.IsNullOrWhiteSpace(this.TermInjectorConfig.NestedTranslationProviderUri) ||
+                !selectedUi.SupportsTranslationProviderUri(new Uri(this.TermInjectorConfig.NestedTranslationProviderUri)))
             {
-                this.TranslationProvider = selectedUi.Browse(
+                var browseResult = selectedUi.Browse(
                     this.Owner,
                     this.LanguagePairs,
-                    this.CredentialStore).SingleOrDefault();
+                    this.CredentialStore);
+                if (browseResult != null)
+                {
+                    this.TranslationProvider = browseResult.SingleOrDefault();
+                }
             }
-            else
+            else if (selectedUi.SupportsTranslationProviderUri(new Uri(this.TermInjectorConfig.NestedTranslationProviderUri)))
             {
-                if (this.TranslationProvider == null && 
-                    String.IsNullOrWhiteSpace(this.TermInjectorConfig.NestedTranslationProviderUri))
+
+                if (this.TranslationProvider == null &&
+                    !String.IsNullOrWhiteSpace(this.TermInjectorConfig.NestedTranslationProviderUri))
                 {
                     this.TranslationProvider = NestedTPFactory.InstantiateNestedTP(this.TermInjectorConfig.NestedTranslationProviderUri, this.CredentialStore);
                 }
@@ -648,8 +665,14 @@ namespace TermInjector2022
                     this.LanguagePairs,
                     this.CredentialStore);
             }
-            this.TermInjectorConfig.NestedTranslationProviderUri = this.TranslationProvider.Uri.ToString();
+
+            if (this.TranslationProvider != null)
+            {
+                this.TermInjectorConfig.NestedTranslationProviderUri = this.TranslationProvider.Uri.ToString();
+            }
         }
+    
+    
 
         private void SaveTemplateButton_Click(object sender, RoutedEventArgs e)
         {

@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using YamlDotNet.Serialization;
 
-namespace TermInjector2022
+namespace TermInjectorPlus
 {
     public class AutoEditRuleCollection
     {
@@ -43,7 +43,7 @@ namespace TermInjector2022
             if (editRuleDir == null)
             {
                 editRuleDir = new DirectoryInfo(
-                    HelperFunctions.GetLocalAppDataPath(TermInjector2022Settings.Default.EditRuleDir));
+                    HelperFunctions.GetLocalAppDataPath(TermInjectorPlusSettings.Default.EditRuleDir));
                 if (!editRuleDir.Exists)
                 {
                     editRuleDir.Create();
@@ -202,8 +202,8 @@ namespace TermInjector2022
         {
             MessageBoxResult messageBoxResult =
                 System.Windows.MessageBox.Show(
-                    String.Format(TermInjector2022.Properties.Resources.Rules_DeleteRuleCollectionConfirmation, this.CollectionName),
-                    TermInjector2022.Properties.Resources.Rules_DeleteRuleCollectionConfirmation, System.Windows.MessageBoxButton.YesNo);
+                    String.Format(TermInjectorPlus.Properties.Resources.Rules_DeleteRuleCollectionConfirmation, this.CollectionName),
+                    TermInjectorPlus.Properties.Resources.Rules_DeleteRuleCollectionConfirmation, System.Windows.MessageBoxButton.YesNo);
             if (messageBoxResult == MessageBoxResult.Yes)
             {
                 if (this.ruleCollectionFile != null && this.ruleCollectionFile.Exists)

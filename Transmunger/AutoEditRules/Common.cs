@@ -8,7 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 
-namespace TermInjector2022
+namespace TermInjectorPlus
 {
     public class ValidationErrorConverter : IMultiValueConverter
     {

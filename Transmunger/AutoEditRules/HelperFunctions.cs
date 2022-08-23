@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
-namespace TermInjector2022
+namespace TermInjectorPlus
 {
     public class HelperFunctions
     {
@@ -16,7 +16,7 @@ namespace TermInjector2022
         {
             var termInjectorDir = Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    TermInjector2022Settings.Default.TermInjectorDir);
+                    TermInjectorPlusSettings.Default.TermInjectorDir);
             if (!Directory.Exists(termInjectorDir))
             {
                 Directory.CreateDirectory(termInjectorDir);

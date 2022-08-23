@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace TermInjector2022 {
+namespace TermInjectorPlus {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace TermInjector2022 {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("TermInjector2022.PluginResources", typeof(PluginResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("TermInjectorPlus.PluginResources", typeof(PluginResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,7 +61,7 @@ namespace TermInjector2022 {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to TermInjector2022 TP.
+        ///   Looks up a localized string similar to TermInjectorPlus TP.
         /// </summary>
         public static string Plugin_Description {
             get {
@@ -70,7 +70,7 @@ namespace TermInjector2022 {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to TermInjector2022.
+        ///   Looks up a localized string similar to TermInjectorPlus.
         /// </summary>
         public static string Plugin_Name {
             get {
@@ -79,7 +79,7 @@ namespace TermInjector2022 {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to TermInjector2022.
+        ///   Looks up a localized string similar to TermInjectorPlus.
         /// </summary>
         public static string Plugin_NiceName {
             get {

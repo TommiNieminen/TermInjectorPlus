@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using YamlDotNet.Serialization;
 
-namespace TermInjector2022
+namespace TermInjectorPlus
 {
     /// <summary>
     /// This contains all the components of a TermInjector pipeline 
@@ -92,7 +92,19 @@ namespace TermInjector2022
             {
                 foreach (var result in results)
                 {
-                    var targetSeg = result.MemoryTranslationUnit.TargetSegment;
+                    Segment targetSeg;
+
+                    //It seems that TMs have the target in memorytranslationunit and
+                    //MT in translationproposal
+                    if (result.TranslationProposal != null)
+                    {
+                        targetSeg = result.TranslationProposal.TargetSegment;
+                    }
+                    else
+                    {
+                        targetSeg = result.MemoryTranslationUnit.TargetSegment;
+                    }
+
                     var plainOutput = targetSeg.ToPlain();
                     foreach (var postEditRuleCollection in this.AutoPostEditRuleCollections)
                     {
@@ -143,16 +155,15 @@ namespace TermInjector2022
 
         [YamlIgnore]
         public ObservableCollection<AutoEditRuleCollection> AutoPreEditRuleCollections { get; set; }
-
+        
         [YamlIgnore]
-        public ITranslationProviderCredentialStore CredentialStore { get; private set; }
         public ITranslationProvider NestedTranslationProvider { get => nestedTranslationProvider; set => nestedTranslationProvider = value; }
 
         internal void SaveConfig(bool isTemplate=false)
         {
             //The configs are saved in the terminjector folder in appdata, using GUIDs as file names.
             var configDir = new DirectoryInfo(
-                HelperFunctions.GetLocalAppDataPath(TermInjector2022Settings.Default.ConfigDir));
+                HelperFunctions.GetLocalAppDataPath(TermInjectorPlusSettings.Default.ConfigDir));
             if (!configDir.Exists)
             {
                 configDir.Create();
@@ -207,6 +218,7 @@ namespace TermInjector2022
             {
                 pipeline = deserializer.Deserialize<TermInjectorPipeline>(reader);
             }
+            
             pipeline.configFile = configFileInfo;
             if (assignNewId)
             {
@@ -223,7 +235,7 @@ namespace TermInjector2022
             TermInjectorPipeline.UpdateCollectionsFromGuids(
                 pipeline.AutoPostEditRuleCollectionGuids,
                 pipeline.AutoPostEditRuleCollections);
-            if (String.IsNullOrWhiteSpace(pipeline.NestedTranslationProviderUri))
+            if (!String.IsNullOrWhiteSpace(pipeline.NestedTranslationProviderUri))
             {
                 pipeline.NestedTranslationProvider = NestedTPFactory.InstantiateNestedTP(pipeline.NestedTranslationProviderUri, credentialStore);
             }
@@ -235,7 +247,7 @@ namespace TermInjector2022
             ObservableCollection<string> guids, ObservableCollection<AutoEditRuleCollection> collections)
         {
             var editRuleDir = new DirectoryInfo(
-                HelperFunctions.GetLocalAppDataPath(TermInjector2022Settings.Default.EditRuleDir));
+                HelperFunctions.GetLocalAppDataPath(TermInjectorPlusSettings.Default.EditRuleDir));
             var editRuleCollectionFiles = editRuleDir.GetFiles("*.yml");
 
             foreach (var guid in guids)

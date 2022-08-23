@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace TermInjector2022
+namespace TermInjectorPlus
 {
-    partial class TermInjector2022Dialog
+    partial class TermInjectorPlusDialog
     {
         /// <summary>
         /// Required designer variable.
@@ -42,14 +42,14 @@ namespace TermInjector2022
             this.wpfHost.Text = "elementHost1";
             this.wpfHost.Child = null;
             // 
-            // TermInjector2022Dialog
+            // TermInjectorPlusDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1498, 674);
             this.Controls.Add(this.wpfHost);
-            this.Name = "TermInjector2022Dialog";
-            this.Text = "TransmungerDialog";
+            this.Name = "TermInjectorPlusDialog";
+            this.Text = "TermInjector+";
             this.ResumeLayout(false);
 
         }

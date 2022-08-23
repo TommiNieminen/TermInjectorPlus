@@ -15,7 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace TermInjector2022
+namespace TermInjectorPlus
 {
 
     /// <summary>
@@ -54,8 +54,8 @@ namespace TermInjector2022
            
             this.RuleCollection = selectedCollection;
             InitializeComponent();
-            this.Title = String.Format(TermInjector2022.Properties.Resources.EditRules_EditRuleCollectionTitle, selectedCollection.CollectionName);
-            this.WindowHeader.Content = String.Format(TermInjector2022.Properties.Resources.EditRules_EditRuleCollectionTitle, selectedCollection.CollectionName);
+            this.Title = String.Format(TermInjectorPlus.Properties.Resources.EditRules_EditRuleCollectionTitle, selectedCollection.CollectionName);
+            this.WindowHeader.Content = String.Format(TermInjectorPlus.Properties.Resources.EditRules_EditRuleCollectionTitle, selectedCollection.CollectionName);
             this.Tester.Refresh();
         }
             

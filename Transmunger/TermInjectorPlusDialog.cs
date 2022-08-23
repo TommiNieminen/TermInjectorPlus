@@ -18,22 +18,22 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Xaml;
 
-namespace TermInjector2022
+namespace TermInjectorPlus
 {
-    public partial class TermInjector2022Dialog : Form
+    public partial class TermInjectorPlusDialog : Form
     {
         private TermInjectorPipelineView termInjectorView;
 
 
         #region "ProviderConfDialog"
 
-        public TermInjector2022Dialog(TermInjector2022TPOptions translationOptions) : this(translationOptions,null,null,null)
+        public TermInjectorPlusDialog(TermInjectorPlusTPOptions translationOptions) : this(translationOptions,null,null,null)
         {
 
         }
 
-        public TermInjector2022Dialog(
-            TermInjector2022TPOptions translationOptions, 
+        public TermInjectorPlusDialog(
+            TermInjectorPlusTPOptions translationOptions, 
             ITranslationProviderCredentialStore credentialStore, 
             IWin32Window owner, 
             LanguagePair[] languagePairs)
@@ -51,7 +51,7 @@ namespace TermInjector2022
             
         }
 
-        public TermInjector2022TPOptions Options
+        public TermInjectorPlusTPOptions Options
         {
             get;
             set;
@@ -85,7 +85,7 @@ namespace TermInjector2022
         private void SaveSettingsButton_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = DialogResult.OK;
-            this.Options = new TermInjector2022TPOptions();
+            this.Options = new TermInjectorPlusTPOptions();
             this.termInjectorView.SaveSettings();
             this.Options.configGuid = this.termInjectorView.TermInjectorConfig.PipelineGuid;
             this.Close();

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TermInjector2022
+namespace TermInjectorPlus
 {
     public class NestedTPFactory
     {

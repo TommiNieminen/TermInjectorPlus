@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 
-namespace TermInjector2022
+namespace TermInjectorPlus
 {
     public class WindowWrapper : System.Windows.Forms.IWin32Window
     {
