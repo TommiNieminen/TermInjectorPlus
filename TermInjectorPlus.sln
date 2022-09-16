@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TermInjectorPlus", "TermInj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SettingsDialogTester", "SettingsDialogTester\SettingsDialogTester.csproj", "{82F63A8B-99AE-4881-B048-02E53EEF5F40}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TermInjectorPlus2017", "TermInjectorPlus2017\TermInjectorPlus2017.csproj", "{3D04BB8E-A9D5-41DB-B713-9CCC6E01D285}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{82F63A8B-99AE-4881-B048-02E53EEF5F40}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{82F63A8B-99AE-4881-B048-02E53EEF5F40}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{82F63A8B-99AE-4881-B048-02E53EEF5F40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D04BB8E-A9D5-41DB-B713-9CCC6E01D285}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D04BB8E-A9D5-41DB-B713-9CCC6E01D285}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D04BB8E-A9D5-41DB-B713-9CCC6E01D285}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D04BB8E-A9D5-41DB-B713-9CCC6E01D285}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -4,7 +4,7 @@
   <Version>1.0</Version>
   <Description>Plugin description</Description>
   <Author></Author>
-  <RequiredProduct name="SDLTradosStudio" minversion="15.0" maxversion="16.0" />
+  <RequiredProduct name="SDLTradosStudio" minversion="14.0" maxversion="15.0" />
   <Include>
     <File>YamlDotNet.dll</File>
     <File>License.txt</File>
