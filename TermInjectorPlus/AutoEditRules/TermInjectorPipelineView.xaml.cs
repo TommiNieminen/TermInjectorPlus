@@ -633,8 +633,20 @@ namespace TermInjectorPlus
             tester.BringIntoView();
         }
 
+        private void ClearTpButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.TpComboBox.SelectedIndex = -1;
+            this.TranslationProvider = null;
+            this.TermInjectorConfig.NestedTranslationProviderUri = null;
+        }
+
         private void TpSettingsButton_Click(object sender, RoutedEventArgs e)
         {
+            //If no selected tp, just return
+            if (this.TpComboBox.SelectedIndex == -1)
+            {
+                return;
+            }
             var selectedUi = (ITranslationProviderWinFormsUI)this.TpComboBox.SelectedItem;
 
             //Open new settings window if there is no uri or the selected ui does not support uri
@@ -685,6 +697,6 @@ namespace TermInjectorPlus
             this.TermInjectorConfig.SaveConfig(false);
         }
 
-
+        
     }
 }

@@ -8,6 +8,9 @@
         mc:Ignorable="d"
         Height="450" Width="870"
         FontFamily="Segoe UI" FontSize="12">
+    <UserControl.Resources>
+        <local:IndexToBoolConverter x:Key="IndexToBoolConverter"/>
+    </UserControl.Resources>
     <ScrollViewer Name="ScrollViewer" VerticalScrollBarVisibility="Auto">
         <StackPanel Background="White">
             <Border Background="AliceBlue" Margin="5" BorderBrush="Black" BorderThickness="1">
@@ -35,6 +38,8 @@
                 <DockPanel Margin="5">
                     <Label FontWeight="Bold" FontSize="15">Translation provider (TM, MT etc.):</Label>
                     
+                    
+                    <Button Name="ClearTpButton" DockPanel.Dock="Right" Width="60" Click="ClearTpButton_Click">Clear</Button>
                     <Button Name="TpSettingsButton" DockPanel.Dock="Right" Width="130" Click="TpSettingsButton_Click">Open settings</Button>
                     <ComboBox Margin="5,0,5,0" Name="TpComboBox"
                             DisplayMemberPath="TypeName"
@@ -123,7 +128,7 @@
                         </DockPanel>
                     </StackPanel>
                 </Border>
-                <Border Background="AliceBlue" Margin="5" BorderBrush="Black" BorderThickness="1">
+                <Border IsEnabled="{Binding ElementName=TpComboBox, Path=SelectedIndex, Converter={StaticResource IndexToBoolConverter}}"  Background="AliceBlue" Margin="5" BorderBrush="Black" BorderThickness="1">
                     <StackPanel>
                         <Label FontWeight="Bold" FontSize="15">Post-edit rule collections</Label>
                         <DockPanel Margin="10">
@@ -193,7 +198,7 @@
                 </Border>
             </StackPanel>
 
-
+            <!--Save and Cancel buttons are given handlers in the Winforms dialog code-->
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Margin="5">
                 <Button Name="SaveSettingsButton" Width="130" Height="30" Margin="0,0,5,0">Save settings</Button>
                 <Button Name="CancelButton" Width="70" Height="30" Margin="5,0,0,0">Cancel</Button>

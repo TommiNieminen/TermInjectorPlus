@@ -37,8 +37,12 @@ namespace TermInjectorPlus
             _languagePair = languages;
             _options = _provider.Options;
             _visitor = new TermInjectorPlusElementVisitor(_options);
-            this._nestedTpLanguageDirection =
-                this._provider.TerminjectorPipeline.NestedTranslationProvider.GetLanguageDirection(_languagePair);
+
+            if (this._provider.TerminjectorPipeline.NestedTranslationProvider != null)
+            {
+                this._nestedTpLanguageDirection =
+                    this._provider.TerminjectorPipeline.NestedTranslationProvider.GetLanguageDirection(_languagePair);
+            }
             #endregion
 
             //TODO: any instantiation code for ILanguageDirection
@@ -71,9 +75,8 @@ namespace TermInjectorPlus
         #region "SearchSegment"
         public SearchResults SearchSegment(SearchSettings settings, Segment segment)
         {
-
             var plain = segment.ToPlain();
-            var results = this._provider.TerminjectorPipeline.ProcessInput(plain, _languagePair);
+            var results = this._provider.TerminjectorPipeline.ProcessInput(plain, _languagePair,settings);
             return results;
             #endregion
         }
@@ -224,6 +227,10 @@ namespace TermInjectorPlus
         /// <returns></returns>
         public ImportResult[] AddTranslationUnitsMasked(TranslationUnit[] translationUnits, ImportSettings settings, bool[] mask)
         {
+            if (this._nestedTpLanguageDirection == null)
+            {
+                return new ImportResult[0];
+            }
             return this._nestedTpLanguageDirection.AddTranslationUnitsMasked(translationUnits, settings, mask);
         }
 
@@ -234,6 +241,11 @@ namespace TermInjectorPlus
         /// <returns></returns>
         public ImportResult UpdateTranslationUnit(TranslationUnit translationUnit)
         {
+            if (this._nestedTpLanguageDirection == null)
+            {
+                return null;
+            }
+
             return this._nestedTpLanguageDirection.UpdateTranslationUnit(translationUnit);
         }
 
@@ -244,6 +256,11 @@ namespace TermInjectorPlus
         /// <returns></returns>
         public ImportResult[] UpdateTranslationUnits(TranslationUnit[] translationUnits)
         {
+            if (this._nestedTpLanguageDirection == null)
+            {
+                return new ImportResult[0];
+            }
+
             return this._nestedTpLanguageDirection.UpdateTranslationUnits(translationUnits);
         }
         /// <summary>
@@ -256,6 +273,11 @@ namespace TermInjectorPlus
         /// <returns></returns>
         public ImportResult[] AddOrUpdateTranslationUnitsMasked(TranslationUnit[] translationUnits, int[] previousTranslationHashes, ImportSettings settings, bool[] mask)
         {
+            if (this._nestedTpLanguageDirection == null)
+            {
+                return new ImportResult[0];
+            }
+
             return this._nestedTpLanguageDirection.AddOrUpdateTranslationUnitsMasked(translationUnits, previousTranslationHashes, settings, mask);
         }
 
@@ -267,6 +289,11 @@ namespace TermInjectorPlus
         /// <returns></returns>
         public ImportResult AddTranslationUnit(TranslationUnit translationUnit, ImportSettings settings)
         {
+            if (this._nestedTpLanguageDirection == null)
+            {
+                return null;
+            }
+
             return this._nestedTpLanguageDirection.AddTranslationUnit(translationUnit, settings);
         }
 
@@ -278,6 +305,11 @@ namespace TermInjectorPlus
         /// <returns></returns>
         public ImportResult[] AddTranslationUnits(TranslationUnit[] translationUnits, ImportSettings settings)
         {
+            if (this._nestedTpLanguageDirection == null)
+            {
+                return new ImportResult[0];
+            }
+
             return this._nestedTpLanguageDirection.AddTranslationUnits(translationUnits, settings);
         }
 
@@ -290,6 +322,11 @@ namespace TermInjectorPlus
         /// <returns></returns>
         public ImportResult[] AddOrUpdateTranslationUnits(TranslationUnit[] translationUnits, int[] previousTranslationHashes, ImportSettings settings)
         {
+            if (this._nestedTpLanguageDirection == null)
+            {
+                return new ImportResult[0];
+            }
+
             return this._nestedTpLanguageDirection.AddOrUpdateTranslationUnits(
                 translationUnits, previousTranslationHashes, settings);
         }

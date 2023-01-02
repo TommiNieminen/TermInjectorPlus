@@ -108,6 +108,7 @@
     <Compile Include="AutoEditRules\AutoEditRuleMatch.cs" />
     <Compile Include="AutoEditRules\CheckBoxListItem.cs" />
     <Compile Include="AutoEditRules\Common.cs" />
+    <Compile Include="AutoEditRules\Converters.cs" />
     <Compile Include="AutoEditRules\CreatePostEditRuleWindow.xaml.cs">
       <DependentUpon>CreatePostEditRuleWindow.xaml</DependentUpon>
     </Compile>

@@ -50,7 +50,11 @@ namespace TermInjectorPlus
             this.AutoPostEditRuleCollections = new ObservableCollection<AutoEditRuleCollection>();
         }
 
-        public SearchResults ProcessInput(string input, LanguagePair languagePair, bool applyEditRules=true)
+        public SearchResults ProcessInput(
+            string input, 
+            LanguagePair languagePair,
+            SearchSettings settings,
+            bool applyEditRules=true)
         {
             //Preprocess input with pre-edit rules
             string preeditedInput = input;
@@ -65,7 +69,22 @@ namespace TermInjectorPlus
                 }
             }
 
-            SearchResults results = this.NestedTranslationProvider.GetLanguageDirection(languagePair).SearchText(new SearchSettings(), preeditedInput);
+            SearchResults results;
+            TranslationUnit tu = new TranslationUnit();
+            Segment orgSegment = new Segment();
+            orgSegment.Culture = languagePair.SourceCulture;
+            orgSegment.Add(preeditedInput);
+            tu.SourceSegment = orgSegment;
+
+            if (this.NestedTranslationProvider != null)
+            {
+                results = this.NestedTranslationProvider.GetLanguageDirection(languagePair).SearchTranslationUnit(settings, tu);
+            }
+            else
+            {
+                results = new SearchResults();
+                results.SourceSegment = orgSegment;
+            }
 
             //If there are no results, apply the no-match rules
             if (results.Count == 0)
@@ -88,6 +107,7 @@ namespace TermInjectorPlus
                 
                 results.Add(noMatchResult);
             }
+            //Apply post-edit rules
             else
             {
                 foreach (var result in results)
