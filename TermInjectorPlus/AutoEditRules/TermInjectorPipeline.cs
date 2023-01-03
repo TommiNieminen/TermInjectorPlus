@@ -89,23 +89,31 @@ namespace TermInjectorPlus
             //If there are no results, apply the no-match rules
             if (results.Count == 0)
             {
+                bool noMatchRulesApplied = false;
                 preeditedInput = input;
                 foreach (var preEditRuleCollection in this.AutoPreEditRuleCollections)
                 {
                     if (preEditRuleCollection.NoMatchCollection)
                     {
-                        preeditedInput = preEditRuleCollection.ProcessPreEditRules(preeditedInput).Result;
+                        var autoEditResult = preEditRuleCollection.ProcessPreEditRules(preeditedInput);
+                        if (autoEditResult.AppliedReplacements.Any())
+                        {
+                            noMatchRulesApplied = true;
+                        }
+                        preeditedInput = autoEditResult.Result;
                     }
                 }
 
-                var noMatchSource = new Segment(languagePair.SourceCulture);
-                noMatchSource.Add(input);
-                var noMatchTarget = new Segment(languagePair.TargetCulture);
-                noMatchTarget.Add(preeditedInput);
-                var noMatchTu = new TranslationUnit(noMatchSource, noMatchTarget);
-                var noMatchResult = this.CreateSearchResult(noMatchSource, noMatchTarget, input, false);
-                
-                results.Add(noMatchResult);
+                if (noMatchRulesApplied)
+                {
+                    var noMatchSource = new Segment(languagePair.SourceCulture);
+                    noMatchSource.Add(input);
+                    var noMatchTarget = new Segment(languagePair.TargetCulture);
+                    noMatchTarget.Add(preeditedInput);
+                    var noMatchTu = new TranslationUnit(noMatchSource, noMatchTarget);
+                    var noMatchResult = this.CreateSearchResult(noMatchSource, noMatchTarget, input, false);
+                    results.Add(noMatchResult);
+                }
             }
             //Apply post-edit rules
             else
@@ -190,6 +198,7 @@ namespace TermInjectorPlus
             }
 
             //if the config is a template, mark it so
+            // TODO: when saving as template, create new config with new guid. How to handle updates to templates?
             this.IsTemplate = isTemplate;
 
             var configTempPath = Path.Combine(

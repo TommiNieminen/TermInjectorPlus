@@ -55,7 +55,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Transmunger\TermInjectorPlus.csproj">
+    <ProjectReference Include="..\TermInjectorPlus\TermInjectorPlus.csproj">
       <Project>{c22ba65d-cfda-4e96-8dad-b7c425e26d26}</Project>
       <Name>TermInjectorPlus</Name>
     </ProjectReference>

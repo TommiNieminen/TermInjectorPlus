@@ -258,6 +258,8 @@ namespace TermInjectorPlus
         public List<TestPostEditRuleControl> PostEditTesters { get; private set; }
 
         private TermInjectorPipeline emptyConfig;
+        private string tpDescription;
+        private ITranslationProvider _translationProvider;
 
         public ObservableCollection<TermInjectorPipeline> PipelineTemplates { get; private set; }
         public ObservableCollection<TermInjectorPipeline> PipelineConfigs { get; private set; }
@@ -265,11 +267,34 @@ namespace TermInjectorPlus
         public ObservableCollection<ITranslationProviderWinFormsUI> TranslationProviderPluginUis
         { get => _translatorProviderPlugins; set { _translatorProviderPlugins = value; NotifyPropertyChanged(); } }
 
-        public ITranslationProvider TranslationProvider { get; private set; }
+        public ITranslationProvider TranslationProvider
+        {
+            get => _translationProvider;
+            set
+            {
+                _translationProvider = value;
+                if (_translationProvider != null &&
+                    _translationProvider.TranslationMethod == TranslationMethod.TranslationMemory)
+                {
+                    this.TpDescription = _translationProvider.Name;
+                }
+                else
+                {
+                    this.TpDescription = null;
+                }
+            }
+            
+        }
         public IPlugin SelectedTranslationProvider
         {
             get => selectedTranslationProvider;
             set { selectedTranslationProvider = value; NotifyPropertyChanged(); }
+        }
+
+        public string TpDescription
+        {
+            get => tpDescription;
+            set { tpDescription = value; NotifyPropertyChanged(); }
         }
 
         private void GetTranslationProvidersUis()
@@ -647,9 +672,12 @@ namespace TermInjectorPlus
             {
                 return;
             }
+
             var selectedUi = (ITranslationProviderWinFormsUI)this.TpComboBox.SelectedItem;
 
             //Open new settings window if there is no uri or the selected ui does not support uri
+            //Note: this condition should normally not fire, since the initial configuration
+            //is done when the TP selection is changed.
             if (String.IsNullOrWhiteSpace(this.TermInjectorConfig.NestedTranslationProviderUri) ||
                 !selectedUi.SupportsTranslationProviderUri(new Uri(this.TermInjectorConfig.NestedTranslationProviderUri)))
             {
@@ -683,8 +711,8 @@ namespace TermInjectorPlus
                 this.TermInjectorConfig.NestedTranslationProviderUri = this.TranslationProvider.Uri.ToString();
             }
         }
-    
-    
+
+
 
         private void SaveTemplateButton_Click(object sender, RoutedEventArgs e)
         {
@@ -697,6 +725,36 @@ namespace TermInjectorPlus
             this.TermInjectorConfig.SaveConfig(false);
         }
 
-        
+        private void TpComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //If no selected tp, just return
+            if (this.TpComboBox.SelectedIndex == -1)
+            {
+                return;
+            }
+
+            var selectedUi = (ITranslationProviderWinFormsUI)this.TpComboBox.SelectedItem;
+
+            //Open the settings dialog for a TP whenever the selection is changed
+            var browseResult = selectedUi.Browse(
+                    this.Owner,
+                    this.LanguagePairs,
+                    this.CredentialStore);
+            if (browseResult != null)
+            {
+                this.TranslationProvider = browseResult.SingleOrDefault();
+            }
+
+            if (this.TranslationProvider != null)
+            {
+                this.TermInjectorConfig.NestedTranslationProviderUri = this.TranslationProvider.Uri.ToString();
+            }
+            else
+            {
+                this.TpComboBox.SelectedIndex = -1;
+                this.TermInjectorConfig.NestedTranslationProviderUri = null;
+            }
+
+        }
     }
 }

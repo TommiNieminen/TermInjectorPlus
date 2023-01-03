@@ -10,6 +10,7 @@
         FontFamily="Segoe UI" FontSize="12">
     <UserControl.Resources>
         <local:IndexToBoolConverter x:Key="IndexToBoolConverter"/>
+        <local:TpDescriptionToVisibilityConverter x:Key="TpDescriptionToVisibilityConverter"/>
     </UserControl.Resources>
     <ScrollViewer Name="ScrollViewer" VerticalScrollBarVisibility="Auto">
         <StackPanel Background="White">
@@ -43,7 +44,11 @@
                     <Button Name="TpSettingsButton" DockPanel.Dock="Right" Width="130" Click="TpSettingsButton_Click">Open settings</Button>
                     <ComboBox Margin="5,0,5,0" Name="TpComboBox"
                             DisplayMemberPath="TypeName"
-                            SelectedValue="{Binding SelectedTranslationProvider, Mode=TwoWay}"/>
+                            SelectedValue="{Binding SelectedTranslationProvider, Mode=TwoWay}" SelectionChanged="TpComboBox_SelectionChanged"/>
+                    <Label 
+                        Name="TmNameBox"
+                        Visibility="{Binding TpDetails, Converter={StaticResource TpDescriptionToVisibilityConverter}}"
+                        Content="{Binding TpDetails}"/>
                 </DockPanel>
 
             </Border>
