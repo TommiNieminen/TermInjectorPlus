@@ -266,7 +266,11 @@ namespace TermInjectorPlus
                 pipeline.AutoPostEditRuleCollections);
             if (!String.IsNullOrWhiteSpace(pipeline.NestedTranslationProviderUri))
             {
-                pipeline.NestedTranslationProvider = NestedTPFactory.InstantiateNestedTP(pipeline.NestedTranslationProviderUri, credentialStore);
+                pipeline.NestedTranslationProvider = 
+                    NestedTPFactory.InstantiateNestedTP(
+                        pipeline.NestedTranslationProviderUri, credentialStore);
+                //TODO: if this return null, the uri should be emptied, since the nested tp
+                //has become invalid
             }
 
             return pipeline;

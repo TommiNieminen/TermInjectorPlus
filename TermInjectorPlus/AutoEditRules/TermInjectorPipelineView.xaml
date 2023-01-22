@@ -43,12 +43,13 @@
                     <Button Name="ClearTpButton" DockPanel.Dock="Right" Width="60" Click="ClearTpButton_Click">Clear</Button>
                     <Button Name="TpSettingsButton" DockPanel.Dock="Right" Width="130" Click="TpSettingsButton_Click">Open settings</Button>
                     <ComboBox Margin="5,0,5,0" Name="TpComboBox"
+                            DropDownOpened="TpComboBox_DropDownOpened"
                             DisplayMemberPath="TypeName"
                             SelectedValue="{Binding SelectedTranslationProvider, Mode=TwoWay}" SelectionChanged="TpComboBox_SelectionChanged"/>
                     <Label 
                         Name="TmNameBox"
-                        Visibility="{Binding TpDetails, Converter={StaticResource TpDescriptionToVisibilityConverter}}"
-                        Content="{Binding TpDetails}"/>
+                        Visibility="{Binding TpDescription, Converter={StaticResource TpDescriptionToVisibilityConverter},Mode=TwoWay}"
+                        Content="{Binding TpDescription,Mode=TwoWay}"/>
                 </DockPanel>
 
             </Border>

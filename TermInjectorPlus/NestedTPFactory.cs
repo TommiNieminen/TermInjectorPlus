@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace TermInjectorPlus
 {
-    public class NestedTPFactory
+    internal class NestedTPFactory
     {
         public static ITranslationProvider InstantiateNestedTP(string nestedTPUriString, ITranslationProviderCredentialStore credentialStore)
         {
@@ -20,7 +20,20 @@ namespace TermInjectorPlus
             {
                 if (factory.SupportsTranslationProviderUri(nestedUri))
                 {
-                    return factory.CreateTranslationProvider(nestedUri, "", credentialStore);
+                    var factoryInfo = factory.GetTranslationProviderInfo(nestedUri,"");
+                    //TODO: this hangs Studio if e.g. the file referred to in file TM does not exist
+                    //It seems to do a endless loop of this part of the code, so setting e.g. a static flag
+                    //for URI failing might work here
+                    ITranslationProvider nestedProvider = null;
+                    try
+                    {
+                        nestedProvider = factory.CreateTranslationProvider(nestedUri, "", credentialStore);
+                    }
+                    catch (Exception ex)
+                    {
+                        nestedProvider = null;
+                    }
+                    return nestedProvider;
                 }
             }
 

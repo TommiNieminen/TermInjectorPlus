@@ -297,6 +297,8 @@ namespace TermInjectorPlus
             set { tpDescription = value; NotifyPropertyChanged(); }
         }
 
+        public bool TpComboBoxSelectionManuallyChanged { get; private set; }
+
         private void GetTranslationProvidersUis()
         {
             this.TranslationProviderPluginUis =
@@ -725,24 +727,34 @@ namespace TermInjectorPlus
             this.TermInjectorConfig.SaveConfig(false);
         }
 
+
+
         private void TpComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //If no selected tp, just return
-            if (this.TpComboBox.SelectedIndex == -1)
+            //If no selected tp, just return. Also return if the tp combox box has not been opened
+            //(this applies when the dialog is opened for the first time and the selection is set
+            //based on the TermInjectorPlus URI).
+            if (this.TpComboBox.SelectedIndex == -1 || !this.TpComboBoxSelectionManuallyChanged)
             {
                 return;
             }
 
             var selectedUi = (ITranslationProviderWinFormsUI)this.TpComboBox.SelectedItem;
-
+            
             //Open the settings dialog for a TP whenever the selection is changed
             var browseResult = selectedUi.Browse(
                     this.Owner,
                     this.LanguagePairs,
                     this.CredentialStore);
-            if (browseResult != null)
+            if (browseResult != null || browseResult.Length == 0)
             {
                 this.TranslationProvider = browseResult.SingleOrDefault();
+            }
+            else
+            {
+                //Restore the previous selection, since no change to translation provider happened
+                TpComboBoxSelectionManuallyChanged = false;
+                this.TpComboBox.SelectedItem = e.RemovedItems[0];
             }
 
             if (this.TranslationProvider != null)
@@ -755,6 +767,11 @@ namespace TermInjectorPlus
                 this.TermInjectorConfig.NestedTranslationProviderUri = null;
             }
 
+        }
+
+        private void TpComboBox_DropDownOpened(object sender, EventArgs e)
+        {
+            this.TpComboBoxSelectionManuallyChanged = true;
         }
     }
 }
