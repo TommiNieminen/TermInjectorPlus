@@ -13,7 +13,16 @@ namespace TermInjectorPlus
         public static ITranslationProvider InstantiateNestedTP(string nestedTPUriString, ITranslationProviderCredentialStore credentialStore)
         {
             //TODO: USE TranslationProviderManager to create factory
-            var tpFactories = TranslationProviderManager.GetTranslationProviderFactories();
+            IList<ITranslationProviderFactory> tpFactories;
+            try
+            {
+                tpFactories = TranslationProviderManager.GetTranslationProviderFactories();
+            }
+            catch
+            {
+                tpFactories = new List<ITranslationProviderFactory>();
+            }
+
             var nestedUri = new Uri(nestedTPUriString);
             
             foreach(var factory in tpFactories)

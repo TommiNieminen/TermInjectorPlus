@@ -187,7 +187,7 @@ namespace TermInjectorPlus
         [YamlIgnore]
         public ITranslationProvider NestedTranslationProvider { get => nestedTranslationProvider; set => nestedTranslationProvider = value; }
 
-        internal void SaveConfig(bool isTemplate=false)
+        internal void SaveConfig()
         {
             //The configs are saved in the terminjector folder in appdata, using GUIDs as file names.
             var configDir = new DirectoryInfo(
@@ -196,11 +196,7 @@ namespace TermInjectorPlus
             {
                 configDir.Create();
             }
-
-            //if the config is a template, mark it so
-            // TODO: when saving as template, create new config with new guid. How to handle updates to templates?
-            this.IsTemplate = isTemplate;
-
+            
             var configTempPath = Path.Combine(
                 configDir.FullName, $"{this.PipelineGuid}_temp.yml");
             var configPath = Path.Combine(
@@ -295,6 +291,17 @@ namespace TermInjectorPlus
                 }
             }
         }
-        
+
+        //To save as template, temporarily assign a new guid to pipeline, and save it as template
+        //under that guid
+        internal void SaveAsTemplate()
+        {
+            var currentGuid = this.PipelineGuid;
+            this.PipelineGuid = System.Guid.NewGuid().ToString();
+            this.IsTemplate = true;
+            this.SaveConfig();
+            this.PipelineGuid = currentGuid;
+            this.IsTemplate = false;
+        }
     }
 }

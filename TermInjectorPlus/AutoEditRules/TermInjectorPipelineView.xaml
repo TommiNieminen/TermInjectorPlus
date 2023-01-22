@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:TermInjectorPlus"
         xmlns:resx="clr-namespace:TermInjectorPlus.Properties"
         mc:Ignorable="d"
-        Height="450" Width="870"
+        Height="450" Width="1500"
         FontFamily="Segoe UI" FontSize="12">
     <UserControl.Resources>
         <local:IndexToBoolConverter x:Key="IndexToBoolConverter"/>
@@ -18,17 +18,19 @@
 
                 <StackPanel>
                     <DockPanel LastChildFill="True" Margin="5">
-                        <Label FontWeight="Bold" FontSize="15">TermInjector template</Label>
-                        <ComboBox Name="TermInjectorConfigComboBox"
+                        <Label VerticalContentAlignment="Center" FontWeight="Bold" FontSize="15">TermInjector template</Label>
+                        <ComboBox Width="250" Name="TermInjectorConfigComboBox"
                             DisplayMemberPath="PipelineName"
+                            VerticalContentAlignment="Center"
                             SelectedValue="{Binding TermInjectorConfig, Mode=TwoWay}"/>
-                    </DockPanel>
-                    <DockPanel Margin="5">
-                        <Label DockPanel.Dock="Left">Name</Label>
 
-                        <Button Name="SaveTemplateButton" Margin="5,0,0,0" Padding="10,0" DockPanel.Dock="Right" Click="SaveTemplateButton_Click">Save template</Button>
-                        <TextBox Margin="5,0,5,0" DockPanel.Dock="Right" Name="TermInjectorConfigNameBox" Text="{Binding Path=TermInjectorConfig.PipelineName, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                        <Label VerticalContentAlignment="Center" DockPanel.Dock="Left">Name</Label>
+
+                            <Button Name="SaveTemplateButton" Margin="5,0,0,0" Padding="10,0" DockPanel.Dock="Right" Click="SaveTemplateButton_Click">Save template</Button>
+                            <TextBox VerticalContentAlignment="Center" Margin="5,0,5,0" DockPanel.Dock="Right" Name="TermInjectorConfigNameBox" Text="{Binding Path=TermInjectorConfig.PipelineName, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                
                     </DockPanel>
+                    
                 </StackPanel>
 
             </Border>
@@ -121,12 +123,19 @@
 
                                 <ListView.View>
                                     <GridView AllowsColumnReorder="true">
-                                        <GridViewColumn Width="220" DisplayMemberBinding="{Binding Path=CollectionName, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+                                        <GridViewColumn Width="250" DisplayMemberBinding="{Binding Path=CollectionName, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
                                             <GridViewColumn.Header>
                                                 <GridViewColumnHeader Content="Collection name" HorizontalContentAlignment="Center"/>
                                             </GridViewColumn.Header>
                                         </GridViewColumn>
-                                        <GridViewColumn Header="Number of rules" DisplayMemberBinding="{Binding Path=EditRules.Count, Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" />
+                                        <GridViewColumn Header="Rules" DisplayMemberBinding="{Binding Path=EditRules.Count, Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" />
+                                        <GridViewColumn Header="No-match" >
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <CheckBox IsEnabled="False" IsChecked="{Binding Path=NoMatchCollection, Mode=OneWay,UpdateSourceTrigger=PropertyChanged}"/>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
                                     </GridView>
                                 </ListView.View>
                             </ListView>
@@ -194,8 +203,8 @@
 
                                 <ListView.View>
                                     <GridView AllowsColumnReorder="true">
-                                        <GridViewColumn Width="220" Header="Collection name" DisplayMemberBinding="{Binding Path=CollectionName, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
-                                        <GridViewColumn Header="Number of rules" DisplayMemberBinding="{Binding Path=EditRules.Count, Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" />
+                                        <GridViewColumn Width="250" Header="Collection name" DisplayMemberBinding="{Binding Path=CollectionName, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                        <GridViewColumn Header="Rules" DisplayMemberBinding="{Binding Path=EditRules.Count, Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" />
                                     </GridView>
                                 </ListView.View>
                             </ListView>

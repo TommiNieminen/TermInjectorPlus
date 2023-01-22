@@ -132,7 +132,8 @@ namespace TermInjectorPlus
             System.Windows.Forms.IWin32Window owner,
             ITranslationProviderCredentialStore credentialStore,
             TermInjectorPlusTPOptions translationOptions,
-            LanguagePair[] languagePairs)
+            LanguagePair[] languagePairs,
+            bool testDialog=false)
         {
             this.DataContext = this;
             this.Owner = owner;
@@ -301,8 +302,16 @@ namespace TermInjectorPlus
 
         private void GetTranslationProvidersUis()
         {
-            this.TranslationProviderPluginUis =
-                new ObservableCollection<ITranslationProviderWinFormsUI>(TranslationProviderManager.GetTranslationProviderWinFormsUIs());
+            try
+            {
+                this.TranslationProviderPluginUis =
+               new ObservableCollection<ITranslationProviderWinFormsUI>(TranslationProviderManager.GetTranslationProviderWinFormsUIs());
+            }
+            catch
+            {
+                this.TranslationProviderPluginUis = new ObservableCollection<ITranslationProviderWinFormsUI>();
+            }
+           
         }
 
 
@@ -718,13 +727,13 @@ namespace TermInjectorPlus
 
         private void SaveTemplateButton_Click(object sender, RoutedEventArgs e)
         {
-            this.TermInjectorConfig.SaveConfig(true);
+            this.TermInjectorConfig.SaveAsTemplate();
         }
 
-        //This will save the config as 
+        //This will save the config as well 
         internal void SaveSettings()
         {
-            this.TermInjectorConfig.SaveConfig(false);
+            this.TermInjectorConfig.SaveConfig();
         }
 
 
@@ -772,6 +781,12 @@ namespace TermInjectorPlus
         private void TpComboBox_DropDownOpened(object sender, EventArgs e)
         {
             this.TpComboBoxSelectionManuallyChanged = true;
+        }
+
+        //TODO: when template selected, copy its values as the current config
+        private void TermInjectorConfigComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

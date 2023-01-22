@@ -27,7 +27,8 @@ namespace TermInjectorPlus
 
         #region "ProviderConfDialog"
 
-        public TermInjectorPlusDialog(TermInjectorPlusTPOptions translationOptions) : this(translationOptions,null,null,null)
+        //This is used for testing the dialog outside of Trados Studio (quicker to do)
+        public TermInjectorPlusDialog(TermInjectorPlusTPOptions translationOptions) : this(translationOptions,null,null,null,true)
         {
 
         }
@@ -36,13 +37,14 @@ namespace TermInjectorPlus
             TermInjectorPlusTPOptions translationOptions, 
             ITranslationProviderCredentialStore credentialStore, 
             IWin32Window owner, 
-            LanguagePair[] languagePairs)
+            LanguagePair[] languagePairs,
+            bool testDialog=false)
         {
             Options = translationOptions;
             InitializeComponent();
             UpdateDialog();
             
-            this.termInjectorView = new TermInjectorPipelineView(owner, credentialStore, Options, languagePairs);
+            this.termInjectorView = new TermInjectorPipelineView(owner, credentialStore, Options, languagePairs, testDialog);
             this.termInjectorView.SaveSettingsButton.Click += SaveSettingsButton_Click;
             this.termInjectorView.CancelButton.Click += CancelButton_Click;
             this.wpfHost.Child = this.termInjectorView;
