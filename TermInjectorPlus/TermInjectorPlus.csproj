@@ -56,6 +56,7 @@
     <Reference Include="Sdl.Core.PluginFramework.PackageSupport, Version=1.8.0.0, Culture=neutral, PublicKeyToken=c28cdb26c445c888, processorArchitecture=MSIL">
       <HintPath>..\packages\Sdl.Core.PluginFramework.1.8.0\lib\net45\Sdl.Core.PluginFramework.PackageSupport.dll</HintPath>
     </Reference>
+    <Reference Include="Sdl.FileTypeSupport.Framework.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c28cdb26c445c888" />
     <Reference Include="Sdl.LanguagePlatform.Core">
       <HintPath>$(ProgramFiles)\SDL\SDL Trados Studio\Studio15\Sdl.LanguagePlatform.Core.dll</HintPath>
       <Private>True</Private>

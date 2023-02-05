@@ -22,7 +22,7 @@
                         <ComboBox Width="250" Name="TermInjectorConfigComboBox"
                             DisplayMemberPath="PipelineName"
                             VerticalContentAlignment="Center"
-                            SelectedValue="{Binding TermInjectorConfig, Mode=TwoWay}"/>
+                            SelectionChanged="TermInjectorConfigComboBox_SelectionChanged"/>
 
                         <Label VerticalContentAlignment="Center" DockPanel.Dock="Left">Name</Label>
 

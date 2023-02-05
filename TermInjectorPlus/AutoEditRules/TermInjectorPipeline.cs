@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Forms;
 using YamlDotNet.Serialization;
 
@@ -28,6 +29,9 @@ namespace TermInjectorPlus
         [YamlMember(Alias = "guid", ApplyNamingConventions = false)]
         public string PipelineGuid;
 
+        [YamlMember(Alias = "template-guid", ApplyNamingConventions = false)]
+        public string TemplateGuid;
+
         [YamlMember(Alias = "nested-tp-uri", ApplyNamingConventions = false)]
         public string NestedTranslationProviderUri;
 
@@ -39,7 +43,8 @@ namespace TermInjectorPlus
 
         private ITranslationProvider nestedTranslationProvider;
 
-        private FileInfo configFile;
+        [YamlIgnore]
+        public FileInfo ConfigFile;
 
         public TermInjectorPipeline()
         {
@@ -235,7 +240,7 @@ namespace TermInjectorPlus
         public static TermInjectorPipeline CreateFromFile(
             FileInfo configFileInfo, 
             ITranslationProviderCredentialStore credentialStore,
-            bool assignNewId = false)
+            bool createFromTemplate = false)
         {
             TermInjectorPipeline pipeline;
             var deserializer = new Deserializer();
@@ -244,9 +249,10 @@ namespace TermInjectorPlus
                 pipeline = deserializer.Deserialize<TermInjectorPipeline>(reader);
             }
             
-            pipeline.configFile = configFileInfo;
-            if (assignNewId)
+            pipeline.ConfigFile = configFileInfo;
+            if (createFromTemplate)
             {
+                pipeline.TemplateGuid = pipeline.PipelineGuid;
                 pipeline.PipelineGuid = Guid.NewGuid().ToString();
             }
             
@@ -292,16 +298,52 @@ namespace TermInjectorPlus
             }
         }
 
-        //To save as template, temporarily assign a new guid to pipeline, and save it as template
-        //under that guid
-        internal void SaveAsTemplate()
+        //TODO: add button to delete selected template
+        internal void SaveAsTemplate(ObservableCollection<TermInjectorPipeline> pipelineTemplates)
         {
-            var currentGuid = this.PipelineGuid;
-            this.PipelineGuid = System.Guid.NewGuid().ToString();
-            this.IsTemplate = true;
-            this.SaveConfig();
-            this.PipelineGuid = currentGuid;
-            this.IsTemplate = false;
+            if (pipelineTemplates.Select(x => x.TemplateGuid).Contains(this.TemplateGuid))
+            {
+                MessageBoxResult messageBoxResult = 
+                    System.Windows.MessageBox.Show(
+                        "Click Yes to replace the existing template, or No to create a new template.","Template exists",MessageBoxButton.YesNoCancel);
+                if (messageBoxResult == MessageBoxResult.Cancel)
+                {
+                    return;
+                }
+                else if (messageBoxResult == MessageBoxResult.Yes)
+                {
+                    var currentGuid = this.PipelineGuid;
+                    this.PipelineGuid = this.TemplateGuid;
+                    this.IsTemplate = true;
+                    this.SaveConfig();
+                    //TODO: nested tp instantiation should only happen to active config, currently
+                    //simply loading the templates causes lots of tps to be instantiated
+                    //pipelineTemplates.Add(TermInjectorPipeline.CreateFromFile(this.ConfigFile,this))
+                    this.PipelineGuid = currentGuid;
+                    this.IsTemplate = false;
+                }
+                else if (messageBoxResult == MessageBoxResult.No)
+                {
+                    var currentGuid = this.PipelineGuid;
+                    this.PipelineGuid = System.Guid.NewGuid().ToString();
+                    this.TemplateGuid = this.PipelineGuid;
+                    this.IsTemplate = true;
+                    this.SaveConfig();
+                    this.PipelineGuid = currentGuid;
+                    this.IsTemplate = false;
+                }
+            }
+            else
+            {
+                var currentGuid = this.PipelineGuid;
+                this.PipelineGuid = System.Guid.NewGuid().ToString();
+                this.TemplateGuid = this.PipelineGuid;
+                this.IsTemplate = true;
+                this.SaveConfig();
+                this.PipelineGuid = currentGuid;
+                this.IsTemplate = false;
+            }
+            
         }
     }
 }

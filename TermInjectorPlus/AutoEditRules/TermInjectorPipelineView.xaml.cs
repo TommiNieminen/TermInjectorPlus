@@ -569,16 +569,35 @@ namespace TermInjectorPlus
             }
             else
             {
-                var tpMatches = this.TranslationProvider.GetLanguageDirection(
-                this.LanguagePairs.First()).SearchText(new SearchSettings(), previousTesterOutput);
+                TranslationUnit tu = new TranslationUnit();
+                
+                Segment orgSegment = new Segment();
 
-                if (!tpMatches.Any())
+                var languagePair = this.LanguagePairs.First();
+                orgSegment.Culture = languagePair.SourceCulture;
+                orgSegment.Add(previousTesterOutput);
+                tu.SourceSegment = orgSegment;
+
+                SearchResults results;
+                try
                 {
-                    previousTesterOutput = "No match found in translation provider";
+                    var searchSettings = new SearchSettings();
+                    results = this.TranslationProvider.GetLanguageDirection(
+                        languagePair).SearchTranslationUnit(searchSettings, tu);
+                }
+                catch (Exception ex)
+                {
+                    results = new SearchResults();
+                }
+                
+
+                if (!results.Any())
+                {
+                    previousTesterOutput = "No match found in translation provider (note that some plugins, such as the ModernMT plugin, require that a document is open in the editor to work).";
                 }
                 else
                 {
-                    previousTesterOutput = tpMatches.First().TranslationProposal.TargetSegment.ToPlain();
+                    previousTesterOutput = results.First().TranslationProposal.TargetSegment.ToPlain();
                 }
             }
 
@@ -727,7 +746,7 @@ namespace TermInjectorPlus
 
         private void SaveTemplateButton_Click(object sender, RoutedEventArgs e)
         {
-            this.TermInjectorConfig.SaveAsTemplate();
+            this.TermInjectorConfig.SaveAsTemplate(this.PipelineTemplates);
         }
 
         //This will save the config as well 
@@ -786,7 +805,8 @@ namespace TermInjectorPlus
         //TODO: when template selected, copy its values as the current config
         private void TermInjectorConfigComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            var template = (TermInjectorPipeline)e.AddedItems[0];
+            this.TermInjectorConfig = TermInjectorPipeline.CreateFromFile(template.ConfigFile, this.CredentialStore, true);
         }
     }
 }
