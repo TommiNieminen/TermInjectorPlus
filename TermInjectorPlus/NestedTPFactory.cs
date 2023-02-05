@@ -48,5 +48,9 @@ namespace TermInjectorPlus
             return null;
         }
 
+        internal static ITranslationProvider InstantiateNestedTP(string nestedTranslationProviderUri, object credentialStore)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

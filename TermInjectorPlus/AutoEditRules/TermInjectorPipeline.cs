@@ -46,6 +46,9 @@ namespace TermInjectorPlus
         [YamlIgnore]
         public FileInfo ConfigFile;
 
+        [YamlIgnore]
+        public ITranslationProviderCredentialStore CredentialStore;
+
         public TermInjectorPipeline()
         {
             this.PipelineGuid = System.Guid.NewGuid().ToString();
@@ -189,8 +192,28 @@ namespace TermInjectorPlus
         [YamlIgnore]
         public ObservableCollection<AutoEditRuleCollection> AutoPreEditRuleCollections { get; set; }
         
+        //TODO: instantiate the nested translation provider only when needed, do it here in the property
         [YamlIgnore]
-        public ITranslationProvider NestedTranslationProvider { get => nestedTranslationProvider; set => nestedTranslationProvider = value; }
+        public ITranslationProvider NestedTranslationProvider
+        {
+            get
+            {
+                if (!String.IsNullOrWhiteSpace(this.NestedTranslationProviderUri))
+                {
+                    nestedTranslationProvider =
+                        NestedTPFactory.InstantiateNestedTP(
+                            this.NestedTranslationProviderUri, this.CredentialStore);
+                    //TODO: if this return null, the uri should be emptied, since the nested tp
+                    //has become invalid
+                }
+                else
+                {
+                    nestedTranslationProvider = null;
+                }
+                return nestedTranslationProvider;
+            }
+                
+        }
 
         internal void SaveConfig()
         {
@@ -206,6 +229,7 @@ namespace TermInjectorPlus
                 configDir.FullName, $"{this.PipelineGuid}_temp.yml");
             var configPath = Path.Combine(
                 configDir.FullName, $"{this.PipelineGuid}.yml");
+            
             var serializer = new Serializer();
 
             //Don't replace current file yet
@@ -235,6 +259,7 @@ namespace TermInjectorPlus
                 }
             }
 
+            this.ConfigFile = new FileInfo(configPath);
         }
 
         public static TermInjectorPipeline CreateFromFile(
@@ -255,7 +280,9 @@ namespace TermInjectorPlus
                 pipeline.TemplateGuid = pipeline.PipelineGuid;
                 pipeline.PipelineGuid = Guid.NewGuid().ToString();
             }
-            
+
+            pipeline.CredentialStore = credentialStore;
+
             pipeline.AutoPreEditRuleCollections = new ObservableCollection<AutoEditRuleCollection>();
             pipeline.AutoPostEditRuleCollections = new ObservableCollection<AutoEditRuleCollection>();
 
@@ -266,14 +293,6 @@ namespace TermInjectorPlus
             TermInjectorPipeline.UpdateCollectionsFromGuids(
                 pipeline.AutoPostEditRuleCollectionGuids,
                 pipeline.AutoPostEditRuleCollections);
-            if (!String.IsNullOrWhiteSpace(pipeline.NestedTranslationProviderUri))
-            {
-                pipeline.NestedTranslationProvider = 
-                    NestedTPFactory.InstantiateNestedTP(
-                        pipeline.NestedTranslationProviderUri, credentialStore);
-                //TODO: if this return null, the uri should be emptied, since the nested tp
-                //has become invalid
-            }
 
             return pipeline;
         }
@@ -301,7 +320,9 @@ namespace TermInjectorPlus
         //TODO: add button to delete selected template
         internal void SaveAsTemplate(ObservableCollection<TermInjectorPipeline> pipelineTemplates)
         {
-            if (pipelineTemplates.Select(x => x.TemplateGuid).Contains(this.TemplateGuid))
+            var existingTemplateGuids = pipelineTemplates.Select(x => x.TemplateGuid);
+            if (this.TemplateGuid != null && 
+                existingTemplateGuids.Contains(this.TemplateGuid))
             {
                 MessageBoxResult messageBoxResult = 
                     System.Windows.MessageBox.Show(
@@ -316,9 +337,7 @@ namespace TermInjectorPlus
                     this.PipelineGuid = this.TemplateGuid;
                     this.IsTemplate = true;
                     this.SaveConfig();
-                    //TODO: nested tp instantiation should only happen to active config, currently
-                    //simply loading the templates causes lots of tps to be instantiated
-                    //pipelineTemplates.Add(TermInjectorPipeline.CreateFromFile(this.ConfigFile,this))
+                    pipelineTemplates.Add(TermInjectorPipeline.CreateFromFile(this.ConfigFile, this.CredentialStore));
                     this.PipelineGuid = currentGuid;
                     this.IsTemplate = false;
                 }
@@ -329,6 +348,7 @@ namespace TermInjectorPlus
                     this.TemplateGuid = this.PipelineGuid;
                     this.IsTemplate = true;
                     this.SaveConfig();
+                    pipelineTemplates.Add(TermInjectorPipeline.CreateFromFile(this.ConfigFile, this.CredentialStore));
                     this.PipelineGuid = currentGuid;
                     this.IsTemplate = false;
                 }
@@ -340,6 +360,7 @@ namespace TermInjectorPlus
                 this.TemplateGuid = this.PipelineGuid;
                 this.IsTemplate = true;
                 this.SaveConfig();
+                pipelineTemplates.Add(TermInjectorPipeline.CreateFromFile(this.ConfigFile, this.CredentialStore));
                 this.PipelineGuid = currentGuid;
                 this.IsTemplate = false;
             }

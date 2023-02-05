@@ -25,8 +25,19 @@
                             SelectionChanged="TermInjectorConfigComboBox_SelectionChanged"/>
 
                         <Label VerticalContentAlignment="Center" DockPanel.Dock="Left">Name</Label>
-
-                            <Button Name="SaveTemplateButton" Margin="5,0,0,0" Padding="10,0" DockPanel.Dock="Right" Click="SaveTemplateButton_Click">Save template</Button>
+                        <Button Name="DeleteTemplateButton" Margin="5,0,0,0" Padding="10,0" DockPanel.Dock="Right" Click="DeleteTemplateButton_Click">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SelectedIndex, ElementName=TermInjectorConfigComboBox}" Value="-1">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style> Delete template
+                        </Button>
+                        <Button Name="SaveTemplateButton" Margin="5,0,0,0" Padding="10,0" DockPanel.Dock="Right" Click="SaveTemplateButton_Click">Save template</Button>
                             <TextBox VerticalContentAlignment="Center" Margin="5,0,5,0" DockPanel.Dock="Right" Name="TermInjectorConfigNameBox" Text="{Binding Path=TermInjectorConfig.PipelineName, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                 
                     </DockPanel>

@@ -51,7 +51,9 @@ namespace TermInjectorPlus
         private void InitializePipelineConfigurations()
         {
             //Always add one empty configuration to list to use as basis for new configurations
-            this.emptyConfig = new TermInjectorPipeline() { PipelineName = "<new template>" };
+            this.emptyConfig = new TermInjectorPipeline() {
+                PipelineName = "<new template>", CredentialStore = this.CredentialStore
+            };
             this.PipelineTemplates =
                 new ObservableCollection<TermInjectorPipeline>()
                 { emptyConfig };
@@ -171,6 +173,14 @@ namespace TermInjectorPlus
 
 
             this.TermInjectorConfigComboBox.ItemsSource = this.PipelineTemplates;
+
+            //Usually setting the template copies the values, but in this initial selection just change the
+            //template, don't change values
+            this.applySelectedTemplate = false;
+            this.TermInjectorConfigComboBox.SelectedItem = 
+                this.PipelineTemplates.SingleOrDefault(
+                    x => x.TemplateGuid != null && x.TemplateGuid == this.TermInjectorConfig.TemplateGuid);
+            this.applySelectedTemplate = true;
         }
 
         //Add testing controls for each collection
@@ -261,6 +271,7 @@ namespace TermInjectorPlus
         private TermInjectorPipeline emptyConfig;
         private string tpDescription;
         private ITranslationProvider _translationProvider;
+        private bool applySelectedTemplate;
 
         public ObservableCollection<TermInjectorPipeline> PipelineTemplates { get; private set; }
         public ObservableCollection<TermInjectorPipeline> PipelineConfigs { get; private set; }
@@ -805,8 +816,16 @@ namespace TermInjectorPlus
         //TODO: when template selected, copy its values as the current config
         private void TermInjectorConfigComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var template = (TermInjectorPipeline)e.AddedItems[0];
-            this.TermInjectorConfig = TermInjectorPipeline.CreateFromFile(template.ConfigFile, this.CredentialStore, true);
+            if (this.applySelectedTemplate)
+            {
+                var template = (TermInjectorPipeline)e.AddedItems[0];
+                this.TermInjectorConfig = TermInjectorPipeline.CreateFromFile(template.ConfigFile, this.CredentialStore, true);
+            }
+        }
+
+        private void DeleteTemplateButton_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO: delete template, remove the config file and remove the template from the combobox
         }
     }
 }
