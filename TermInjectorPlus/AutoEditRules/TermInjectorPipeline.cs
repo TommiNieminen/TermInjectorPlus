@@ -200,9 +200,11 @@ namespace TermInjectorPlus
             {
                 if (!String.IsNullOrWhiteSpace(this.NestedTranslationProviderUri))
                 {
+                    //TODO: add check for whether translation provider supports language pairs of project
                     nestedTranslationProvider =
                         NestedTPFactory.InstantiateNestedTP(
-                            this.NestedTranslationProviderUri, this.CredentialStore);
+                            this.NestedTranslationProviderUri, 
+                            this.CredentialStore);
                     //TODO: if this return null, the uri should be emptied, since the nested tp
                     //has become invalid
                 }
@@ -210,10 +212,13 @@ namespace TermInjectorPlus
                 {
                     nestedTranslationProvider = null;
                 }
+                
                 return nestedTranslationProvider;
             }
                 
         }
+
+        public LanguagePair[] LanguagePairs { get; internal set; }
 
         internal void SaveConfig()
         {

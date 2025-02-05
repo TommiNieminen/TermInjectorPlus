@@ -34,10 +34,11 @@ namespace TermInjectorPlus
                 .CreateLogger();
         }
 
-        public TermInjectorPlusTP(TermInjectorPlusTPOptions options, ITranslationProviderCredentialStore credentialStore)
+        public TermInjectorPlusTP(TermInjectorPlusTPOptions options,
+            ITranslationProviderCredentialStore credentialStore)
         {
             this.SetupLogging();
-
+            
             Options = options;
             this.CredentialStore = credentialStore;
 

@@ -52,7 +52,8 @@ namespace TermInjectorPlus
         {
             //Always add one empty configuration to list to use as basis for new configurations
             this.emptyConfig = new TermInjectorPipeline() {
-                PipelineName = "<new template>", CredentialStore = this.CredentialStore
+                PipelineName = "<new template>",
+                CredentialStore = this.CredentialStore
             };
             this.PipelineTemplates =
                 new ObservableCollection<TermInjectorPipeline>()
@@ -571,7 +572,10 @@ namespace TermInjectorPlus
             if (this.TranslationProvider == null &&
                     !String.IsNullOrWhiteSpace(this.TermInjectorConfig.NestedTranslationProviderUri))
             {
-                this.TranslationProvider = NestedTPFactory.InstantiateNestedTP(this.TermInjectorConfig.NestedTranslationProviderUri, this.CredentialStore);
+                this.TranslationProvider = NestedTPFactory.InstantiateNestedTP(
+                    this.TermInjectorConfig.NestedTranslationProviderUri, 
+                    this.CredentialStore,
+                    this.LanguagePairs);
             }
 
             if (this.TranslationProvider == null)
@@ -737,7 +741,10 @@ namespace TermInjectorPlus
                 if (this.TranslationProvider == null &&
                     !String.IsNullOrWhiteSpace(this.TermInjectorConfig.NestedTranslationProviderUri))
                 {
-                    this.TranslationProvider = NestedTPFactory.InstantiateNestedTP(this.TermInjectorConfig.NestedTranslationProviderUri, this.CredentialStore);
+                    this.TranslationProvider = NestedTPFactory.InstantiateNestedTP(
+                        this.TermInjectorConfig.NestedTranslationProviderUri, 
+                        this.CredentialStore,
+                        this.LanguagePairs);
                 }
 
                 selectedUi.Edit(

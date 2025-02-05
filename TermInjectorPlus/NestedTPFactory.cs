@@ -5,12 +5,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace TermInjectorPlus
 {
     internal class NestedTPFactory
     {
-        public static ITranslationProvider InstantiateNestedTP(string nestedTPUriString, ITranslationProviderCredentialStore credentialStore)
+        public static ITranslationProvider InstantiateNestedTP(
+            string nestedTPUriString, 
+            ITranslationProviderCredentialStore credentialStore, 
+            Sdl.LanguagePlatform.Core.LanguagePair[] languagePairs)
         {
             IList<ITranslationProviderFactory> tpFactories;
             try
@@ -36,6 +40,11 @@ namespace TermInjectorPlus
                     try
                     {
                         nestedProvider = factory.CreateTranslationProvider(nestedUri, "", credentialStore);
+                        if (!languagePairs.Any(nestedProvider.SupportsLanguageDirection))
+                        {
+                            MessageBox.Show($"Selected translation provider does not support any of the specified language directions.");
+                            nestedProvider = null;
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -47,10 +56,6 @@ namespace TermInjectorPlus
 
             return null;
         }
-
-        internal static ITranslationProvider InstantiateNestedTP(string nestedTranslationProviderUri, object credentialStore)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }
