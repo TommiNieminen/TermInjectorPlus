@@ -29,9 +29,6 @@ namespace TermInjectorPlus
         [YamlMember(Alias = "guid", ApplyNamingConventions = false)]
         public string PipelineGuid;
 
-        [YamlMember(Alias = "template-guid", ApplyNamingConventions = false)]
-        public string TemplateGuid;
-
         [YamlMember(Alias = "nested-tp-uri", ApplyNamingConventions = false)]
         public string NestedTranslationProviderUri;
 
@@ -41,7 +38,12 @@ namespace TermInjectorPlus
         [YamlMember(Alias = "auto-post-edit-rule-collection-guids", ApplyNamingConventions = false)]
         public ObservableCollection<string> AutoPostEditRuleCollectionGuids { get; internal set; }
 
+
         private ITranslationProvider nestedTranslationProvider;
+
+        [YamlIgnore]
+        public LanguagePair[] LanguagePairs;
+
 
         [YamlIgnore]
         public FileInfo ConfigFile;
@@ -158,13 +160,12 @@ namespace TermInjectorPlus
         private SearchResult CreateSearchResult(Segment searchSegment, Segment translation,
             string sourceSegment, bool formattingPenalty)
         {
-            #region "TranslationUnit"
+            
             TranslationUnit tu = new TranslationUnit();
             Segment orgSegment = new Segment();
             orgSegment.Add(sourceSegment);
             tu.SourceSegment = orgSegment;
             tu.TargetSegment = translation;
-            #endregion
 
             tu.ResourceId = new PersistentObjectToken(tu.GetHashCode(), Guid.Empty);
 
@@ -198,27 +199,34 @@ namespace TermInjectorPlus
         {
             get
             {
-                if (!String.IsNullOrWhiteSpace(this.NestedTranslationProviderUri))
+                if (this.nestedTranslationProvider == null)
                 {
-                    //TODO: add check for whether translation provider supports language pairs of project
-                    nestedTranslationProvider =
-                        NestedTPFactory.InstantiateNestedTP(
-                            this.NestedTranslationProviderUri, 
-                            this.CredentialStore);
-                    //TODO: if this return null, the uri should be emptied, since the nested tp
-                    //has become invalid
+                    if (!String.IsNullOrWhiteSpace(this.NestedTranslationProviderUri))
+                    {
+                        //TODO: add check for whether translation provider supports language pairs of project
+                        //FIX: This seems all messed up, the translation provider should be set up only once
+                        this.nestedTranslationProvider =
+                            NestedTPFactory.InstantiateNestedTP(
+                                this.NestedTranslationProviderUri,
+                                this.CredentialStore,
+                                this.LanguagePairs);
+                        //TODO: if this return null, the uri should be emptied, since the nested tp
+                        //has become invalid
+                    }
+                    else
+                    {
+                        this.nestedTranslationProvider = null;
+                    }
+
+                    return this.nestedTranslationProvider;
                 }
                 else
-                {
-                    nestedTranslationProvider = null;
+                { 
+                    return this.nestedTranslationProvider; 
                 }
-                
-                return nestedTranslationProvider;
             }
                 
         }
-
-        public LanguagePair[] LanguagePairs { get; internal set; }
 
         internal void SaveConfig()
         {
@@ -282,8 +290,10 @@ namespace TermInjectorPlus
             pipeline.ConfigFile = configFileInfo;
             if (createFromTemplate)
             {
-                pipeline.TemplateGuid = pipeline.PipelineGuid;
+                //Create a new config duplicating the template, except
+                //for the GUID, also mark the config as non-template
                 pipeline.PipelineGuid = Guid.NewGuid().ToString();
+                pipeline.IsTemplate = false;
             }
 
             pipeline.CredentialStore = credentialStore;
@@ -298,6 +308,8 @@ namespace TermInjectorPlus
             TermInjectorPipeline.UpdateCollectionsFromGuids(
                 pipeline.AutoPostEditRuleCollectionGuids,
                 pipeline.AutoPostEditRuleCollections);
+
+
 
             return pipeline;
         }
@@ -322,54 +334,75 @@ namespace TermInjectorPlus
             }
         }
 
-        //TODO: add button to delete selected template
-        internal void SaveAsTemplate(ObservableCollection<TermInjectorPipeline> pipelineTemplates)
+        internal Boolean DeleteTemplate()
         {
-            var existingTemplateGuids = pipelineTemplates.Select(x => x.TemplateGuid);
-            if (this.TemplateGuid != null && 
-                existingTemplateGuids.Contains(this.TemplateGuid))
+            //The configs are saved in the terminjector folder in appdata, using GUIDs as file names.
+            var configDir = new DirectoryInfo(
+                HelperFunctions.GetLocalAppDataPath(TermInjectorPlusSettings.Default.ConfigDir));
+            var templatePath = Path.Combine(
+                configDir.FullName, $"{this.PipelineGuid}.yml");
+            MessageBoxResult messageBoxResult =
+                    System.Windows.MessageBox.Show(
+                        "Are you sure you want to delete this template.", "Confirm template deletion", MessageBoxButton.YesNo);
+            if (messageBoxResult == MessageBoxResult.Cancel)
+            {
+                return false;
+            }
+            else //(messageBoxResult == MessageBoxResult.Yes)
+            {
+                File.Delete(templatePath);
+                return true;
+            }
+        }        
+
+        internal Boolean SaveAsTemplate(ObservableCollection<TermInjectorPipeline> pipelineTemplates)
+        {
+            var pipelineWithSameName = pipelineTemplates.SingleOrDefault(x => x.PipelineName == this.PipelineName);
+            if (pipelineWithSameName != null)
             {
                 MessageBoxResult messageBoxResult = 
                     System.Windows.MessageBox.Show(
-                        "Click Yes to replace the existing template, or No to create a new template.","Template exists",MessageBoxButton.YesNoCancel);
+                        "Click Yes to replace the existing template, or No to create a new template, or Cancel to do neither.","Template with same name exists",MessageBoxButton.YesNoCancel);
                 if (messageBoxResult == MessageBoxResult.Cancel)
                 {
-                    return;
+                    return false;
                 }
                 else if (messageBoxResult == MessageBoxResult.Yes)
                 {
                     var currentGuid = this.PipelineGuid;
-                    this.PipelineGuid = this.TemplateGuid;
+                    this.PipelineGuid = pipelineWithSameName.PipelineGuid;
                     this.IsTemplate = true;
                     this.SaveConfig();
+                    pipelineTemplates.Remove(pipelineWithSameName);
                     pipelineTemplates.Add(TermInjectorPipeline.CreateFromFile(this.ConfigFile, this.CredentialStore));
                     this.PipelineGuid = currentGuid;
                     this.IsTemplate = false;
+                    return false;
                 }
-                else if (messageBoxResult == MessageBoxResult.No)
+                else //Result is No, creates a new template
                 {
                     var currentGuid = this.PipelineGuid;
                     this.PipelineGuid = System.Guid.NewGuid().ToString();
-                    this.TemplateGuid = this.PipelineGuid;
                     this.IsTemplate = true;
                     this.SaveConfig();
                     pipelineTemplates.Add(TermInjectorPipeline.CreateFromFile(this.ConfigFile, this.CredentialStore));
                     this.PipelineGuid = currentGuid;
                     this.IsTemplate = false;
+                    return true;
                 }
             }
             else
             {
                 var currentGuid = this.PipelineGuid;
                 this.PipelineGuid = System.Guid.NewGuid().ToString();
-                this.TemplateGuid = this.PipelineGuid;
                 this.IsTemplate = true;
                 this.SaveConfig();
                 pipelineTemplates.Add(TermInjectorPipeline.CreateFromFile(this.ConfigFile, this.CredentialStore));
                 this.PipelineGuid = currentGuid;
                 this.IsTemplate = false;
+                return true;
             }
-            
+
         }
     }
 }

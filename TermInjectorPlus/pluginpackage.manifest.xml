@@ -11,5 +11,7 @@
     <File>ThirdPartyNotices.txt</File>
     <File>Serilog.dll</File>
     <File>Serilog.Sinks.File.dll</File>
+    <File>Microsoft.WindowsAPICodePack.dll</File>
+    <File>Microsoft.WindowsAPICodePack.Shell.dll</File>
   </Include>
 </PluginPackage>

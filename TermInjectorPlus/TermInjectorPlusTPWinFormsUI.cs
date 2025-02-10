@@ -16,14 +16,21 @@ namespace TermInjectorPlus
     {
         #region ITranslationProviderWinFormsUI Members
         
-        public ITranslationProvider[] Browse(IWin32Window owner, LanguagePair[] languagePairs, ITranslationProviderCredentialStore credentialStore)
+        public ITranslationProvider[] Browse(
+            IWin32Window owner, 
+            LanguagePair[] languagePairs, 
+            ITranslationProviderCredentialStore credentialStore)
         {
             
-            TermInjectorPlusDialog dialog = new TermInjectorPlusDialog(new TermInjectorPlusTPOptions(),credentialStore,owner, languagePairs);
+            TermInjectorPlusDialog dialog = new TermInjectorPlusDialog(
+                new TermInjectorPlusTPOptions(),
+                credentialStore,owner, 
+                languagePairs);
             
             if (dialog.ShowDialog(owner) == DialogResult.OK)
             {
-                TermInjectorPlusTP testProvider = new TermInjectorPlusTP(dialog.Options,credentialStore);
+                TermInjectorPlusTP testProvider = 
+                    new TermInjectorPlusTP(dialog.Options,credentialStore);
                 return new ITranslationProvider[] { testProvider };
             }
             return null;
@@ -40,8 +47,11 @@ namespace TermInjectorPlus
         /// <param name="languagePairs"></param>
         /// <param name="credentialStore"></param>
         /// <returns></returns>
-        #region "Edit"
-        public bool Edit(IWin32Window owner, ITranslationProvider translationProvider, LanguagePair[] languagePairs, ITranslationProviderCredentialStore credentialStore)
+        
+        public bool Edit(IWin32Window owner, 
+            ITranslationProvider translationProvider, 
+            LanguagePair[] languagePairs, 
+            ITranslationProviderCredentialStore credentialStore)
         {
             TermInjectorPlusTP editProvider = translationProvider as TermInjectorPlusTP;
             if (editProvider == null)
@@ -49,7 +59,8 @@ namespace TermInjectorPlus
                 return false;
             }
 
-            TermInjectorPlusDialog dialog = new TermInjectorPlusDialog(editProvider.Options,credentialStore,owner,languagePairs);
+            TermInjectorPlusDialog dialog = new TermInjectorPlusDialog(
+                editProvider.Options,credentialStore,owner,languagePairs);
             if (dialog.ShowDialog(owner) == DialogResult.OK)
             {
                 editProvider.Options = dialog.Options;
@@ -58,9 +69,13 @@ namespace TermInjectorPlus
 
             return false;
         }
-        #endregion
+        
 
-        public bool GetCredentialsFromUser(IWin32Window owner, Uri translationProviderUri, string translationProviderState, ITranslationProviderCredentialStore credentialStore)
+        public bool GetCredentialsFromUser(
+            IWin32Window owner, 
+            Uri translationProviderUri, 
+            string translationProviderState, 
+            ITranslationProviderCredentialStore credentialStore)
         {
             throw new NotImplementedException();
         }
@@ -72,7 +87,7 @@ namespace TermInjectorPlus
         /// <param name="translationProviderUri"></param>
         /// <param name="translationProviderState"></param>
         /// <returns></returns>
-        #region "GetDisplayInfo"
+        
         public TranslationProviderDisplayInfo GetDisplayInfo(Uri translationProviderUri, string translationProviderState)
         {
             TranslationProviderDisplayInfo info = new TranslationProviderDisplayInfo();
@@ -84,7 +99,7 @@ namespace TermInjectorPlus
 
             return info;
         }
-        #endregion
+        
 
         public bool SupportsEditing
         {
@@ -97,7 +112,10 @@ namespace TermInjectorPlus
             {
                 throw new ArgumentNullException("URI not supported by the plug-in.");
             }
-            return String.Equals(translationProviderUri.Scheme, TermInjectorPlusTP.TermInjectorPlusTranslationProviderScheme, StringComparison.CurrentCultureIgnoreCase);
+            return String.Equals(
+                translationProviderUri.Scheme, 
+                TermInjectorPlusTP.TermInjectorPlusTranslationProviderScheme, 
+                StringComparison.CurrentCultureIgnoreCase);
         }
 
         public string TypeDescription

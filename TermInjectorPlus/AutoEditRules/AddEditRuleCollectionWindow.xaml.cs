@@ -100,7 +100,7 @@ namespace TermInjectorPlus
             using (var dialog = new CommonOpenFileDialog())
             {
                 dialog.Multiselect = true;
-                dialog.Filters.Add(new CommonFileDialogFilter(".yml files", ".yml"));
+                dialog.Filters.Add(new CommonFileDialogFilter(".yml files", "yml"));
                 CommonFileDialogResult result = dialog.ShowDialog();
                 List<AutoEditRuleCollection> collectionsToImport = new List<AutoEditRuleCollection>();
                 var replaceExistingRules = !this.ReplaceCheckBox.IsChecked.Value;

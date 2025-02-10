@@ -17,7 +17,7 @@ namespace TermInjectorPlus
 
         public static readonly string TermInjectorPlusTranslationProviderScheme = "terminjectorplus";
 
-        #region "TranslationOptions"
+        
         public TermInjectorPlusTPOptions Options
         {
             get;
@@ -51,17 +51,19 @@ namespace TermInjectorPlus
                 var configInOptionFileInfo = pipelineConfigDir.GetFiles($"{configGuid}.yml").FirstOrDefault();
                 if (configInOptionFileInfo != null)
                 {
-                    this.TerminjectorPipeline = TermInjectorPipeline.CreateFromFile(configInOptionFileInfo, credentialStore);
+                    this.TerminjectorPipeline = TermInjectorPipeline.CreateFromFile(
+                        configInOptionFileInfo, credentialStore);
                 }
             }
 
         }
-        #endregion
+        
 
 
-        #region ITranslationProvider Members
+        
 
-        public ITranslationProviderLanguageDirection GetLanguageDirection(LanguagePair languageDirection)
+        public ITranslationProviderLanguageDirection GetLanguageDirection(
+            LanguagePair languageDirection)
         {
             return new TermInjectorPlusTPLanguageDirection(this,languageDirection);
         }
@@ -193,9 +195,7 @@ namespace TermInjectorPlus
 
         public ITranslationProviderCredentialStore CredentialStore { get; }
         public TermInjectorPipeline TerminjectorPipeline { get; private set; }
-        public ITranslationProvider NestedTP { get; private set; }
 
-        #endregion
     }
 }
 

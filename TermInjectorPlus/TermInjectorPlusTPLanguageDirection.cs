@@ -32,7 +32,7 @@ namespace TermInjectorPlus
         #region "ProviderLanguageDirection"
         public TermInjectorPlusTPLanguageDirection(TermInjectorPlusTP provider, LanguagePair languages)
         {
-            #region "Instantiate"
+            
             _provider = provider;
             _languagePair = languages;
             _options = _provider.Options;
@@ -43,7 +43,7 @@ namespace TermInjectorPlus
                 this._nestedTpLanguageDirection =
                     this._provider.TerminjectorPipeline.NestedTranslationProvider.GetLanguageDirection(_languagePair);
             }
-            #endregion
+            
 
             //TODO: any instantiation code for ILanguageDirection
         }

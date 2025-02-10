@@ -14,25 +14,26 @@ namespace TermInjectorPlus
                                 Description = "TermInjectorPlus_Plug_inFactory")]
     class TermInjectorPlusTPFactory : ITranslationProviderFactory
     {
-        #region ITranslationProviderFactory Members
-
-        public ITranslationProvider CreateTranslationProvider(Uri translationProviderUri, string translationProviderState, ITranslationProviderCredentialStore credentialStore)
+        
+        public ITranslationProvider CreateTranslationProvider(
+            Uri translationProviderUri, 
+            string translationProviderState, 
+            ITranslationProviderCredentialStore credentialStore)
         {
-            return new TermInjectorPlusTP(new TermInjectorPlusTPOptions(translationProviderUri),credentialStore);
+            return new TermInjectorPlusTP(new TermInjectorPlusTPOptions(
+                translationProviderUri),credentialStore);
         }
 
-        public TranslationProviderInfo GetTranslationProviderInfo(Uri translationProviderUri, string translationProviderState)
+        public TranslationProviderInfo GetTranslationProviderInfo(
+            Uri translationProviderUri, 
+            string translationProviderState)
         {
             TranslationProviderInfo info = new TranslationProviderInfo();
 
-            #region "TranslationMethod"
             info.TranslationMethod = TermInjectorPlusTPOptions.ProviderTranslationMethod;
-            #endregion
-
-            #region "Name"
+            
             info.Name = PluginResources.Plugin_NiceName;
-            #endregion
-
+            
             return info;
         }
 
@@ -42,9 +43,11 @@ namespace TermInjectorPlus
             {
                 throw new ArgumentNullException("Translation provider URI not supported.");
             }
-            return String.Equals(translationProviderUri.Scheme, TermInjectorPlusTP.TermInjectorPlusTranslationProviderScheme, StringComparison.OrdinalIgnoreCase);
+            return String.Equals(
+                translationProviderUri.Scheme, 
+                TermInjectorPlusTP.TermInjectorPlusTranslationProviderScheme, 
+                StringComparison.OrdinalIgnoreCase);
         }
 
-        #endregion
     }
 }

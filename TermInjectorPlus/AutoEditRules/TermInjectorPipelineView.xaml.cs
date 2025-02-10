@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -21,6 +22,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
@@ -50,14 +52,10 @@ namespace TermInjectorPlus
 
         private void InitializePipelineConfigurations()
         {
-            //Always add one empty configuration to list to use as basis for new configurations
-            this.emptyConfig = new TermInjectorPipeline() {
-                PipelineName = "<new template>",
-                CredentialStore = this.CredentialStore
-            };
+            
             this.PipelineTemplates =
                 new ObservableCollection<TermInjectorPipeline>()
-                { emptyConfig };
+                { };
 
             this.PipelineConfigs = new ObservableCollection<TermInjectorPipeline>();
 
@@ -96,6 +94,7 @@ namespace TermInjectorPlus
             {
                 editRuleDir.Create();
             }
+
             var deserializer = new Deserializer();
             foreach (var file in editRuleDir.EnumerateFiles())
             {
@@ -145,8 +144,6 @@ namespace TermInjectorPlus
             this.InitializeAutoEditRuleCollections();
             this.InitializePipelineConfigurations();
 
-            Guid configGuid;
-
             InitializeComponent();
 
             //Populate the translation provider combo box
@@ -154,33 +151,38 @@ namespace TermInjectorPlus
             this.TpComboBox.ItemsSource = this.TranslationProviderPluginUis;
 
 
+            Guid configGuid;
             //Check if the options contain a guid for an existing terminjector configuration
             if (Guid.TryParse(translationOptions.configGuid, out configGuid))
             {
                 var configInOptions =
-                    this.PipelineConfigs.SingleOrDefault(x => x.PipelineGuid == translationOptions.configGuid);
+                    this.PipelineConfigs.SingleOrDefault(
+                        x => x.PipelineGuid == translationOptions.configGuid);
                 if (configInOptions != null)
                 {
                     this.TermInjectorConfig = configInOptions;
                 }
             }
-
-            if (this.TermInjectorConfig == null)
+            else
             {
-                this.TermInjectorConfig = this.emptyConfig;
+                this.TermInjectorConfig = new TermInjectorPipeline()
+                { PipelineName = "new pipeline" };
             }
 
-            this.Title = String.Format(TermInjectorPlus.Properties.Resources.EditRules_EditRulesTitle, TermInjectorConfig.PipelineName);
+            
+            this.Title = String.Format(TermInjectorPlus.Properties.Resources.EditRules_EditRulesTitle, this.TermInjectorConfig.PipelineName);
 
 
             this.TermInjectorConfigComboBox.ItemsSource = this.PipelineTemplates;
 
-            //Usually setting the template copies the values, but in this initial selection just change the
-            //template, don't change values
-            this.applySelectedTemplate = false;
-            this.TermInjectorConfigComboBox.SelectedItem = 
+        }
+
+        private void SetTemplate(Boolean apply)
+        {
+            this.applySelectedTemplate = apply;
+            this.TermInjectorConfigComboBox.SelectedItem =
                 this.PipelineTemplates.SingleOrDefault(
-                    x => x.TemplateGuid != null && x.TemplateGuid == this.TermInjectorConfig.TemplateGuid);
+                    x => x.IsTemplate && x.PipelineGuid == this.TermInjectorConfig.PipelineGuid);
             this.applySelectedTemplate = true;
         }
 
@@ -269,7 +271,6 @@ namespace TermInjectorPlus
         public List<TestPreEditRuleControl> PreEditTesters { get; private set; }
         public List<TestPostEditRuleControl> PostEditTesters { get; private set; }
 
-        private TermInjectorPipeline emptyConfig;
         private string tpDescription;
         private ITranslationProvider _translationProvider;
         private bool applySelectedTemplate;
@@ -647,6 +648,23 @@ namespace TermInjectorPlus
             //this.TermInjectorConfig.SaveConfig();
         }
 
+        private void OpenPreEditCollectionInEditor_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedCollection = (AutoEditRuleCollection)this.AutoPreEditRuleCollectionList.SelectedItem;
+            selectedCollection.OpenInEditor();
+        
+        }
+
+        //TODO: duplicate Editor button and this for post-edit rules
+        private void ReloadPreEditCollection_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedCollection = (AutoEditRuleCollection)this.AutoPreEditRuleCollectionList.SelectedItem;
+            var loadedRuleCollection = selectedCollection.Reload();
+            var collectionIndex = this.TermInjectorConfig.AutoPreEditRuleCollections.IndexOf(selectedCollection);
+            this.TermInjectorConfig.AutoPreEditRuleCollections.Insert(collectionIndex, loadedRuleCollection);
+            this.TermInjectorConfig.AutoPreEditRuleCollections.Remove(selectedCollection);
+        }
+
         private void MovePreRuleCollectionDown_Click(object sender, RoutedEventArgs e)
         {
             this.MoveCollectionDown(
@@ -764,7 +782,11 @@ namespace TermInjectorPlus
 
         private void SaveTemplateButton_Click(object sender, RoutedEventArgs e)
         {
-            this.TermInjectorConfig.SaveAsTemplate(this.PipelineTemplates);
+            Boolean templateGuidChanged = this.TermInjectorConfig.SaveAsTemplate(this.PipelineTemplates);
+            if (templateGuidChanged)
+            {
+                this.SetTemplate(false);
+            }
         }
 
         //This will save the config as well 
@@ -792,7 +814,7 @@ namespace TermInjectorPlus
                     this.Owner,
                     this.LanguagePairs,
                     this.CredentialStore);
-            if (browseResult != null || browseResult.Length == 0)
+            if (browseResult != null && browseResult.Length > 0)
             {
                 this.TranslationProvider = browseResult.SingleOrDefault();
             }
@@ -800,7 +822,10 @@ namespace TermInjectorPlus
             {
                 //Restore the previous selection, since no change to translation provider happened
                 TpComboBoxSelectionManuallyChanged = false;
-                this.TpComboBox.SelectedItem = e.RemovedItems[0];
+                if (e.RemovedItems.Count > 0)
+                {
+                    this.TpComboBox.SelectedItem = e.RemovedItems[0];
+                }
             }
 
             if (this.TranslationProvider != null)
@@ -820,19 +845,39 @@ namespace TermInjectorPlus
             this.TpComboBoxSelectionManuallyChanged = true;
         }
 
-        //TODO: when template selected, copy its values as the current config
         private void TermInjectorConfigComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (this.applySelectedTemplate)
+            // This code applies the template when selected, this is not user-friendly
+            /*if (this.applySelectedTemplate)
             {
-                var template = (TermInjectorPipeline)e.AddedItems[0];
-                this.TermInjectorConfig = TermInjectorPipeline.CreateFromFile(template.ConfigFile, this.CredentialStore, true);
-            }
+                if (e.AddedItems.Count > 0) {
+                    var template = (TermInjectorPipeline)e.AddedItems[0];
+                    this.TermInjectorConfig = TermInjectorPipeline.CreateFromFile(
+                        template.ConfigFile, this.CredentialStore, createFromTemplate: true);
+                }
+            }*/
         }
 
         private void DeleteTemplateButton_Click(object sender, RoutedEventArgs e)
         {
-            //TODO: delete template, remove the config file and remove the template from the combobox
+            var template = (TermInjectorPipeline)this.TermInjectorConfigComboBox.SelectedItem;
+            this.PipelineTemplates.Remove(template);
+            template.DeleteTemplate();
+        }
+
+        
+
+        private void ApplyTemplateButton_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult messageBoxResult =
+                    System.Windows.MessageBox.Show(
+                        "Applying the template will replace the currently selected settings. Click OK if you want to proceed.","Apply template?",MessageBoxButton.OKCancel);
+            if (messageBoxResult == MessageBoxResult.OK)
+            {
+                var template = (TermInjectorPipeline)this.TermInjectorConfigComboBox.SelectedItem;
+                this.TermInjectorConfig = TermInjectorPipeline.CreateFromFile(
+                    template.ConfigFile, this.CredentialStore, createFromTemplate: true);
+            }
         }
     }
 }

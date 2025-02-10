@@ -40,7 +40,7 @@ namespace TermInjectorPlus
                     try
                     {
                         nestedProvider = factory.CreateTranslationProvider(nestedUri, "", credentialStore);
-                        if (!languagePairs.Any(nestedProvider.SupportsLanguageDirection))
+                        if (languagePairs != null && !languagePairs.Any(nestedProvider.SupportsLanguageDirection))
                         {
                             MessageBox.Show($"Selected translation provider does not support any of the specified language directions.");
                             nestedProvider = null;

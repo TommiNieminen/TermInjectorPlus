@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -33,10 +34,10 @@ namespace TermInjectorPlus
 
         public AutoEditRuleCollection()
         {
-            
+
         }
 
-        public void Save(DirectoryInfo editRuleDir=null)
+        public void Save(DirectoryInfo editRuleDir = null)
         {
             //If dir arg is null, save to opus-cat data directory. Dir arg is used with
             //exporting rules.
@@ -55,7 +56,7 @@ namespace TermInjectorPlus
             var ruleCollectionPath = Path.Combine(
                 editRuleDir.FullName, $"{this.CollectionGuid}.yml");
             var serializer = new Serializer();
-            
+
             //Don't replace current file yet
             using (var writer = File.CreateText(ruleCollectionTempPath))
             {
@@ -103,14 +104,15 @@ namespace TermInjectorPlus
         {
             Dictionary<int, List<AutoEditRuleMatch>> regexMatches = new Dictionary<int, List<AutoEditRuleMatch>>();
             foreach (var rule in this.EditRules)
-            {   
+            {
                 //If source pattern exists, use it as condition for rule application
                 if (!String.IsNullOrEmpty(rule.SourcePattern))
                 {
                     //Note that we check for the trigger in the unedited source (don't
                     //want to do serial rule application here)
-                    var uneditedSourceMatches = rule.SourcePatternRegex.Matches(uneditedInput);
-                    if (uneditedSourceMatches.Count > 0)
+                    var uneditedSourceMatches = rule.SourcePatternRegex.Matches(uneditedInput).Cast<Match>().Where(
+                        x => x.Length > 0);
+                    if (uneditedSourceMatches.Count() > 0)
                     {
                         int matchIndex = 0;
                         foreach (Match match in uneditedSourceMatches)
@@ -135,7 +137,7 @@ namespace TermInjectorPlus
 
         private Dictionary<int, List<AutoEditRuleMatch>> GetAllOutputMatches(string source, string uneditedOutput)
         {
-            Dictionary<int, List<AutoEditRuleMatch>> regexMatches = 
+            Dictionary<int, List<AutoEditRuleMatch>> regexMatches =
                 new Dictionary<int, List<AutoEditRuleMatch>>();
             foreach (var rule in this.EditRules)
             {
@@ -145,7 +147,7 @@ namespace TermInjectorPlus
                 {
                     //Note that we check for the trigger in the unedited source (don't
                     //want to do serial rule application here)
-                    sourceMatches = 
+                    sourceMatches =
                         rule.SourcePatternRegex.Matches(source).Cast<Match>().Where(x => x.Length > 0).ToList();
                 }
 
@@ -153,7 +155,7 @@ namespace TermInjectorPlus
                 if (sourceMatches == null || sourceMatches.Count > 0)
                 {
                     var outputMatches = rule.OutputPatternRegex.Matches(uneditedOutput);
-                
+
                     if (outputMatches.Count > 0)
                     {
                         int matchIndex = 0;
@@ -279,7 +281,7 @@ namespace TermInjectorPlus
             List<AutoEditRuleMatch> appliedReplacements = new List<AutoEditRuleMatch>();
             List<Tuple<int, int>> coveredUneditedOutputSpans = new List<Tuple<int, int>>();
             //Collect matches for all rules
-            Dictionary<int, List<AutoEditRuleMatch>> uneditedSourceMatches = this.GetAllOutputMatches(source,unedited);
+            Dictionary<int, List<AutoEditRuleMatch>> uneditedSourceMatches = this.GetAllOutputMatches(source, unedited);
 
             int endOfLastMatchIndex = -1;
             //How much the length of the edited source has changed in comparison with unedited source
@@ -292,11 +294,11 @@ namespace TermInjectorPlus
                 //Remove the original text
                 var matchLength = longestMatch.Match.Length;
                 edited = edited.Remove(matchesAtPosition.Key + editingOffset, matchLength);
-                
+
                 //Replace with rule replacement
                 var replacement = longestMatch.Match.Result(longestMatch.Rule.Replacement);
 
-                var sourceGroupMatches = 
+                var sourceGroupMatches =
                     Regex.Matches(
                         replacement,
                         @"(^(\$\$)*\$|[^$](\$\$)*\$)<(?<casingOperator>[LUC])?(?<sourceGroup>\d+)>");
@@ -311,7 +313,7 @@ namespace TermInjectorPlus
                         if (longestMatch.SourceMatch.Groups.Count > sourceGroupIndex)
                         {
                             var sourceGroup = longestMatch.SourceMatch.Groups[sourceGroupIndex];
-                            
+
                             var casingOperator = match.Groups["casingOperator"];
                             if (casingOperator.Success)
                             {
@@ -350,7 +352,7 @@ namespace TermInjectorPlus
                 endOfLastMatchIndex = longestMatch.Match.Index + matchLength;
 
             }
-            
+
             return new AutoEditResult(edited, appliedReplacements);
         }
 
@@ -376,7 +378,7 @@ namespace TermInjectorPlus
             var casingGroupMatches =
                     Regex.Matches(
                         replacement,
-                        @"(^(\$\$)*\$|[^$](\$\$)*\$)(?<casingOperator>[LUC])(?<outputGroup>\d+)");
+                         @"(^(\$\$)*\$|(?<=[^$])(\$\$)*\$)(?<casingOperator>[LUC])(?<outputGroup>\d+)");
 
             if (casingGroupMatches.Count > 0)
             {
@@ -409,7 +411,7 @@ namespace TermInjectorPlus
             return replacement;
         }
 
-        public static AutoEditRuleCollection CreateFromFile(FileInfo ruleFileInfo, bool assignNewId=false)
+        public static AutoEditRuleCollection CreateFromFile(FileInfo ruleFileInfo, bool assignNewId = false)
         {
             AutoEditRuleCollection editRuleCollection;
             var deserializer = new Deserializer();
@@ -423,6 +425,47 @@ namespace TermInjectorPlus
                 editRuleCollection.CollectionGuid = Guid.NewGuid().ToString();
             }
             return editRuleCollection;
+        }
+
+        internal void OpenInEditor()
+        {
+            var editRuleDir = new DirectoryInfo(
+                    HelperFunctions.GetLocalAppDataPath(TermInjectorPlusSettings.Default.EditRuleDir));
+            var ruleCollectionPath = Path.Combine(
+                editRuleDir.FullName, $"{this.CollectionGuid}.yml");
+
+            new Process
+            {
+                StartInfo = new ProcessStartInfo(ruleCollectionPath)
+                {
+                    UseShellExecute = true
+                }
+            }.Start();
+        }
+
+        internal AutoEditRuleCollection Reload()
+        {
+            var editRuleDir = new DirectoryInfo(
+                    HelperFunctions.GetLocalAppDataPath(TermInjectorPlusSettings.Default.EditRuleDir));
+            var ruleCollectionPath = Path.Combine(
+                editRuleDir.FullName, $"{this.CollectionGuid}.yml");
+
+            var deserializer = new Deserializer();
+            FileInfo ruleCollectionFile = new FileInfo(ruleCollectionPath);
+            AutoEditRuleCollection loadedRuleCollection;
+            using (var reader = ruleCollectionFile.OpenText())
+            {
+                try
+                {
+                    loadedRuleCollection = deserializer.Deserialize<AutoEditRuleCollection>(reader);
+                }
+                catch
+                {
+                    loadedRuleCollection = null;
+                }
+            }
+
+            return loadedRuleCollection;
         }
     }
 }

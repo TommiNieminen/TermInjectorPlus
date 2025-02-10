@@ -62,12 +62,11 @@ namespace TermInjectorPlus
         #endregion
 
 
-        #region "UpdateDialog"
+        
         private void UpdateDialog()
         {
             //TODO: add code to update the dialog, if necessary, from the options read in the plugin URI string
         }
-        #endregion
 
         //TODO: replace this with WPF child Save and Cancel handler
         /*private void Ok_Click(object sender, EventArgs e)
