@@ -13,11 +13,11 @@
 # you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
-title: TermnInjectorPlus
+title: TermInjectorPlus
 description: >- # this means to ignore newlines until "baseurl:"
         OPUS-CAT is a collection of software which makes it possible to use OPUS-MT neural machine translation models in professional translation. OPUS-CAT includes a local offline MT engine and a collection of CAT tool plugins.
 #baseurl: "/help" # the subpath of your site, e.g. /blog
-#url: "https://TommiNieminen.github.io/TermInjectorPlus" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://TommiNieminen.github.io/TermInjectorPlus" # the base hostname & protocol for your site, e.g. http://example.com
 #twitter_username: jekyllrb
 github_username:  TommiNieminen
 email: nieminentommi (at) hotmail.com

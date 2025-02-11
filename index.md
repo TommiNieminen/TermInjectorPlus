@@ -1,14 +1,13 @@
 ---
-layout: page
-title: Edit rules
-permalink: /editrules
+layout: home
 ---
 
-Edit rules can be used to edit the source text before translating it with MT models (_pre-edit rules_), or to edit the machine translation (_post-edit rules_). Pre-edit rules can be used to compensate for errors and deviations from normal text that exist in source texts (misspellings, text processing artifacts etc.), which may otherwise degrade the MT quality. Post-edit rules can be used to modify machine translations to correct incorrect terminology or punctuation mistakes.
+TermInjectorPlus is an updated version of the TermInjector plugin for Trados Studio. With TermInjectorPlus, you can define three types of rules:
+1. Pre-edit rules: Rules that modify source text before it is sent to a translation provider (translation memory or machine translation engine). These rules can be used to fix source errors or to modify constructions that are difficult for machine translation engines.
+2. Post-edit rules: Rules that modify the translations from a translation provider. These rules can be used to fix recurring error in translation provider output.
+3. No-match rules: Rules that modify the source text, which are only applied in case a translation provider does not provide a match. These rules can be used for instance to convert dates and numbers and to add translations for parts of the source text.
 
-**Note:** Edit rules are available in OPUS-CAT MT Engine version 1.2.0 and later. See [the installation page](./install.md) for instructions on how to download the latest version of OPUS-CAT MT Engine.
-
-Edit rules can be defined in the **Edit rules** tab of OPUS-CAT MT Engine. Regular expressions ([.NET regex flavor](https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference)) can be used in the rules. Rules are organized into _rule collections_, which can contain any number of rules. 
+Regular expressions ([.NET regex flavor](https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference)) can be used in the rules. Rules are organized into _rule collections_, which can contain any number of rules. 
 
 ## Contents
 1. [Quickstart (pre-edit rules)](#Quickstart)
@@ -26,18 +25,22 @@ Edit rules can be defined in the **Edit rules** tab of OPUS-CAT MT Engine. Regul
 
 ### <a name="Quickstart"></a>1. Quickstart: Adding a simple pre-edit rule
 
-1. Select a model from the **Models** tab and click **Edit Rules**.
+1. Select **TermInjectorPlus** in the **Use** menu of **Project Settings**.
 
-    <img src="./images/editrules1.png?raw=true" alt="drawing" width="75%"/>
+    <img src="./images/usemenu.png?raw=true" alt="drawing" width="100%"/>
 
 
-2. The **Edit rules** tab opens. Click **Create rule** in the **Pre-edit rule collections** section.
+2. The **TermInjectorPlus** settings window opens. When you Open the **Translation provider** drop-down menu, you see a list of all the translation providers available in your Trados Studio. Select **File-based translation memory**.
 
-    <img src="./images/editrules2.png?raw=true" alt="drawing" width="75%"/>
+    <img src="./images/selecttp.png?raw=true" alt="drawing" width="100%"/>
 
-3. The **Create edit rule** window opens.
+3. Click the **Create rule** button in the left lower part of the settings.
+ 
+    <img src="./images/createrulebutton.png?raw=true" alt="drawing" width="100%"/>
 
-    <img src="./images/editrules3.png?raw=true" alt="drawing" width="75%"/>
+4. The **Create edit rule** window opens.
+
+    <img src="./images/editrules3.png?raw=true" alt="drawing" width="100%"/>
     
    The **Create edit rule** window has two sections. The rule is defined in the upper section, and the rule can be tested in the lower section. There are three fields in the upper **Define pre-edit rule** section:
 
@@ -59,7 +62,7 @@ Edit rules can be defined in the **Edit rules** tab of OPUS-CAT MT Engine. Regul
     
 7. Now that the rule is tested and verified to work, you can save it by clicking **Save** (note that testing the rule is not required, but it reduces the chance of mistakes, especially with more complex rules). When you click **Save**, the **Create edit rule** window is closed, and the new rule is displayed on the **Edit rules** tab of the MT Engine, and it will now be applied when machine translations are generated with this model:
 
-    <img src="./images/editrules7.png?raw=true" alt="drawing" width="100%"/>
+    <img src="./images/preeditrule.png?raw=true" alt="drawing" width="100%"/>
 
 ### <a name="rule_collections"></a>2. Rule collections
 
