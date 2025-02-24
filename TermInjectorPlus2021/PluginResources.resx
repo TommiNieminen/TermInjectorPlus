@@ -117,55 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="EditRules_AddRuleCollectionButton" xml:space="preserve">
-    <value>Add rule collection</value>
+  <data name="Plugin_Description" xml:space="preserve">
+    <value>TermInjectorPlus TP</value>
   </data>
-  <data name="EditRules_CreateRuleButton" xml:space="preserve">
-    <value>Create rule</value>
+  <data name="Plugin_Name" xml:space="preserve">
+    <value>TermInjectorPlus</value>
   </data>
-  <data name="EditRules_DeleteRuleCollectionButton" xml:space="preserve">
-    <value>Delete rule collection</value>
+  <data name="Plugin_NiceName" xml:space="preserve">
+    <value>TermInjectorPlus</value>
   </data>
-  <data name="EditRules_EditRuleCollectionButton" xml:space="preserve">
-    <value>Edit rule collection</value>
-  </data>
-  <data name="EditRules_EditRulesTitle" xml:space="preserve">
-    <value>Edit rules for model {0}</value>
-  </data>
-  <data name="EditRules_RemoveRuleCollectionButton" xml:space="preserve">
-    <value>Remove rule collection</value>
-  </data>
-  <data name="Main_EditRulesButton" xml:space="preserve">
-    <value>Edit rules</value>
-  </data>
-  <data name="EditRules_AddEditRuleCollectionTitle" xml:space="preserve">
-    <value>Add edit rule collection</value>
-  </data>
-  <data name="EditRules_CreatePreEditRuleTitle" xml:space="preserve">
-    <value>Create edit rule</value>
-  </data>
-  <data name="EditRules_CreatePostEditRuleTitle" xml:space="preserve">
-    <value>Create post-edit rule</value>
-  </data>
-  <data name="EditRules_DeleteRuleButton" xml:space="preserve">
-    <value>Delete rule</value>
-  </data>
-  <data name="EditRules_EditRuleButton" xml:space="preserve">
-    <value>Edit rule</value>
-  </data>
-  <data name="EditRules_EditRuleCollectionTitle" xml:space="preserve">
-    <value>Edit rules in collection {0}</value>
-  </data>
-  <data name="Rules_DeleteRuleCollectionConfirmation" xml:space="preserve">
-    <value>Are you sure want to permanently delete rule collection {0}? This collection may be in use with other projects, and it will also be deleted from those projects.</value>
-  </data>
-  <data name="EditRules_MoveDownButton" xml:space="preserve">
-    <value>Move down</value>
-  </data>
-  <data name="EditRules_MoveUpButton" xml:space="preserve">
-    <value>Move up</value>
-  </data>
-  <data name="EditRules_EditRulesHeading" xml:space="preserve">
-    <value>TermInjector settings</value>
+  <data name="Plugin_Tooltip" xml:space="preserve">
+    <value />
   </data>
 </root>

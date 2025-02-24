@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Windows;
 using YamlDotNet.Serialization;
@@ -424,6 +425,7 @@ namespace TermInjectorPlus
             {
                 editRuleCollection.CollectionGuid = Guid.NewGuid().ToString();
             }
+            editRuleCollection.ruleCollectionFile = ruleFileInfo;
             return editRuleCollection;
         }
 

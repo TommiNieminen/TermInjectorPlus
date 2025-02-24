@@ -86,7 +86,7 @@ namespace TermInjectorPlus
             orgSegment.Add(preeditedInput);
             tu.SourceSegment = orgSegment;
 
-            if (this.NestedTranslationProvider != null)
+            if (this.NestedTranslationProvider != null && this.NestedTranslationProvider.SupportsLanguageDirection(languagePair))
             {
                 results = this.NestedTranslationProvider.GetLanguageDirection(languagePair).SearchTranslationUnit(settings, tu);
             }
@@ -309,7 +309,7 @@ namespace TermInjectorPlus
                 pipeline.AutoPostEditRuleCollectionGuids,
                 pipeline.AutoPostEditRuleCollections);
 
-
+            
 
             return pipeline;
         }

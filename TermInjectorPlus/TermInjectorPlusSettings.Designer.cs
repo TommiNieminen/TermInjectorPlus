@@ -12,7 +12,7 @@ namespace TermInjectorPlus {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.9.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.12.0.0")]
     internal sealed partial class TermInjectorPlusSettings : global::System.Configuration.ApplicationSettingsBase {
         
         private static TermInjectorPlusSettings defaultInstance = ((TermInjectorPlusSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new TermInjectorPlusSettings())));

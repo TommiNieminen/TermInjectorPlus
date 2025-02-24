@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PluginPackage xmlns="http://www.sdl.com/Plugins/PluginPackage/1.0">
+  <PlugInName>TermInjectorPlus</PlugInName>
+  <Version>1.0</Version>
+  <Description>Plugin description</Description>
+  <Author></Author>
+  <RequiredProduct name="SDLTradosStudio" minversion="16.0" maxversion="17.0" />
+  <Include>
+    <File>YamlDotNet.dll</File>
+    <File>License.txt</File>
+    <File>ThirdPartyNotices.txt</File>
+    <File>Serilog.dll</File>
+    <File>Serilog.Sinks.File.dll</File>
+  </Include>
+</PluginPackage>

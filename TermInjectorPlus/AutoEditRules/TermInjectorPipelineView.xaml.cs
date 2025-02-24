@@ -1,4 +1,5 @@
 ﻿
+using MS.WindowsAPICodePack.Internal;
 using Sdl.Core.PluginFramework;
 using Sdl.LanguagePlatform.Core;
 using Sdl.LanguagePlatform.TranslationMemory;
@@ -98,30 +99,27 @@ namespace TermInjectorPlus
             var deserializer = new Deserializer();
             foreach (var file in editRuleDir.EnumerateFiles())
             {
-                using (var reader = file.OpenText())
+                try
                 {
-                    try
+                    var loadedRuleCollection = AutoEditRuleCollection.CreateFromFile(file);
+                    switch (loadedRuleCollection.CollectionType)
                     {
-                        var loadedRuleCollection = deserializer.Deserialize<AutoEditRuleCollection>(reader);
-                        switch (loadedRuleCollection.CollectionType)
-                        {
-                            case "preedit":
-                                this.AutoPreEditRuleCollections.Add(loadedRuleCollection);
-                                break;
-                            case "postedit":
-                                this.AutoPostEditRuleCollections.Add(loadedRuleCollection);
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error($"Auto edit rule deserialization failed, file {file.Name}. Exception: {ex.Message}");
+                        case "preedit":
+                            this.AutoPreEditRuleCollections.Add(loadedRuleCollection);
+                            break;
+                        case "postedit":
+                            this.AutoPostEditRuleCollections.Add(loadedRuleCollection);
+                            break;
+                        default:
+                            break;
                     }
                 }
+                catch (Exception ex)
+                {
+                    Log.Error($"Auto edit rule deserialization failed, file {file.Name}. Exception: {ex.Message}");
+                }
+                
             }
-
         }
 
 
@@ -552,69 +550,84 @@ namespace TermInjectorPlus
         {
             string previousTesterOutput = null;
             string rawSource = null;
-            foreach (var tester in this.PreEditTesters)
+            if (this.PreEditTesters.Count > 0)
             {
-                if (previousTesterOutput != null)
+                foreach (var tester in this.PreEditTesters)
                 {
-                    tester.SourceText = previousTesterOutput;
+                    if (previousTesterOutput != null)
+                    {
+                        tester.SourceText = previousTesterOutput;
+                    }
+                    else
+                    {
+                        rawSource = tester.SourceText;
+                    }
+                    tester.ProcessRules();
+                    previousTesterOutput = tester.OutputText;
+                }
+
+                //previousTesterOutput will now contain the pre-edited source for machine translation,
+                //change it to MT output.
+                //Do not apply edit rules here, since they will be visually applied in the tester
+
+                if (this.TranslationProvider == null &&
+                        !String.IsNullOrWhiteSpace(this.TermInjectorConfig.NestedTranslationProviderUri))
+                {
+                    this.TranslationProvider = NestedTPFactory.InstantiateNestedTP(
+                        this.TermInjectorConfig.NestedTranslationProviderUri,
+                        this.CredentialStore,
+                        this.LanguagePairs);
+                }
+
+                if (this.TranslationProvider == null)
+                {
+                    previousTesterOutput = "No translation provider configured";
                 }
                 else
                 {
-                    rawSource = tester.SourceText;
+                    TranslationUnit tu = new TranslationUnit();
+
+                    Segment orgSegment = new Segment();
+
+                    var languagePair = this.LanguagePairs.First();
+                    orgSegment.Culture = languagePair.SourceCulture;
+                    orgSegment.Add(previousTesterOutput);
+                    tu.SourceSegment = orgSegment;
+
+                    SearchResults results;
+                    try
+                    {
+                        var searchSettings = new SearchSettings();
+                        results = this.TranslationProvider.GetLanguageDirection(
+                            languagePair).SearchTranslationUnit(searchSettings, tu);
+                    }
+                    catch (Exception ex)
+                    {
+                        results = new SearchResults();
+                    }
+
+
+                    if (!results.Any())
+                    {
+                        previousTesterOutput = "No match found in translation provider (note that some plugins, such as the ModernMT plugin, require that a document is open in the editor to work).";
+                    }
+                    else
+                    {
+                        if (results.First().TranslationProposal != null)
+                        {
+                            previousTesterOutput = results.First().TranslationProposal.TargetSegment.ToPlain();
+                        }
+                        else
+                        {
+                            previousTesterOutput = results.First().MemoryTranslationUnit.TargetSegment.ToPlain();
+                        }
+                    }
                 }
-                tester.ProcessRules();
-                previousTesterOutput = tester.OutputText;
             }
-
-            //previousTesterOutput will now contain the pre-edited source for machine translation,
-            //change it to MT output.
-            //Do not apply edit rules here, since they will be visually applied in the tester
-
-            if (this.TranslationProvider == null &&
-                    !String.IsNullOrWhiteSpace(this.TermInjectorConfig.NestedTranslationProviderUri))
+            else if (this.PostEditTesters.Count > 0)
             {
-                this.TranslationProvider = NestedTPFactory.InstantiateNestedTP(
-                    this.TermInjectorConfig.NestedTranslationProviderUri, 
-                    this.CredentialStore,
-                    this.LanguagePairs);
-            }
-
-            if (this.TranslationProvider == null)
-            {
-                previousTesterOutput = "No translation provider configured";
-            }
-            else
-            {
-                TranslationUnit tu = new TranslationUnit();
-                
-                Segment orgSegment = new Segment();
-
-                var languagePair = this.LanguagePairs.First();
-                orgSegment.Culture = languagePair.SourceCulture;
-                orgSegment.Add(previousTesterOutput);
-                tu.SourceSegment = orgSegment;
-
-                SearchResults results;
-                try
-                {
-                    var searchSettings = new SearchSettings();
-                    results = this.TranslationProvider.GetLanguageDirection(
-                        languagePair).SearchTranslationUnit(searchSettings, tu);
-                }
-                catch (Exception ex)
-                {
-                    results = new SearchResults();
-                }
-                
-
-                if (!results.Any())
-                {
-                    previousTesterOutput = "No match found in translation provider (note that some plugins, such as the ModernMT plugin, require that a document is open in the editor to work).";
-                }
-                else
-                {
-                    previousTesterOutput = results.First().TranslationProposal.TargetSegment.ToPlain();
-                }
+                rawSource = this.PostEditTesters.First().OutputText;
+                previousTesterOutput = this.PostEditTesters.First().OutputText;
             }
 
             foreach (var tester in this.PostEditTesters)
@@ -655,7 +668,13 @@ namespace TermInjectorPlus
         
         }
 
-        //TODO: duplicate Editor button and this for post-edit rules
+        private void OpenPostEditCollectionInEditor_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedCollection = (AutoEditRuleCollection)this.AutoPostEditRuleCollectionList.SelectedItem;
+            selectedCollection.OpenInEditor();
+
+        }
+
         private void ReloadPreEditCollection_Click(object sender, RoutedEventArgs e)
         {
             var selectedCollection = (AutoEditRuleCollection)this.AutoPreEditRuleCollectionList.SelectedItem;
@@ -663,6 +682,15 @@ namespace TermInjectorPlus
             var collectionIndex = this.TermInjectorConfig.AutoPreEditRuleCollections.IndexOf(selectedCollection);
             this.TermInjectorConfig.AutoPreEditRuleCollections.Insert(collectionIndex, loadedRuleCollection);
             this.TermInjectorConfig.AutoPreEditRuleCollections.Remove(selectedCollection);
+        }
+
+        private void ReloadPostEditCollection_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedCollection = (AutoEditRuleCollection)this.AutoPostEditRuleCollectionList.SelectedItem;
+            var loadedRuleCollection = selectedCollection.Reload();
+            var collectionIndex = this.TermInjectorConfig.AutoPostEditRuleCollections.IndexOf(selectedCollection);
+            this.TermInjectorConfig.AutoPostEditRuleCollections.Insert(collectionIndex, loadedRuleCollection);
+            this.TermInjectorConfig.AutoPostEditRuleCollections.Remove(selectedCollection);
         }
 
         private void MovePreRuleCollectionDown_Click(object sender, RoutedEventArgs e)

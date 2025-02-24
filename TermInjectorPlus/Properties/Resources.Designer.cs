@@ -19,7 +19,7 @@ namespace TermInjectorPlus.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -205,7 +205,7 @@ namespace TermInjectorPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure want to permanently delete rule collection {0}? This collection may be in use with other models, and it will also be deleted from those models..
+        ///   Looks up a localized string similar to Are you sure want to permanently delete rule collection {0}? This collection may be in use with other projects, and it will also be deleted from those projects..
         /// </summary>
         public static string Rules_DeleteRuleCollectionConfirmation {
             get {

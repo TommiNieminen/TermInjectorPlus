@@ -45,8 +45,6 @@ namespace TermInjectorPlus
             UpdateDialog();
             
             this.termInjectorView = new TermInjectorPipelineView(owner, credentialStore, Options, languagePairs, testDialog);
-            this.termInjectorView.SaveSettingsButton.Click += SaveSettingsButton_Click;
-            this.termInjectorView.CancelButton.Click += CancelButton_Click;
             this.wpfHost.Child = this.termInjectorView;
             //TODO: add event handlers for the child Save and Cancel buttons to implement window closing
             //termInjectorView.SaveButton.Clicked? +=
@@ -83,7 +81,7 @@ namespace TermInjectorPlus
             this.Close();
         }*/
 
-        private void SaveSettingsButton_Click(object sender, RoutedEventArgs e)
+        private void SaveSettingsButton_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.OK;
             this.Options = new TermInjectorPlusTPOptions();
@@ -92,7 +90,7 @@ namespace TermInjectorPlus
             this.Close();
         }
 
-        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        private void CancelButton_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.Cancel;
             this.Close();
