@@ -10,20 +10,27 @@ TermInjectorPlus is an updated version of the TermInjector plugin for Trados Stu
 Regular expressions ([.NET regex flavor](https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference)) can be used in the rules. Rules are organized into _rule collections_, which can contain any number of rules. 
 
 ## Contents
-1. [Quickstart (pre-edit rules)](#Quickstart)
-2. [Rule collections](#rule_collections) 
-3. [Post-edit rules](#post_edit_rules)
-4. [Rule testers](#rule_testers)  
+1. [Quickstart (pre-edit rules without translation provider)](#Quickstart)
+2. [Selecting a translation provider](#select_tp)
+3. [Pre-edit rules with a translation provider](#pre_edit_with_tp)
+4. [Rule collections](#rule_collections) 
+5. [Post-edit rules](#post_edit_rules)
+6. [Rule testers](#rule_testers)  
   4.1 [Testing the entire translation pipeline](#pipeline_tester)
-5. [Managing rule collections](#management)  
+7. [Managing rule collections](#management)  
   5.1 [Importing and exporting rule collections](#import_export)
-6. [Using regular expressions in rules](#regex)  
+8. [Using regular expressions in rules](#regex)  
   6.1 [Capturing groups](#cap_groups)  
   6.2 [Changing the character case of text matched by capturing groups](#case_conversion)  
   6.3 [Referencing source pattern capturing groups in post-edit rules](#source_ref)
-7. [Using rule collections sequentially](#sequential_use)
+9. [Using rule collections sequentially](#sequential_use)
+10. Templates
 
-### <a name="Quickstart"></a>1. Quickstart: Adding a simple pre-edit rule
+### <a name="Quickstart"></a>1. Quickstart: Adding a simple pre-edit rule (no-match rule)
+
+### <a name="select_tp"></a>2. Quickstart: Selecting a translation provider
+
+### <a name="pre_edit_with_tp"></a>3. Adding a pre-edit rule for translation provider
 
 1. Select **TermInjectorPlus** in the **Use** menu of **Project Settings**.
 
