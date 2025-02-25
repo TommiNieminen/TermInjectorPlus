@@ -28,10 +28,11 @@ Regular expressions ([.NET regex flavor](https://docs.microsoft.com/en-us/dotnet
 8. [Using rule collections sequentially](#sequential_use)
 9. [Adding a no-match rule](#no_match)
 10. [Templates](#templates)
+11. [Modifying rule collections in a text editor](#modify_in_editor)
 
 ### <a name="Quickstart"></a>1. Quickstart: Adding a simple pre-edit rule
 
-1. Select **TermInjectorPlus** in the **Use** menu of **Project Settings**.
+1. Open a project in Trados Studio and then select **Project Settings > Language Pairs > All Language Pairs > Translation Memory and Automated Translation**. Select **TermInjectorPlus** in the **Use** menu.
 
     <img src="./images/usemenu.png?raw=true" alt="drawing" width="100%"/>
 
@@ -369,4 +370,18 @@ No-match rules are only used when the translation provider does not provide tran
   
 ### <a name="templates"></a>10. Templates
 
-TermInjectorPlus configurations can be saved as templates so that it can be easily used in new translation projects. 
+A TermInjectorPlus configuration (specified rules and the translation providere) can be saved as a template, so that it can be easily used in new translation projects. To save a configuration as a template, click on the **Save as template** button. The template is saved with the name entered in the **Name** field. If a template with the same names exists, a dialog window will be shown.
+
+To use a template, select the template from the drop-down list and click **Apply template**. Applying a template will replace the current configuration in TermInjectorPlug settings.
+
+A template can be deleted by selecting it from the drop-down list and clicking **Delete template**. Note that deleting the template does not delete the rule collections included in the template.
+
+### <a name="modify_in_editor"></a>11. Modifying rule collections in a text editor
+
+Rule collections are usually modified through the TermInjectorPlus user interface, but some large-scale modifications are faster to perform by modifying the rule collection files in a text editor. Rule collections are saved in the .yaml format, which is a human-readable data language. In the followin example, we show how to modify a rule collection in a text editor to correct a problem that affects multiple rules in the collection (an incorrect regular expression replacement is used in every rule).
+
+1. Select the rule collection, and click the **Open in editor** button.
+2. The rule collection .yaml file opens in your default text editor.
+3. Press **Ctrl+H** to open the find-and-replace window of the editor (this should work on most text editors). Type the incorrect regular expression in the upper field, and the correction in the field below, and then click **Replace all** (or the equivalent in your editor).
+4. Once all occurrences of the error have been corrected, save the file in the editor and close the editor.
+5. Select the rule collection again in TermInjectorPlus settings, and click the **Reload collection** button. The corrected rules will now be used by TermInjectorPlus. 
