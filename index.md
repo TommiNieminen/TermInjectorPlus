@@ -2,42 +2,40 @@
 layout: home
 ---
 
-TermInjectorPlus is an updated version of the TermInjector plugin for Trados Studio. With TermInjectorPlus, you can define three types of rules:
-1. Pre-edit rules: Rules that modify source text before it is sent to a translation provider (translation memory or machine translation engine). These rules can be used to fix source errors or to modify constructions that are difficult for machine translation engines.
-2. Post-edit rules: Rules that modify the translations from a translation provider. These rules can be used to fix recurring error in translation provider output.
-3. No-match rules: Rules that modify the source text, which are only applied in case a translation provider does not provide a match. These rules can be used for instance to convert dates and numbers and to add translations for parts of the source text.
+TermInjectorPlus is an updated version of the TermInjector plugin for Trados Studio. TermInjectorPlus can be used with most translation providers (translation memories and machine translation providers) available in Trados. TermInjector acts as a wrapper around a translation provider, and it can modify both the source text sent into the translation provider and the output text that the translation provider returns.
+
+In TermInjectorPlus, you can define three types of rules:
+
+1. **Pre-edit rules**: Rules that modify source text before it is sent to a translation provider (translation memory or machine translation engine). These rules can be used to fix source errors or to modify constructions that are difficult for machine translation engines.
+2. **Post-edit rules**: Rules that modify the translations from a translation provider. These rules can be used to fix recurring error in translation provider output.
+3. **No-match rules**: Rules that modify the source text, which are only applied in case a translation provider does not provide a match. These rules can be used for instance to convert dates and numbers and to add translations for parts of the source text. No-match rules can also be used without specifying a translation provider.
 
 Regular expressions ([.NET regex flavor](https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference)) can be used in the rules. Rules are organized into _rule collections_, which can contain any number of rules. 
 
 ## Contents
-1. [Quickstart (pre-edit rules without translation provider)](#Quickstart)
-2. [Selecting a translation provider](#select_tp)
-3. [Pre-edit rules with a translation provider](#pre_edit_with_tp)
-4. [Rule collections](#rule_collections) 
-5. [Post-edit rules](#post_edit_rules)
-6. [Rule testers](#rule_testers)  
-  4.1 [Testing the entire translation pipeline](#pipeline_tester)
-7. [Managing rule collections](#management)  
-  5.1 [Importing and exporting rule collections](#import_export)
-8. [Using regular expressions in rules](#regex)  
-  6.1 [Capturing groups](#cap_groups)  
-  6.2 [Changing the character case of text matched by capturing groups](#case_conversion)  
-  6.3 [Referencing source pattern capturing groups in post-edit rules](#source_ref)
-9. [Using rule collections sequentially](#sequential_use)
-10. Templates
+1. [Quickstart](#Quickstart)
+2. [Setting up a translation provider](#select_tp)
+3. [Rule collections](#rule_collections) 
+4. [Post-edit rules](#post_edit_rules)
+5. [Rule testers](#rule_testers)  
+  5.1 [Testing the entire translation pipeline](#pipeline_tester)
+6. [Managing rule collections](#management)  
+  6.1 [Importing and exporting rule collections](#import_export)
+7. [Using regular expressions in rules](#regex)  
+  7.1 [Capturing groups](#cap_groups)  
+  7.2 [Changing the character case of text matched by capturing groups](#case_conversion)  
+  7.3 [Referencing source pattern capturing groups in post-edit rules](#source_ref)
+8. [Using rule collections sequentially](#sequential_use)
+9. [Adding a no-match rule](#no_match)
+10. [Templates](#templates)
 
-### <a name="Quickstart"></a>1. Quickstart: Adding a simple pre-edit rule (no-match rule)
-
-### <a name="select_tp"></a>2. Quickstart: Selecting a translation provider
-
-### <a name="pre_edit_with_tp"></a>3. Adding a pre-edit rule for translation provider
+### <a name="Quickstart"></a>1. Quickstart: Adding a simple pre-edit rule
 
 1. Select **TermInjectorPlus** in the **Use** menu of **Project Settings**.
 
     <img src="./images/usemenu.png?raw=true" alt="drawing" width="100%"/>
 
-
-2. The **TermInjectorPlus** settings window opens. When you Open the **Translation provider** drop-down menu, you see a list of all the translation providers available in your Trados Studio. Select **File-based translation memory**.
+2. The **TermInjectorPlus** settings window opens. When you Open the **Translation provider** drop-down menu, you see a list of all the translation providers available in your Trados Studio. Select **File-based translation memory**, and then select a file-based translation memory in the file selection dialog that opens (any TM will do for the purposes of this step).
 
     <img src="./images/selecttp.png?raw=true" alt="drawing" width="100%"/>
 
@@ -67,13 +65,37 @@ Regular expressions ([.NET regex flavor](https://docs.microsoft.com/en-us/dotnet
 
     <img src="./images/editrules6.png?raw=true" alt="drawing" width="100%"/>
     
-7. Now that the rule is tested and verified to work, you can save it by clicking **Save** (note that testing the rule is not required, but it reduces the chance of mistakes, especially with more complex rules). When you click **Save**, the **Create edit rule** window is closed, and the new rule is displayed on the **Edit rules** tab of the MT Engine, and it will now be applied when machine translations are generated with this model:
+7. Now that the rule is tested and verified to work, you can save it by clicking **Save** (note that testing the rule is not required, but it reduces the chance of mistakes, especially with more complex rules). When you click **Save**, the **Create edit rule** window is closed, and the new rule is displayed in the **Pre-edit rules** section of TermInjectorPlus, and it will now be applied when  translations are retrieved from the selected translation provider:
 
     <img src="./images/preeditrule.png?raw=true" alt="drawing" width="100%"/>
+    <img src="./images/acheive.png?raw=true" alt="drawing" width="100%"/>
 
-### <a name="rule_collections"></a>2. Rule collections
 
-As mentioned, edit rules are organized into _rule collections_, which may contain any amount of rules. Every rule must be part of a rule collection, so when you create a rule using the **Create rule** button (as in the quickstart section above), a rule collection is also created to contain the rule. The default name of the created rule collection is the same as the description of the rule that it contains (_fix "acheive" misspelling_ in the example above). You can edit a rule collection by selecting it from the list and clicking **Edit rule collection**:
+### <a name="select_tp"></a>2. Setting up a translation provider
+
+In the [Quickstart](#Quickstart), we selected a file-based translation as the translation provider. This required simply selecting the file-based translation memory in the file selection dialog, but some translation providers require more setting up. This is especially the case with machine translation providers, as they often require specifying an API key.
+
+Whenever you select a translation provider from the **Translation provider** drop-down, the settings window of the translation provider opens, and you need to specify the information that the translation provider requires. As an example, let's set up the OPUS-CAT machine translation provider:
+
+1. Install the **OPUS-CAT plugin** from RWS appstore (can be accessed from the **Add-Ins** tab of the Trados ribbon).
+
+2. Install **OPUS-CAT MT Engine** by following the instructions [here](https://helsinki-nlp.github.io/OPUS-CAT/install).
+
+3. Click the **Translation provider** drop-down and select **OPUS-CAT**:
+
+  <img src="./images/opuscat_settings.png?raw=true" alt="drawing" width="100%"/>
+
+4. The OPUS-CAT plugin settings window opens. As the plugin does not require an API key, we can simply click **Save** to confirm the selection of OPUS-CAT as the translation provider:
+
+  <img src="./images/opuscat_settings2.png?raw=true" alt="drawing" width="100%"/>
+  
+5. OPUS-CAT is now shown as the translator provider in TermInjectorPlus settings. You can modify the translation provider settings by clicking **Open settings**, or clear the translation provider by clicking **Clear**:
+
+  <img src="./images/opuscat_settings3.png?raw=true" alt="drawing" width="100%"/>
+
+### <a name="rule_collections"></a>3. Rule collections
+
+As mentioned, edit rules are organized into _rule collections_, which may contain any amount of rules. Every rule must be part of a rule collection, so when you create a rule using the **Create rule** button (as in the quickstart section above), a rule collection is also created to contain the rule. The default name of the created rule collection is the same as the description of the rule that it contains (_fix "acheive" misspelling_ in the quickstart). You can edit a rule collection by selecting it from the list and clicking **Edit rule collection**:
 
   <img src="./images/editrules8.png?raw=true" alt="drawing" width="100%"/>
 
@@ -87,11 +109,13 @@ The **Edit rules in collection** window contains a field for the name of the col
 
 <a name="global"></a>The **Edit rules in collection** window also contains a field for modifying the name of the collection, and a checkbox labeled **Global collection**. If the **Global collection** checkbox is checked, the collection can be added to other models by using the **Add rule collection** button in the **Edit rules** tab. The checkbox is unchecked by default for newly created models, to avoid cluttering the list of global collections.
 
+The **No-match collection** checkbox can be checked to indicate that the collection is a no-match collection, which means that its rules will only be applied in cases where the translation provider does not provide a match. See [No-match rules section](#nomatch) for more information.
+
 After you have edited the collection by adding, deleting, or modifying rules or by changing the collection name or its global status, you can either save the modifications by clicking the **Save** button, or reject them by clicking the **Cancel** button. 
 
-### <a name="post_edit_rules"></a>3. Post-edit rules
+### <a name="post_edit_rules"></a>4. Post-edit rules
 
-Post-edit rules are used to edit the output of the machine translation produced by the model. You can create a post-edit rule by clicking on the **Create rule** button in the **Post-edit rule collections** section of the **Edit rules** tab:
+Post-edit rules are used to edit the output of the translation provider. You can create a post-edit rule by clicking on the **Create rule** button in the **Post-edit rule collections** section of TermInjectorPlus settings:
 
   <img src="./images/editrules11.png?raw=true" alt="drawing" width="100%"/>
 
@@ -112,7 +136,7 @@ Here's a simple example rule, where all four fields are used:
 
   <img src="./images/editrules14.png?raw=true" alt="drawing" width="100%"/>
 
-This rule replaces the word _vika_ in the MT output with the word _virhe_, but only if the original source text contained the word _fault_. So in this rule, the source pattern is used as a condition for the replacement.
+This rule replaces the word _vika_ in the translation provider output with the word _virhe_, but only if the original source text contained the word _fault_. So in this rule, the source pattern is used as a condition for the replacement.
 
 <a name="post_edit_tester"></a>As in the **Create pre-edit rule** window, the lower section contains a tester, which can be used to verify that the rule works as intended. If a source pattern has been defined, the tester will contain an additional field for entering the test source text, against which the source pattern will be matched:
 
@@ -122,12 +146,12 @@ Once the post-edit rule has been defined, it can be saved by clicking the **Save
 
   <img src="./images/editrules13.png?raw=true" alt="drawing" width="100%"/>
 
-### <a name="rule_testers"></a>4. Rule testers
+### <a name="rule_testers"></a>5. Rule testers
 
 Rule testers can be used to verify that the edit rules work correctly both individually and in combination with other rules. Testers are available in the following contexts:
   1. **Create pre-edit rule** and **Create post-edit rule** windows
   2. **Edit rules in collection** window
-  3. **Edit rules** tab
+  3. TermInjectorPlus settings window
   
 Each rule tester is similar, but there are some differences. The testers in the **Create pre-edit rule** and **Create post-edit rule** windows are always visible, and they are always used to test a single rule at a time. See [Pre-edit rule tester](#pre_edit_tester) and [Post-edit rule tester](#post_edit_tester) for more information on these testers.
 
@@ -141,9 +165,9 @@ When you click the button, the tester expands. The following screenshot shows th
 
 As you can see from the image above, matches for all of the listed rules are highlighted in the tester.
 
-#### <a name="pipeline_tester">4.1 Testing the entire translation pipeline in the **Edit rules** tab
+#### <a name="pipeline_tester">5.1 Testing the entire translation pipeline in TermInjectorPlus settings
 
-The tester in the **Edit rules in collection** window is the most comprehensive tester, since it tests both the pre-edit and post-edit rule collections: the tester edits the source text with each of the pre-edit rule collections, then produces a machine translation from the edited source text, and finally edits the MT output with all the post-edit rule collections. This tester is also hidden by default, and it can be opened by clicking the expander button at the bottom of the tab:
+The tester in the TermInjectorPlus settings window is the most comprehensive tester, since it tests both the pre-edit and post-edit rule collections: the tester edits the source text with each of the pre-edit rule collections, then retrieves a match for the edited source text from the translation provider, and finally edits the translation provider output with all the post-edit rule collections. This tester is also hidden by default, and it can be opened by clicking the expander button at the bottom of the tab:
 
   <img src="./images/editrules17.png?raw=true" alt="drawing" width="100%"/>
 
@@ -157,9 +181,9 @@ If the **Edit rules** tab tester is being used for the first time, there will be
 
 The parts of the text, which match some rule, are highlighted. The image above shows that the original source text is first edited to correct two misspellings (_calender_ and _experiance_), the edited source text is then used as MT input, and the MT output is then edited to replace _vika_ with _virhe_ (as the source text fulfills the condition of having the word _fault_ in it). 
 
-### <a name="management"></a>5. Adding, removing, and deleting rule collections
+### <a name="management"></a>6. Adding, removing, and deleting rule collections
 
-Rule collections can be added, removed or deleted in the **Edit rules** tab. Rule collections that have been defined as [global](#global), can be used in multiple MT models, and they can be removed and added by using the **Add rule collection** and **Remove rule collection** buttons. Local and global rule collections can be permanently deleted by clicking the **Delete rule collection** button (deletion needs to be confirmed, as the same rule collection may be in use in other MT models):
+Rule collections can be added, removed or deleted in the **Edit rules** tab. Rule collections that have been defined as [global](#global), can be used with multiple translation providers, and they can be removed and added by using the **Add rule collection** and **Remove rule collection** buttons. Local and global rule collections can be permanently deleted by clicking the **Delete rule collection** button (deletion needs to be confirmed, as the same rule collection may be in use in other MT models):
 
   <img src="./images/editrules20.png?raw=true" alt="drawing" width="100%"/>
 
@@ -167,16 +191,16 @@ When you click the **Add rule collection** button, the **Add edit rule collectio
 
   <img src="./images/editrules21.png?raw=true" alt="drawing" width="100%"/>
 
-If we check the checkbox for the _Expand contractions_ rule collection and click the **Save** button, the _Expand contractions_ collection will be added to the rule collection list on the **Edit rules** tab:
+If we check the checkbox for the _Expand contractions_ rule collection and click the **Save** button, the _Expand contractions_ collection will be added to the rule collection list in the TermInjectorPlus settings window:
 
   <img src="./images/editrules22.png?raw=true" alt="drawing" width="100%"/>
   
-The addition of the collection is also reflected in the tester of the **Edit rules** tab. Two pre-edit rule collections are now displayed in the tester, and the rules of both collections are applied to the source sentence before it is machine translated:
+The addition of the collection is also reflected in the tester of the TermInjectorPlus settings window. Two pre-edit rule collections are now displayed in the tester, and the rules of both collections are applied to the source sentence before it is machine translated:
 
   <img src="./images/editrules23.png?raw=true" alt="drawing" width="100%"/>
   
 
-#### <a name="import_export"></a>5.1 Importing and exporting rule collections
+#### <a name="import_export"></a>6.1 Importing and exporting rule collections
 
 The **Add edit rule collection** window can also be used to import and export rule collections. There are two buttons in the top section of the window:
 
@@ -186,16 +210,16 @@ The **Add edit rule collection** window can also be used to import and export ru
   2. **Import rule collections**: With this button you can import rule collections and add them to the model. Imported rule collections become global, so they can also be used with other models after importing them. Next to this button is the **Replace existing rules** checkbox. If this checkbox is checked, the rule collections will overwrite existing rule collections that have same ID number. If the checkbox is not checked, the imported rule collection will receive a new ID number, and the old collection will not be overwritten.
   
 
-### <a name="regex"></a>6. Using regular expressions in rules
+### <a name="regex"></a>7. Using regular expressions in rules
 
-Both pre-edit and post-edit rules can contain regular expressions ([.NET regex flavor](https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference)). Regular expressions enhance the capability of the rules significantly. Providing a comprehensive tutorial on regular expression usage is beyond the scope of this documentation, so this section will only cover the usage of regular expressions in the OPUS-CAT MT Engine. However, there are many introductory articles aimed at translators available, e.g. [this article by Riccardo Schiaffino from the ATA Chronicle](https://www.ata-chronicle.online/highlights/regular-expressions-an-introduction-for-translators/).
+Both pre-edit and post-edit rules can contain regular expressions ([.NET regex flavor](https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference)). Regular expressions enhance the capability of the rules significantly. Providing a comprehensive tutorial on regular expression usage is beyond the scope of this documentation, so this section will only cover the usage of regular expressions in TermInjectorPlus. However, there are many introductory articles aimed at translators available, e.g. [this article by Riccardo Schiaffino from the ATA Chronicle](https://www.atanet.org/resources/regular-expressions-an-introduction-for-translators/).
 
 Regular expressions can be used in pre- and post-edit rules by checking the **Use regex** checkbox when creating or editing the rule:
 
   <img src="./images/editrules25.png?raw=true" alt="drawing" width="100%"/>
   <img src="./images/editrules26.png?raw=true" alt="drawing" width="100%"/>
   
-When the **Use regex** checkbox next to a rule pattern field has been checked, the pattern is interpreted as a regular expression. If the checkbox is not checked, regular expressions special characters in the pattern will be interpreted as normal text. Let's take for instance the special character _._ (period), which stands for any character in regular expressions. Let's say we have the pattern _Window._. If the **Use regex** checkbox has not been checked, the pattern will only match _Window._:
+When the **Use regex** checkbox next to a rule pattern field has been checked, the pattern is interpreted as a regular expression. If the checkbox is not checked, special characters in the pattern will be interpreted as normal text. Let's take for instance the special character _._ (period), which stands for any character in regular expressions. Let's say we have the pattern _Window._. If the **Use regex** checkbox has not been checked, the pattern will only match _Window._:
 
   <img src="./images/editrules29.png?raw=true" alt="drawing" width="100%"/>
 
@@ -203,7 +227,7 @@ When the **Use regex** checkbox next to a rule pattern field has been checked, t
  
   <img src="./images/editrules30.png?raw=true" alt="drawing" width="100%"/>
 
-#### <a name="cap_groups"></a>6.1 Capturing groups
+#### <a name="cap_groups"></a>7.1 Capturing groups
 
 If **Use regex** checkbox has been checked, it's also possible to use regular expression capturing groups in the replacement fields of the rule. Capturing groups make it possible to copy text from the match to the replacement string. Here's an example of how capturing groups can be used:
 
@@ -225,9 +249,9 @@ Capturing groups capture the part of the source text that they match. For instan
 
 The capturing groups of the rule pattern capture the letter sequences in the incorrectly hyphenated word, and the replacement _$1$2_ reconstructs the word without the hyphen.
 
-#### <a name="case_conversion"></a>6.2 Changing the character case of text matched by capturing groups
+#### <a name="case_conversion"></a>7.2 Changing the character case of text matched by capturing groups
 
-The regular expressions in the OPUS-MT Engine contain some extensions to the .NET regular expression language. One of these is the possibility to convert the text matched by capturing group into lower or upper case. The case of the letters in a capturing group can be converted by adding _L_ (for lower case), _U_ (for upper case), or _C_ (for upper-case first letter) after the dollar sign but before the index. Let's say for instance that the source text contains sentences that are written in ALL CAPS, i.e. just using upper case letters. This may degrade the quality of the machine translation, so it makes sense to convert the source sentence to lower case before machine translating it. This can be done with the following rule:
+The regular expressions in TermInjectorPlus contain some extensions to the .NET regular expression language. One of these is the possibility to convert the text matched by capturing group into lower or upper case. The case of the letters in a capturing group can be converted by adding _L_ (for lower case), _U_ (for upper case), or _C_ (for upper-case first letter) after the dollar sign but before the index. Let's say for instance that the source text contains sentences that are written in ALL CAPS, i.e. just using upper case letters. This may degrade the quality of the machine translation, so it makes sense to convert the source sentence to lower case before machine translating it. This can be done with the following rule:
 
   <img src="./images/editrules35.png?raw=true" alt="drawing" width="100%"/>
   
@@ -237,7 +261,7 @@ In this rule, the source pattern contains two capturing groups, one for the init
   
 Note that the match covers the whole sentence. This is intended, since the rule should be used only with sentences that contain no lower-case letters.
 
-#### <a name="source_ref"></a>6.3 Referencing source pattern capturing groups in post-edit rules
+#### <a name="source_ref"></a>7.3 Referencing source pattern capturing groups in post-edit rules
 
 As mentioned before, post-edit rules have a source pattern field, which can be used as a condition for rule application: if a source pattern is defined, the source text must match the pattern, otherwise the rule will not be applied. It is also possible to use capturing groups in the source pattern field of post-edit rules. This makes it possible to copy parts of text from the source sentence when applying a post-edit rule. The following example shows one scenario, in which this functionality can be useful:
 
@@ -265,14 +289,14 @@ With this rule, the problematic _ERROR-XXXXX:_ part of the sentence is removed b
 
   <img src="./images/editrules38.png?raw=true" alt="drawing" width="100%"/>
 
-We can verify that these rules work correctly together by using the tester for the whole translation pipeline in the **Edit rules** tab:
+We can verify that these rules work correctly together by using the tester for the whole translation pipeline in the TermInjectorPlus settings window:
 
   <img src="./images/editrules39.png?raw=true" alt="drawing" width="100%"/>
   <img src="./images/editrules40.png?raw=true" alt="drawing" width="100%"/>
 
 As you can see from the images above, the two rules transfer the text from the original source (top field of the tester) to the final translation (bottom field in the tester), without ever machine translating the problematic part of the source sentence.
 
-### <a name="sequential_use"></a>7. Using rule collections sequentially
+### <a name="sequential_use"></a>8. Using rule collections sequentially
 
 As was demonstrated in the previous section, using rules in combination can be more powerful than just using a single rule. It is also possible to use several pre-edit or post-edit rules together to make more complex replacements than single rules allow for. Each rule collection is processed sequentially, which means that the output of the previous rule collection is used as the input of the next rule collection. To see how rule collections can be combined sequentially to perform complex replacements, let's return to the case conversion example from the previous section. In the case conversion example we created a rule, which converted ALL CAPS source sentences to lower case (except for the first letter):
 
@@ -296,3 +320,53 @@ This time we use the upper casing operator _$U1_ to upper case the abbreviation.
   <img src="./images/editrules45.png?raw=true" alt="drawing" width="100%"/>
   
 By combining sequential rule collections in this way, very complex replacement operations can be performed.
+
+### <a name="no_match"></a>9. Adding a no-match rule
+
+No-match rules are only used when the translation provider does not provide translation. This is usually only the case with translation memories, so you can think of no-match rules as augmenting translation memory-assisted translation without machine translation. The main use of no-match rules is to translate parts of the source sentence to reduce the workload of the translator. For instance, let's take a medical translation where it is not possible to use machine translation, and there are many occurrences of the pharmacological term _acetylcholinesterase_.
+
+1. Select **TermInjectorPlus** in the **Use** menu of **Project Settings**.
+
+    <img src="./images/usemenu.png?raw=true" alt="drawing" width="100%"/>
+
+2. The **TermInjectorPlus** settings window opens.
+
+    <img src="./images/nomatchrule1.png?raw=true" alt="drawing" width="100%"/>
+
+3. Click the **Create rule** button in the left lower part of the settings.
+ 
+    <img src="./images/createrulebutton.png?raw=true" alt="drawing" width="100%"/>
+
+4. The **Create edit rule** window opens.
+
+    <img src="./images/editrules3.png?raw=true" alt="drawing" width="100%"/>
+    
+   The **Create edit rule** window has two sections. The rule is defined in the upper section, and the rule can be tested in the lower section. There are three fields in the upper **Define pre-edit rule** section:
+
+   - **Rule description**: Freeform description of the rule, preferably as informative as possible.
+   - **Pre-edit pattern**: This is the pattern that the rule will search for in the source text.
+   - **Pre-edit replacement**: This is the text that will replace the part of the source text that has been matched by the **Pre-edit pattern**.
+   
+5. Let's create a simple no-match rule that translates the term _acetylcholinesterase_:
+
+    <img src="./images/nomatch.png?raw=true" alt="drawing" width="100%"/>
+    
+6. Rules are not created by default as no-match rules, so the rule collection needs to be specified as a no-match collection. Select the newly created rule collection and click **Edit rule collection**:
+
+    <img src="./images/nomatch3.png?raw=true" alt="drawing" width="100%"/>
+
+7. In the **Edit rule collection** window, check the **No-match collection checkbox** and click **Save**:
+
+  <img src="./images/nomatch2.png?raw=true" alt="drawing" width="100%"/>
+
+8. Save the TermInjectorPlus settings by clicking **Save settings**:
+
+  <img src="./images/nomatch5.png?raw=true" alt="drawing" width="100%"/>
+
+9. Once the TermInjectorPlus settings have been saved, TermInjectorPlus will apply the rule in the Trados editor, whenever the source segment contains the term _acetylcholinesterase_. Note that the match percentage is 0, indicating that the translation proposal is the result of applying no-match rules:
+
+  <img src="./images/nomatch4.png?raw=true" alt="drawing" width="100%"/>
+  
+### <a name="templates"></a>10. Templates
+
+TermInjectorPlus configurations can be saved as templates so that it can be easily used in new translation projects. 
