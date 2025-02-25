@@ -1,4 +1,4 @@
-﻿using Microsoft.WindowsAPICodePack.Dialogs;
+﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -70,15 +70,14 @@ namespace TermInjectorPlus
 
         private void ExportRules_Click(object sender, RoutedEventArgs e)
         {
-            using (var dialog = new CommonOpenFileDialog())
+            using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
             {
-                dialog.IsFolderPicker = true;
-                CommonFileDialogResult result = dialog.ShowDialog();
-                if (result == CommonFileDialogResult.Ok)
+                DialogResult result = dialog.ShowDialog();
+                if (result == System.Windows.Forms.DialogResult.OK)
                 {
                     try
                     {
-                        var targetDir = dialog.FileName;
+                        var targetDir = dialog.SelectedPath;
                         foreach (var checkedRule in RuleCollectionCheckBoxList.Where(x => x.Checked))
                         {
                             checkedRule.Item.Save(new DirectoryInfo(targetDir));
@@ -97,14 +96,14 @@ namespace TermInjectorPlus
 
         private void ImportRules_Click(object sender, RoutedEventArgs e)
         {
-            using (var dialog = new CommonOpenFileDialog())
+            using (var dialog = new System.Windows.Forms.OpenFileDialog())
             {
                 dialog.Multiselect = true;
-                dialog.Filters.Add(new CommonFileDialogFilter(".yml files", "yml"));
-                CommonFileDialogResult result = dialog.ShowDialog();
+                dialog.Filter = ".yml files (*.yml)|*.yml;*.yaml";
+                DialogResult result = dialog.ShowDialog();
                 List<AutoEditRuleCollection> collectionsToImport = new List<AutoEditRuleCollection>();
                 var replaceExistingRules = !this.ReplaceCheckBox.IsChecked.Value;
-                if (result == CommonFileDialogResult.Ok)
+                if (result == System.Windows.Forms.DialogResult.OK)
                 {
                     try
                     {

@@ -1,5 +1,4 @@
 ﻿
-using MS.WindowsAPICodePack.Internal;
 using Sdl.Core.PluginFramework;
 using Sdl.LanguagePlatform.Core;
 using Sdl.LanguagePlatform.TranslationMemory;
