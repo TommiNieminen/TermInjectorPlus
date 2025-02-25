@@ -894,8 +894,11 @@ namespace TermInjectorPlus
         private void DeleteTemplateButton_Click(object sender, RoutedEventArgs e)
         {
             var template = (TermInjectorPipeline)this.TermInjectorConfigComboBox.SelectedItem;
-            this.PipelineTemplates.Remove(template);
-            template.DeleteTemplate();
+            
+            if (template.DeleteTemplate())
+            {
+                this.PipelineTemplates.Remove(template);
+            }
         }
 
         
