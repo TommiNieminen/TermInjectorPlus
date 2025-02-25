@@ -112,11 +112,11 @@
                 <Expander  Expanded="Tester_Expanded"
                 Margin="5"
                 IsExpanded="False"
-                Header="Rule collection tester">
+                Header="Rule collection tester (does not include no-match collections, test those separately)">
                     <StackPanel>
                         <Button Margin="5"
                   Padding="5"
-                  Click="TestRules_Click">Test all pre- and post-edit rule collections</Button>
+                  Click="TestRules_Click">Test all pre- and post-edit rule collections (excluding no-match collections)</Button>
                         <StackPanel Name="RuleTester"/>
                     </StackPanel>
                 </Expander>

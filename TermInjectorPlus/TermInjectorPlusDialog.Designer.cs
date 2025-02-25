@@ -34,6 +34,7 @@ namespace TermInjectorPlus
             this.wpfHost = new System.Windows.Forms.Integration.ElementHost();
             this.CancelButton = new System.Windows.Forms.Button();
             this.SaveSettingsButton = new System.Windows.Forms.Button();
+            this.HelpButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // wpfHost
@@ -65,11 +66,22 @@ namespace TermInjectorPlus
             this.SaveSettingsButton.UseVisualStyleBackColor = true;
             this.SaveSettingsButton.Click += new System.EventHandler(this.SaveSettingsButton_Click);
             // 
+            // HelpButton
+            // 
+            this.HelpButton.Location = new System.Drawing.Point(12, 674);
+            this.HelpButton.Name = "HelpButton";
+            this.HelpButton.Size = new System.Drawing.Size(107, 44);
+            this.HelpButton.TabIndex = 4;
+            this.HelpButton.Text = "Help";
+            this.HelpButton.UseVisualStyleBackColor = true;
+            this.HelpButton.Click += new System.EventHandler(this.HelpButton_Click);
+            // 
             // TermInjectorPlusDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1498, 730);
+            this.Controls.Add(this.HelpButton);
             this.Controls.Add(this.SaveSettingsButton);
             this.Controls.Add(this.CancelButton);
             this.Controls.Add(this.wpfHost);
@@ -89,5 +101,6 @@ namespace TermInjectorPlus
         private System.Windows.Forms.Integration.ElementHost wpfHost;
         private System.Windows.Forms.Button CancelButton;
         private System.Windows.Forms.Button SaveSettingsButton;
+        private System.Windows.Forms.Button HelpButton;
     }
 }

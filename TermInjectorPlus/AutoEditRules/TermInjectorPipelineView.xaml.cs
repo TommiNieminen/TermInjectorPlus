@@ -197,6 +197,11 @@ namespace TermInjectorPlus
 
             foreach (var preEditRuleCollection in this.TermInjectorConfig.AutoPreEditRuleCollections)
             {
+                //Don't include no match collections as they have separate processing
+                if (preEditRuleCollection.NoMatchCollection)
+                {
+                    continue;
+                }
 
                 var title = $"Pre-edit rule collection";
                 var testControl =

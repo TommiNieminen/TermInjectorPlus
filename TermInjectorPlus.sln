@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TermInjectorPlus2021", "Ter
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TermInjectorPlus2022", "TermInjectorPlus2022\TermInjectorPlus2022.csproj", "{3B9D228F-D6E8-4DB0-A247-F7918BFE370A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TermInjectorPlus2024", "TermInjectorPlus2024\TermInjectorPlus2024.csproj", "{B3B29FF5-4D8A-475A-B27F-0932487C8769}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{3B9D228F-D6E8-4DB0-A247-F7918BFE370A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B9D228F-D6E8-4DB0-A247-F7918BFE370A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B9D228F-D6E8-4DB0-A247-F7918BFE370A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3B29FF5-4D8A-475A-B27F-0932487C8769}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3B29FF5-4D8A-475A-B27F-0932487C8769}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3B29FF5-4D8A-475A-B27F-0932487C8769}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3B29FF5-4D8A-475A-B27F-0932487C8769}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

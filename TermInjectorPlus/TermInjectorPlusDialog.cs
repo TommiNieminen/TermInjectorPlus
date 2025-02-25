@@ -96,5 +96,9 @@ namespace TermInjectorPlus
             this.Close();
         }
 
+        private void HelpButton_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://tomminieminen.github.io/TermInjectorPlus/");
+        }
     }
 }

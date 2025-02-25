@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using Sdl.Core.Globalization;
 using Sdl.LanguagePlatform.Core;
 using Sdl.LanguagePlatform.TranslationMemory;
 using Sdl.LanguagePlatform.TranslationMemoryApi;
@@ -50,6 +51,12 @@ namespace TermInjectorPlus
 
         #endregion
 
+#if (TRADOS22 || TRADOS24)
+        CultureCode ITranslationProviderLanguageDirection.SourceLanguage => new CultureCode(this.SourceLanguage);
+        CultureCode ITranslationProviderLanguageDirection.TargetLanguage => new CultureCode(this.TargetLanguage);
+
+#endif
+
         public System.Globalization.CultureInfo SourceLanguage
         {
             get { return _languagePair.SourceCulture; }
@@ -59,6 +66,7 @@ namespace TermInjectorPlus
         {
             get { return _languagePair.TargetCulture; }
         }
+
 
         public ITranslationProvider TranslationProvider
         {
