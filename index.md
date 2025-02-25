@@ -2,7 +2,7 @@
 layout: home
 ---
 
-TermInjectorPlus is an updated version of the TermInjector plugin for Trados Studio. TermInjectorPlus can be used with most translation providers (translation memories and machine translation providers) available in Trados. TermInjector acts as a wrapper around a translation provider, and it can modify both the source text sent into the translation provider and the output text that the translation provider returns.
+TermInjectorPlus is an updated version of the TermInjector plugin for Trados Studio. TermInjectorPlus can be used with most translation providers (translation memories and machine translation providers) available in Trados. TermInjector acts as a wrapper around a translation provider, and it can modify both the source text sent into the translation provider and the output text that the translation provider returns. TermInjectorPlus is adapted from the **Edit rules** functionality in [OPUS-CAT MT Engine](https://helsinki-nlp.github.io/OPUS-CAT/install) (my main open-source project).
 
 In TermInjectorPlus, you can define three types of rules:
 
