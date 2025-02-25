@@ -372,16 +372,38 @@ No-match rules are only used when the translation provider does not provide tran
 
 A TermInjectorPlus configuration (specified rules and the translation providere) can be saved as a template, so that it can be easily used in new translation projects. To save a configuration as a template, click on the **Save as template** button. The template is saved with the name entered in the **Name** field. If a template with the same names exists, a dialog window will be shown.
 
-To use a template, select the template from the drop-down list and click **Apply template**. Applying a template will replace the current configuration in TermInjectorPlug settings.
+  <img src="./images/templates1.png?raw=true" alt="drawing" width="100%"/>
+
+To use a template, first select the template from the drop-down list:
+
+  <img src="./images/templates2.png?raw=true" alt="drawing" width="100%"/>
+
+Then click **Apply template**. Applying a template will replace the current configuration in TermInjectorPlug settings:
+
+  <img src="./images/templates3.png?raw=true" alt="drawing" width="100%"/>
 
 A template can be deleted by selecting it from the drop-down list and clicking **Delete template**. Note that deleting the template does not delete the rule collections included in the template.
+
+  <img src="./images/templates4.png?raw=true" alt="drawing" width="100%"/>
 
 ### <a name="modify_in_editor"></a>11. Modifying rule collections in a text editor
 
 Rule collections are usually modified through the TermInjectorPlus user interface, but some large-scale modifications are faster to perform by modifying the rule collection files in a text editor. Rule collections are saved in the .yaml format, which is a human-readable data language. In the followin example, we show how to modify a rule collection in a text editor to correct a problem that affects multiple rules in the collection (an incorrect regular expression replacement is used in every rule).
 
 1. Select the rule collection, and click the **Open in editor** button.
+
+  <img src="./images/editor1.png?raw=true" alt="drawing" width="100%"/>
+
 2. The rule collection .yaml file opens in your default text editor.
-3. Press **Ctrl+H** to open the find-and-replace window of the editor (this should work on most text editors). Type the incorrect regular expression in the upper field, and the correction in the field below, and then click **Replace all** (or the equivalent in your editor).
-4. Once all occurrences of the error have been corrected, save the file in the editor and close the editor.
-5. Select the rule collection again in TermInjectorPlus settings, and click the **Reload collection** button. The corrected rules will now be used by TermInjectorPlus. 
+
+  <img src="./images/editor2.png?raw=true" alt="drawing" width="100%"/>
+
+3. Press **Ctrl+H** to open the find-and-replace window of the editor (this should work on most text editors). Type the incorrect substring in the upper field, and the correction in the field below, and then click **Replace all** (or the equivalent in your editor). In this example, we change the source pattern so as to it cover the complete word the source pattern is part of.
+
+  <img src="./images/editor3.png?raw=true" alt="drawing" width="100%"/>
+
+4. Once all occurrences of the error have been corrected, save the file in the editor (Ctrl + S usually works) and close the editor.
+
+5. Select the rule collection again in TermInjectorPlus settings, and click the **Reload collection** button. The corrected rules will now be used by TermInjectorPlus:
+
+  <img src="./images/editor4.png?raw=true" alt="drawing" width="100%"/>

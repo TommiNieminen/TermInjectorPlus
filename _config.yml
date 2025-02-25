@@ -15,7 +15,7 @@
 # in the templates via {{ site.myvariable }}.
 title: TermInjectorPlus
 description: >- # this means to ignore newlines until "baseurl:"
-        OPUS-CAT is a collection of software which makes it possible to use OPUS-MT neural machine translation models in professional translation. OPUS-CAT includes a local offline MT engine and a collection of CAT tool plugins.
+        TermInjectorPlus is a Trados translation provider plugin, which can be used to modify the inputs and outputs of other Trados translation providers by using sophisticated rules.
 #baseurl: "/help" # the subpath of your site, e.g. /blog
 url: "https://TommiNieminen.github.io/TermInjectorPlus" # the base hostname & protocol for your site, e.g. http://example.com
 #twitter_username: jekyllrb
